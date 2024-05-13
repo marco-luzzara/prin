@@ -1,8 +1,10 @@
-FROM python:3.10
+FROM python:3.11
 
 WORKDIR /app
 
-VOLUME /app/to-watch
+ENV WATCHED_FOLDER="/app/to-watch"
+ENV PATIENT_ID=
+ENV KAFKA_BOOTSTRAP_SERVERS=
 
 COPY requirements.txt .
 
@@ -10,4 +12,4 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
-ENTRYPOINT ["python", "main.py", "/app/to-watch"]
+ENTRYPOINT ["python", "main.py"]

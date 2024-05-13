@@ -161,3 +161,4 @@ cython_debug/
 
 # custom
 todo
+remote_machine/to-watch/

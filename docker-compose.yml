@@ -1,0 +1,64 @@
+# https://github.com/bitnami/containers/blob/466fffb6f2fe8cef54f281f22e62a967f7d69b78/bitnami/kafka/README.md
+
+x-kafka-shared-image: &kafka-shared-image
+  image: 'bitnami/kafka:3.6.2'
+
+# cannot keep image and healtcheck together because the kafka-init does not need a healthcheck
+x-kafka-shared-healthcheck: &kafka-shared-healthcheck
+  healthcheck:
+    test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server kafka-broker-0:9092,kafka-broker-1:9092 --list" ]
+    interval: 5s
+    timeout: 5s
+    retries: 5
+    start_period: 30s
+    # start_interval: 10s
+
+x-kafka-shared-envs: &kafka-shared-envs
+  KAFKA_CFG_PROCESS_ROLES: controller,broker
+  KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+  KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka-broker-0:9093,1@kafka-broker-1:9093
+  KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+  KAFKA_KRAFT_CLUSTER_ID: clusterid0with016bytes
+
+services:
+  watcher:
+    container_name: remote-machine-1
+    build:
+      context: remote_machine
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./remote_machine/to-watch:/app/to-watch:ro
+    environment:
+      - PATIENT_ID=0
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092,kafka-broker-1:9092
+    
+  kafka-broker-0:
+    <<: [*kafka-shared-image, *kafka-shared-healthcheck]
+    environment:
+      <<: *kafka-shared-envs
+      KAFKA_CFG_NODE_ID: 0   
+
+  kafka-broker-1:
+    <<: [*kafka-shared-image, *kafka-shared-healthcheck]
+    environment:
+      <<: *kafka-shared-envs
+      KAFKA_CFG_NODE_ID: 1
+
+  kafka-init:
+    <<: *kafka-shared-image
+    depends_on:
+      kafka-broker-0:
+        condition: service_healthy
+      kafka-broker-1:
+        condition: service_healthy
+    entrypoint:
+      - 'bash'
+      - '-c'
+      - |
+        kafka-topics.sh --create \
+          --if-not-exists \
+          --topic "filesystemwatcher.medical-records" \
+          --replication-factor=1 \
+          --bootstrap-server kafka-broker-0:9092,kafka-broker-1:9092
+    
