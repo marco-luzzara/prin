@@ -1,0 +1,49 @@
+{
+    "type": "kafka",
+    "spec": {
+        "ioConfig": {
+            "type": "kafka",
+            "consumerProperties": {
+                "bootstrap.servers": "kafka-broker-0:9092,kafka-broker-1:9092",
+                "client.id": "from-druid"
+            },
+            "topic": "filesystemwatcher.medical-records",
+            "inputFormat": {
+                "type": "kafka",
+                "valueFormat": {
+                    "type": "csv",
+                    "skipHeaderRows": 0,
+                    "findColumnsFromHeader": true
+                }
+            }
+        },
+        "tuningConfig": {
+            "type": "kafka"
+        },
+        "dataSchema": {
+            "dataSource": "filesystemwatcher.medical-records",
+            "timestampSpec": {
+                "column": "kafka.timestamp",
+                "format": "millis"
+            },
+            "granularitySpec": {
+                "queryGranularity": "none",
+                "rollup": false
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    "patient name",
+                    {
+                        "name": "data1",
+                        "type": "double"
+                    },
+                    {
+                        "name": "data2",
+                        "type": "double"
+                    },
+                    "kafka.topic"
+                ]
+            }
+        }
+    }
+}

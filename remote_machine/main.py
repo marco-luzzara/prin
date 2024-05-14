@@ -15,7 +15,7 @@ def get_env_or_throw_if_empty(env: str) -> str:
     if env_value is not None and len(env_value) > 0:
         return env_value
     else:
-        raise f'environment variable {env} must be non-empty'
+        raise Exception(f'environment variable {env} must be non-empty')
 
 WATCHED_FOLDER = get_env_or_throw_if_empty('WATCHED_FOLDER')
 PATIENT_ID = get_env_or_throw_if_empty('PATIENT_ID')
@@ -27,7 +27,7 @@ class EventProcessor:
 
     def process(self) -> bytes:
         df = pd.read_excel(self.path)
-        csv_file = df.to_csv()
+        csv_file = df.to_csv(index=False)
         csv_file_bytes = csv_file.encode('utf-8')
 
         return csv_file_bytes
