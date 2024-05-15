@@ -1,14 +1,24 @@
-import sys
 import time
 import os
 import logging
+import socket
+import dataclasses
+from typing import Callable, List
+
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler, FileSystemEvent
 
 import pandas as pd
+import json
 
 from confluent_kafka import Producer
-import socket
+
+@dataclasses.dataclass
+class PatientRecord:
+    patient_id: str
+    patient_name: str
+    data1: float
+    data2: float
 
 def get_env_or_throw_if_empty(env: str) -> str:
     env_value = os.getenv(env)
@@ -18,47 +28,38 @@ def get_env_or_throw_if_empty(env: str) -> str:
         raise Exception(f'environment variable {env} must be non-empty')
 
 WATCHED_FOLDER = get_env_or_throw_if_empty('WATCHED_FOLDER')
-PATIENT_ID = get_env_or_throw_if_empty('PATIENT_ID')
 KAFKA_BOOTSTRAP_SERVERS = get_env_or_throw_if_empty('KAFKA_BOOTSTRAP_SERVERS')
 
-class EventProcessor:
-    def __init__(self, event: FileSystemEvent):
-        self.path = event.src_path
+def cast_excel_to_objs_list(excel_path: str) -> List[PatientRecord]:
+    df = pd.read_excel(excel_path)
+    return [PatientRecord(**obj) for obj in json.loads(df.to_json(orient='records'))]
 
-    def process(self) -> bytes:
-        df = pd.read_excel(self.path)
-        csv_file = df.to_csv(index=False)
-        csv_file_bytes = csv_file.encode('utf-8')
 
-        return csv_file_bytes
-    
-class FileProcessor:
-    def process(self, file: bytes) -> None:
-        raise 'subclass me'
-
-class KafkaFileProcessor(FileProcessor):
+class PatientRecordConsumer:
     def __init__(self, producer: Producer):
         self.producer = producer
 
-    def process(self, file: bytes) -> None:
-        self.producer.produce('filesystemwatcher.medical-records', key=PATIENT_ID, value=file)
+    def consume(self, patient_record: PatientRecord) -> None:
+        patient_dict = dataclasses.asdict(patient_record)
+        del patient_dict['patient_id']
+        self.producer.produce('filesystemwatcher.medical-records', 
+                              key=patient_record.patient_id, 
+                              value=json.dumps(patient_dict).encode())
 
 
 class XslFileEventHandler(PatternMatchingEventHandler):
-    def __init__(self, fileProcessor: FileProcessor):
-        #include only the excel files, the events for other file types are ignored
+    def __init__(self, record_consumer: Callable[[PatientRecord], None]):
+        # include only the excel files, the events for other file types are ignored
         super().__init__(['*.xls', '*.xlsx', '*.ods'], ignore_directories=True)
-        self.fileProcessor = fileProcessor
+        self.record_consumer = record_consumer
 
     def on_created(self, event: FileSystemEvent) -> None:
-        eventProcessor = EventProcessor(event)
-        csv_file_bytes = eventProcessor.process()
+        logging.info(f'Excel file found: {event.src_path}...')
+        patient_records = cast_excel_to_objs_list(event.src_path)
 
-        # show only the first 10 byte of a CSV
-        csv_overview = str(csv_file_bytes[0:10]) + ('...' if len(csv_file_bytes) > 10 else '')
-        logging.info(f'Excel file found: {event.src_path}: {csv_overview}')
-
-        self.fileProcessor.process(csv_file_bytes)
+        for patient_record in patient_records:
+            logging.info(f'|___Patient found: {patient_record}')
+            self.record_consumer(patient_record)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
@@ -75,8 +76,8 @@ if __name__ == "__main__":
 
     logging.info(f'Start watching directory {WATCHED_FOLDER!r}')
 
-    fileProcessor = KafkaFileProcessor(kafka_producer)
-    event_handler = XslFileEventHandler(fileProcessor)
+    kafka_pub = PatientRecordConsumer(kafka_producer)
+    event_handler = XslFileEventHandler(kafka_pub.consume)
     
     observer = Observer()
     observer.schedule(event_handler, WATCHED_FOLDER, recursive=False)

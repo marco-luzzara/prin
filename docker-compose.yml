@@ -8,7 +8,7 @@ x-kafka-shared-healthcheck: &kafka-shared-healthcheck
     interval: 5s
     timeout: 5s
     retries: 5
-    start_period: 30s
+    start_period: 1m
     # start_interval: 10s
 
 x-kafka-shared-envs: &kafka-shared-envs
@@ -29,7 +29,6 @@ services:
     volumes:
       - ./remote_machine/to-watch:/app/to-watch:ro
     environment:
-      - PATIENT_ID=0
       - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092,kafka-broker-1:9092
 
 # ----------------------------- KAFKA -----------------------------
@@ -64,103 +63,114 @@ services:
           --replication-factor=1 \
           --bootstrap-server kafka-broker-0:9092,kafka-broker-1:9092
 
+# ----------------------------- TRINO -----------------------------
+# https://trino.io/docs/current/installation/containers.html
+
+  trino:
+    image: trinodb/trino:447
+    ports:
+      - 8081:8080
+    volumes:
+      - ./trino/catalog:/etc/trino/catalog
+      - ./trino/kafka-description-files:/etc/trino/kafka
+
 # ----------------------------- DRUID -----------------------------
 # https://druid.apache.org/docs/latest/tutorials/docker/#launching-the-cluster
 # https://github.com/apache/druid/blob/29.0.1/distribution/docker/docker-compose.yml
 
-  druid-postgres:
-    image: postgres:15
-    # ports:
-    #   - "5432:5432"
-    # volumes:
-    #   - metadata_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=FoolishPassword
-      - POSTGRES_USER=druid
-      - POSTGRES_DB=druid
+  # druid-postgres:
+  #   image: postgres:15
+  #   # ports:
+  #   #   - "5432:5432"
+  #   # volumes:
+  #   #   - metadata_data:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_PASSWORD=FoolishPassword
+  #     - POSTGRES_USER=druid
+  #     - POSTGRES_DB=druid
 
-  # Need 3.5 or later for container nodes
-  druid-zookeeper:
-    image: zookeeper:3.5.10
-    # ports:
-    #   - "2181:2181"
-    environment:
-      - ZOO_MY_ID=1
+  # # Need 3.5 or later for container nodes
+  # druid-zookeeper:
+  #   image: zookeeper:3.5.10
+  #   # ports:
+  #   #   - "2181:2181"
+  #   environment:
+  #     - ZOO_MY_ID=1
 
-  druid-coordinator:
-    image: apache/druid:29.0.1
-    # volumes:
-    #   - druid_shared:/opt/shared
-    #   - coordinator_var:/opt/druid/var
-    depends_on:
-      - druid-zookeeper
-      - druid-postgres
-    # ports:
-    #   - "8081:8081"
-    command:
-      - coordinator
-    env_file:
-      - druid/druid.env
+  # druid-coordinator:
+  #   image: apache/druid:29.0.1
+  #   # volumes:
+  #   #   - druid_shared:/opt/shared
+  #   #   - coordinator_var:/opt/druid/var
+  #   depends_on:
+  #     - druid-zookeeper
+  #     - druid-postgres
+  #   # ports:
+  #   #   - "8081:8081"
+  #   command:
+  #     - coordinator
+  #   env_file:
+  #     - druid/druid.env
 
-  druid-broker:
-    image: apache/druid:29.0.1
-    # volumes:
-    #   - broker_var:/opt/druid/var
-    depends_on:
-      - druid-zookeeper
-      - druid-postgres
-      - druid-coordinator
-    # ports:
-    #   - "8082:8082"
-    command:
-      - broker
-    env_file:
-      - druid/druid.env
+  # druid-broker:
+  #   image: apache/druid:29.0.1
+  #   # volumes:
+  #   #   - broker_var:/opt/druid/var
+  #   depends_on:
+  #     - druid-zookeeper
+  #     - druid-postgres
+  #     - druid-coordinator
+  #   # ports:
+  #   #   - "8082:8082"
+  #   command:
+  #     - broker
+  #   env_file:
+  #     - druid/druid.env
 
-  druid-historical:
-    image: apache/druid:29.0.1
-    # volumes:
-    #   - druid_shared:/opt/shared
-    #   - historical_var:/opt/druid/var
-    depends_on: 
-      - druid-zookeeper
-      - druid-postgres
-      - druid-coordinator
-    # ports:
-    #   - "8083:8083"
-    command:
-      - historical
-    env_file:
-      - druid/druid.env
+  # druid-historical:
+  #   image: apache/druid:29.0.1
+  #   # volumes:
+  #   #   - druid_shared:/opt/shared
+  #   #   - historical_var:/opt/druid/var
+  #   depends_on: 
+  #     - druid-zookeeper
+  #     - druid-postgres
+  #     - druid-coordinator
+  #   # ports:
+  #   #   - "8083:8083"
+  #   command:
+  #     - historical
+  #   env_file:
+  #     - druid/druid.env
 
-  druid-middlemanager:
-    image: apache/druid:29.0.1
-    # volumes:
-    #   - druid_shared:/opt/shared
-    #   - middle_var:/opt/druid/var
-    depends_on: 
-      - druid-zookeeper
-      - druid-postgres
-      - druid-coordinator
-    # ports:
-    #   - "8091:8091"
-    #   - "8100-8105:8100-8105"
-    command:
-      - middleManager
-    env_file:
-      - druid/druid.env
+  # druid-middlemanager:
+  #   image: apache/druid:29.0.1
+  #   # volumes:
+  #   #   - druid_shared:/opt/shared
+  #   #   - middle_var:/opt/druid/var
+  #   depends_on: 
+  #     - druid-zookeeper
+  #     - druid-postgres
+  #     - druid-coordinator
+  #   # ports:
+  #   #   - "8091:8091"
+  #   #   - "8100-8105:8100-8105"
+  #   command:
+  #     - middleManager
+  #   env_file:
+  #     - druid/druid.env
 
-  druid-router:
-    image: apache/druid:29.0.1
-    # volumes:
-    #   - router_var:/opt/druid/var
-    depends_on:
-      - druid-zookeeper
-      - druid-postgres
-      - druid-coordinator
-    ports:
-      - "8888:8888"
-    command:
-      - router
-    env_file:
-      - druid/druid.env
+  # druid-router:
+  #   image: apache/druid:29.0.1
+  #   # volumes:
+  #   #   - router_var:/opt/druid/var
+  #   depends_on:
+  #     - druid-zookeeper
+  #     - druid-postgres
+  #     - druid-coordinator
+  #   ports:
+  #     - "8888:8888"
+  #   command:
+  #     - router
+  #   env_file:
+  #     - druid/druid.env

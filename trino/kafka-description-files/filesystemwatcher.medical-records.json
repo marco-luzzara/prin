@@ -1,0 +1,36 @@
+{
+    "tableName": "medical-records",
+    "schemaName": "filesystemwatcher",
+    "topicName": "filesystemwatcher.medical-records",
+    "key": {
+        "dataFormat": "raw",
+        "fields": [
+            {
+                "name": "kafka_key",
+                "type": "VARCHAR",
+                "dataFormat": "BYTE",
+                "hidden": "false"
+            }
+        ]
+    },
+    "message": {
+        "dataFormat": "json",
+        "fields": [
+            {
+                "name": "patient_name",
+                "mapping": "patient_name",
+                "type": "VARCHAR"
+            },
+            {
+                "name": "data1",
+                "mapping": "data1",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "data2",
+                "mapping": "data2",
+                "type": "DOUBLE"
+            }
+        ]
+    }
+}
