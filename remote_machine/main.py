@@ -4,6 +4,7 @@ import logging
 import socket
 import dataclasses
 from typing import Callable, List
+from .PatientRecord import PatientRecord
 
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler, FileSystemEvent
@@ -12,13 +13,6 @@ import pandas as pd
 import json
 
 from confluent_kafka import Producer
-
-@dataclasses.dataclass
-class PatientRecord:
-    patient_id: str
-    patient_name: str
-    data1: float
-    data2: float
 
 def get_env_or_throw_if_empty(env: str) -> str:
     env_value = os.getenv(env)
@@ -32,7 +26,7 @@ KAFKA_BOOTSTRAP_SERVERS = get_env_or_throw_if_empty('KAFKA_BOOTSTRAP_SERVERS')
 
 def cast_excel_to_objs_list(excel_path: str) -> List[PatientRecord]:
     df = pd.read_excel(excel_path)
-    return [PatientRecord(**obj) for obj in json.loads(df.to_json(orient='records'))]
+    return [PatientRecord.from_dict(obj) for obj in json.loads(df.to_json(orient='records'))]
 
 
 class PatientRecordConsumer:
