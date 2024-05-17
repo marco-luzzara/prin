@@ -4,7 +4,7 @@ import logging
 import socket
 import dataclasses
 from typing import Callable, List
-from .PatientRecord import PatientRecord
+from PatientRecord import PatientRecord
 
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler, FileSystemEvent
@@ -24,8 +24,19 @@ def get_env_or_throw_if_empty(env: str) -> str:
 WATCHED_FOLDER = get_env_or_throw_if_empty('WATCHED_FOLDER')
 KAFKA_BOOTSTRAP_SERVERS = get_env_or_throw_if_empty('KAFKA_BOOTSTRAP_SERVERS')
 
+# def get_python_engine(excel_path: str) -> str:
+#     file_ext = excel_path.rsplit('.', 1)[1]
+#     engine_map = {
+#         'xslx': 'openpyxl',
+#         'odf': 'odf'
+#     }
+#     return engine_map.get(file_ext, engine_map['xslx'])
+
+
 def cast_excel_to_objs_list(excel_path: str) -> List[PatientRecord]:
-    df = pd.read_excel(excel_path)
+    df = pd.read_excel(excel_path, engine='calamine', dtype={ 
+        'TELEFONO': str 
+    })
     return [PatientRecord.from_dict(obj) for obj in json.loads(df.to_json(orient='records'))]
 
 
@@ -35,9 +46,9 @@ class PatientRecordConsumer:
 
     def consume(self, patient_record: PatientRecord) -> None:
         patient_dict = dataclasses.asdict(patient_record)
-        del patient_dict['patient_id']
+        del patient_dict['id']
         self.producer.produce('filesystemwatcher.medical-records', 
-                              key=patient_record.patient_id, 
+                              key=patient_record.id.to_bytes(8, 'big'), 
                               value=json.dumps(patient_dict).encode())
 
 

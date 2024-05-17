@@ -1,20 +1,21 @@
 from dataclasses import field, fields
 from pydantic.dataclasses import dataclass
 
-from typing import Dict, Literal, Self
+from typing import Dict, Literal, Any
+Self = Any
 
 @dataclass
 class PatientRecord:
     id: int = field(metadata={'mapped_to': '#ID'})
-    data_di_nascita: str = field(metadata={'mapped_to': 'DATA DI NASCITA'})
+    data_di_nascita: int = field(metadata={'mapped_to': 'DATA DI NASCITA'})
     luogo_di_nascita: str = field(metadata={'mapped_to': 'LUOGO DI NASCITA'})
     age: int = field(metadata={'mapped_to': 'age'})
     sex: str = field(metadata={'mapped_to': 'sex'})
     telefono: str = field(metadata={'mapped_to': 'TELEFONO'})
     destrimane_mancino: Literal['destrimane', 'mancino'] = field(metadata={'mapped_to': 'DESTRIMANE/MANCINO'})
     egfr: int = field(metadata={'mapped_to': 'eGFR'})
-    prima_visita: str = field(metadata={'mapped_to': '1° visita'})
-    data_diagnosi: str = field(metadata={'mapped_to': 'Data diagnosi'})
+    prima_visita: int = field(metadata={'mapped_to': '1° visita'})
+    data_diagnosi: int = field(metadata={'mapped_to': 'Data diagnosi'})
     patologia: str = field(metadata={'mapped_to': 'PATOLOGIA'})
     a: str = field(metadata={'mapped_to': 'A'})
     t: str = field(metadata={'mapped_to': 'T'})
@@ -79,13 +80,13 @@ class PatientRecord:
     fcsrt_immediate_free_recall_corr: float = field(metadata={'mapped_to': 'FCSRT - Immediate free recall [corr]'})
     fcsrt_delayed_free_recall_raw: float = field(metadata={'mapped_to': 'FCSRT - Delayed free recall [raw]'})
     fcsrt_delayed_free_recall_corr: float = field(metadata={'mapped_to': 'FCSRT - Delayed free recall [corr]'})
-    fcsrt_isc: float = field(metadata={'mapped_to': 'FCSRT - ISC'})
-    fcsrt_itr: float = field(metadata={'mapped_to': 'FCSRT - ITR'})
-    fcsrt_dtr: float = field(metadata={'mapped_to': 'FCSRT - DTR'})
+    fcsrt_isc: float = field(metadata={'mapped_to': 'FCSRT - ISC '})
+    fcsrt_itr: float = field(metadata={'mapped_to': 'FCSRT - ITR '})
+    fcsrt_dtr: float = field(metadata={'mapped_to': 'FCSRT - DTR '})
     ravlt_immediato_raw: float = field(metadata={'mapped_to': 'RAVLT - Immediato [raw]'})
     ravlt_immediato_corr: float = field(metadata={'mapped_to': 'RAVLT - Immediato [corr]'})
-    ravlt_differito_raw: float = field(metadata={'mapped_to': 'RAVLT - Differito [raw]'})
-    ravlt_differito_corr: float = field(metadata={'mapped_to': 'RAVLT - Differito [corr]'})
+    ravlt_differito_raw: float = field(metadata={'mapped_to': ' RAVLT - Differito [raw]'})
+    ravlt_differito_corr: float = field(metadata={'mapped_to': ' RAVLT - Differito [corr]'})
     ravlt_recognition: float = field(metadata={'mapped_to': 'RAVLT - Recognition'})
     digit_span_diretto_raw: float = field(metadata={'mapped_to': 'Digit Span - diretto [raw]'})
     digit_span_diretto_corr: float = field(metadata={'mapped_to': 'Digit Span - diretto [corr]'})
@@ -114,9 +115,9 @@ class PatientRecord:
     test_di_prassia_costruttiva_raw: float = field(metadata={'mapped_to': 'Test di prassia costruttiva  [raw]'})
     test_di_prassia_costruttiva_corr: float = field(metadata={'mapped_to': 'Test di prassia costruttiva  [corr]'})
     gds: float = field(metadata={'mapped_to': 'GDS'})
-    bdi: float = field(metadata={'mapped_to': 'BDI'})
+    bdi: float = field(metadata={'mapped_to': 'BDI '})
     stai_i: float = field(metadata={'mapped_to': 'STAI-I'})
-    stai_ii: float = field(metadata={'mapped_to': 'STAI-II'})
+    stai_ii: float = field(metadata={'mapped_to': 'STAI-II '})
     social_cognition_gs_raw: float = field(metadata={'mapped_to': 'Social Cognition - GS [raw]'})
     social_cognition_gs_corr: float = field(metadata={'mapped_to': 'Social Cognition - GS [corr]'})
     social_cognition_ia_raw: float = field(metadata={'mapped_to': 'Social Cognition - IA [raw]'})
@@ -135,7 +136,7 @@ class PatientRecord:
     def from_dict(cls: Self, dict_to_map: Dict) -> Self:
         result_dict = {}
         for pr_field in fields(cls):
-            dict_key = pr_field.metadata['mapped_to'].strip()
+            dict_key = pr_field.metadata['mapped_to']
             result_dict[pr_field.name] = dict_to_map[dict_key]
 
         return cls(**result_dict)
