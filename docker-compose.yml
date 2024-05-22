@@ -7,7 +7,7 @@ x-kafka-shared-healthcheck: &kafka-shared-healthcheck
     test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server kafka-broker-0:9092,kafka-broker-1:9092 --list" ]
     interval: 5s
     timeout: 5s
-    retries: 5
+    retries: 10
     start_period: 1m
     # start_interval: 10s
 
@@ -67,12 +67,61 @@ services:
 # https://trino.io/docs/current/installation/containers.html
 
   trino:
-    image: trinodb/trino:447
+    image: ranger-trino
+    stdin_open: true
+    tty: true
     ports:
       - 8081:8080
+    depends_on:
+      ranger:
+        condition: service_started
     volumes:
       - ./trino/catalog:/etc/trino/catalog
       - ./trino/kafka-description-files:/etc/trino/kafka
+
+# ----------------------------- RANGER -----------------------------
+
+  ranger:
+    image: ranger:latest
+    stdin_open: true
+    tty: true
+    ports:
+      - "6080:6080"
+    depends_on:
+      ranger-zk:
+        condition: service_started
+      ranger-db:
+        condition: service_healthy
+      ranger-solr:
+        condition: service_started
+    environment:
+      - DEBUG_ADMIN=${DEBUG_ADMIN:-false}
+    command:
+      - /home/ranger/scripts/ranger.sh
+
+  ranger-zk:
+    image: ranger-zk
+    # ports:
+    #   - "2181:2181"
+
+  ranger-solr:
+    image: ranger-solr
+    # ports:
+    #   - "8983:8983"
+    command:
+      - solr-precreate
+      - ranger_audits
+      - /opt/solr/server/solr/configsets/ranger_audits/
+
+  ranger-db:
+    image: ranger-postgres
+    volumes:
+      - ./postgres-db-mount:/var/lib/postgresql/data
+    healthcheck:
+      test: 'su -c "pg_isready -q" postgres'
+      interval: 10s
+      timeout: 2s
+      retries: 30
 
 # ----------------------------- DRUID -----------------------------
 # https://druid.apache.org/docs/latest/tutorials/docker/#launching-the-cluster

@@ -1,0 +1,50 @@
+diff --git a/dev-support/ranger-docker/.env b/dev-support/ranger-docker/.env
+index 91613e5..10eaf37 100644
+--- a/dev-support/ranger-docker/.env
++++ b/dev-support/ranger-docker/.env
+@@ -2,7 +2,7 @@ BUILD_HOST_SRC=true
+ SKIPTESTS=true
+ GIT_URL=https://github.com/apache/ranger.git
+ BRANCH=master
+-PROFILE=
++PROFILE=ranger-jdk11,!all,!linux
+ BUILD_OPTS=
+ 
+ # To build Trino plugins package, use following PROFILE
+@@ -11,19 +11,19 @@ BUILD_OPTS=
+ # Java version for RangerBase image.
+ # This image gets used as base docker image for all images.
+ # Valid values: 8, 11, 17
+-RANGER_BASE_JAVA_VERSION=8
++RANGER_BASE_JAVA_VERSION=11
+ 
+ # Java version to use to build Apache Ranger
+ # Valid values: 8, 11, 17
+ # Trino builds on jdk 11 and above
+-RANGER_BUILD_JAVA_VERSION=8
++RANGER_BUILD_JAVA_VERSION=11
+ 
+ # Java version to use to run Ranger Admin server
+ # Valid values: 8, 11, 17
+-RANGER_ADMIN_JAVA_VERSION=8
++RANGER_ADMIN_JAVA_VERSION=11
+ 
+ # base & third party images
+-UBUNTU_VERSION=20.04
++UBUNTU_VERSION=22.04
+ MARIADB_VERSION=10.7.3
+ POSTGRES_VERSION=12
+ ENABLE_DB_MOUNT=true
+diff --git a/ranger_in_docker b/ranger_in_docker
+index 99089f8..4022876 100755
+--- a/ranger_in_docker
++++ b/ranger_in_docker
+@@ -68,7 +68,7 @@ else
+     DB_SERVICE_NAME="ranger-${RANGER_DB_TYPE}"
+ fi
+ 
+-CORE_SERVICES="ranger-base,ranger,${DB_SERVICE_NAME},ranger-usersync"
++CORE_SERVICES="ranger-base,ranger,${DB_SERVICE_NAME}" #, ranger-usersync"
+ 
+ if [ -z "${ENABLED_RANGER_SERVICES}" ]
+ then
