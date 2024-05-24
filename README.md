@@ -10,6 +10,9 @@
 First run the compose file:
 
 ```
+set -a
+source .env
+set +a
 docker compose up -d
 ```
 
@@ -22,4 +25,44 @@ trino --catalog kafka --schema filesystemwatcher
 # on the trino cli then run...
 SELECT * FROM "medical-records";
 # you should see all the events
+```
+
+---
+
+## Produce Test Data with Kafka
+
+To produce test data with Kafka, run:
+
+```
+docker exec -it prin-kafka-broker-0-1 bash
+kafka-console-producer.sh \
+    --topic filesystemwatcher.test \ # specify a previously created topic
+    --property parse.key=true \
+    --property key.separator="|" \
+    --broker-list localhost:9092 #,kafka-broker-1:9092
+100|{"prop1":"test", "prop2": 10}
+```
+
+---
+
+## Insert on S3
+
+To test the insertion on S3, create a table from Trino:
+
+```
+trino --catalog hive --schema default
+
+# query
+CREATE TABLE example (
+    id INT,
+    name VARCHAR
+)
+WITH (
+    format = 'PARQUET'
+);
+
+INSERT INTO example
+VALUES 
+    (1, 'Name1'),
+    (2, 'Name2');
 ```

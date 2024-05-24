@@ -4,7 +4,7 @@ x-kafka-shared-image: &kafka-shared-image
 # cannot keep image and healtcheck together because the kafka-init does not need a healthcheck
 x-kafka-shared-healthcheck: &kafka-shared-healthcheck
   healthcheck:
-    test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server kafka-broker-0:9092,kafka-broker-1:9092 --list" ]
+    test: ["CMD-SHELL", "kafka-topics.sh --list --bootstrap-server kafka-broker-0:9092 #,kafka-broker-1:9092" ]
     interval: 5s
     timeout: 5s
     retries: 10
@@ -15,7 +15,7 @@ x-kafka-shared-envs: &kafka-shared-envs
   KAFKA_CFG_PROCESS_ROLES: controller,broker
   KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
   KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-  KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka-broker-0:9093,1@kafka-broker-1:9093
+  KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka-broker-0:9093 #,1@kafka-broker-1:9093
   KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
   KAFKA_KRAFT_CLUSTER_ID: clusterid0with016bytes
 
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./remote_machine/to-watch:/app/to-watch:ro
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092,kafka-broker-1:9092
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092 #,kafka-broker-1:9092
 
 # ----------------------------- KAFKA -----------------------------
 # https://github.com/bitnami/containers/blob/466fffb6f2fe8cef54f281f22e62a967f7d69b78/bitnami/kafka/README.md
@@ -40,19 +40,19 @@ services:
       <<: *kafka-shared-envs
       KAFKA_CFG_NODE_ID: 0   
 
-  kafka-broker-1:
-    <<: [*kafka-shared-image, *kafka-shared-healthcheck]
-    environment:
-      <<: *kafka-shared-envs
-      KAFKA_CFG_NODE_ID: 1
+  # kafka-broker-1:
+  #   <<: [*kafka-shared-image, *kafka-shared-healthcheck]
+  #   environment:
+  #     <<: *kafka-shared-envs
+  #     KAFKA_CFG_NODE_ID: 1
 
   kafka-init:
     <<: *kafka-shared-image
     depends_on:
       kafka-broker-0:
         condition: service_healthy
-      kafka-broker-1:
-        condition: service_healthy
+      # kafka-broker-1:
+      #   condition: service_healthy
     entrypoint:
       - 'bash'
       - '-c'
@@ -61,7 +61,27 @@ services:
           --if-not-exists \
           --topic "filesystemwatcher.medical-records" \
           --replication-factor=1 \
-          --bootstrap-server kafka-broker-0:9092,kafka-broker-1:9092
+          --bootstrap-server kafka-broker-0:9092 #,kafka-broker-1:9092
+
+# ----------------------------- HIVE METASTORE -----------------------------
+# https://github.com/naushadh/hive-metastore
+  hive-metastore:
+    image: naushadh/hive-metastore
+    depends_on:
+      ranger-db:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=ranger-db
+      - DATABASE_DB=hive_metastore_db
+      - DATABASE_USER=hive_metastore
+      - DATABASE_PASSWORD=hive-password
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - S3_ENDPOINT_URL
+      - S3_BUCKET
+      - S3_PREFIX
+    # ports:
+    #   - '9083:9083'
 
 # ----------------------------- TRINO -----------------------------
 # https://trino.io/docs/current/installation/containers.html
@@ -117,6 +137,7 @@ services:
     image: ranger-postgres
     volumes:
       - ./postgres-db-mount:/var/lib/postgresql/data
+      - ./postgres/init/hive-metastore-init.sql:/docker-entrypoint-initdb.d/hive-metastore-init.sql
     healthcheck:
       test: 'su -c "pg_isready -q" postgres'
       interval: 10s
