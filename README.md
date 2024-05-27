@@ -65,4 +65,12 @@ INSERT INTO example
 VALUES 
     (1, 'Name1'),
     (2, 'Name2');
+
+SELECT * FROM example;
+```
+
+You can get the objects from minio with:
+
+```
+mc get /data/prin/metadata/example/${object_name}
 ```

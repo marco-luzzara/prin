@@ -162,4 +162,3 @@ cython_debug/
 # custom
 todo
 remote_machine/to-watch/
-trino/catalog/hive.properties
