@@ -126,12 +126,37 @@ services:
     tty: true
     ports:
       - 8081:8080
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/lib/trino/bin/health-check"]
+      interval: 5s
+      start_period: 2m
+      timeout: 10s
+      retries: 10
     depends_on:
       ranger:
         condition: service_started
     volumes:
       - ./trino/catalog:/etc/trino/catalog
       - ./trino/kafka-description-files:/etc/trino/kafka
+
+# ----------------------------- CDC -----------------------------
+## Includes Kafka CLI and the Trino CLI. This container encompasses a CDC script
+## that copies the new Kafka messages to a Trino table (pointing to an S3 bucket)
+
+  cdc-script:
+    build:
+      context: ./trino/cli
+    image: trino-cdc:377
+    environment:
+      - TRINO_ENDPOINT=http://trino:8080
+      - FLUSH_DELAY_SECONDS=15
+    depends_on:
+      trino:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./trino/cli/scripts:/cdc/scripts
 
 # ----------------------------- RANGER -----------------------------
 
@@ -170,111 +195,10 @@ services:
   ranger-db:
     image: ranger-postgres
     volumes:
-      - ./postgres-db-mount:/var/lib/postgresql/data
+      # - ./postgres-db-mount:/var/lib/postgresql/data
       - ./postgres/init/hive-metastore-init.sql:/docker-entrypoint-initdb.d/hive-metastore-init.sql
     healthcheck:
       test: 'su -c "pg_isready -q" postgres'
       interval: 10s
       timeout: 2s
       retries: 30
-
-# ----------------------------- DRUID -----------------------------
-# https://druid.apache.org/docs/latest/tutorials/docker/#launching-the-cluster
-# https://github.com/apache/druid/blob/29.0.1/distribution/docker/docker-compose.yml
-
-  # druid-postgres:
-  #   image: postgres:15
-  #   # ports:
-  #   #   - "5432:5432"
-  #   # volumes:
-  #   #   - metadata_data:/var/lib/postgresql/data
-  #   environment:
-  #     - POSTGRES_PASSWORD=FoolishPassword
-  #     - POSTGRES_USER=druid
-  #     - POSTGRES_DB=druid
-
-  # # Need 3.5 or later for container nodes
-  # druid-zookeeper:
-  #   image: zookeeper:3.5.10
-  #   # ports:
-  #   #   - "2181:2181"
-  #   environment:
-  #     - ZOO_MY_ID=1
-
-  # druid-coordinator:
-  #   image: apache/druid:29.0.1
-  #   # volumes:
-  #   #   - druid_shared:/opt/shared
-  #   #   - coordinator_var:/opt/druid/var
-  #   depends_on:
-  #     - druid-zookeeper
-  #     - druid-postgres
-  #   # ports:
-  #   #   - "8081:8081"
-  #   command:
-  #     - coordinator
-  #   env_file:
-  #     - druid/druid.env
-
-  # druid-broker:
-  #   image: apache/druid:29.0.1
-  #   # volumes:
-  #   #   - broker_var:/opt/druid/var
-  #   depends_on:
-  #     - druid-zookeeper
-  #     - druid-postgres
-  #     - druid-coordinator
-  #   # ports:
-  #   #   - "8082:8082"
-  #   command:
-  #     - broker
-  #   env_file:
-  #     - druid/druid.env
-
-  # druid-historical:
-  #   image: apache/druid:29.0.1
-  #   # volumes:
-  #   #   - druid_shared:/opt/shared
-  #   #   - historical_var:/opt/druid/var
-  #   depends_on: 
-  #     - druid-zookeeper
-  #     - druid-postgres
-  #     - druid-coordinator
-  #   # ports:
-  #   #   - "8083:8083"
-  #   command:
-  #     - historical
-  #   env_file:
-  #     - druid/druid.env
-
-  # druid-middlemanager:
-  #   image: apache/druid:29.0.1
-  #   # volumes:
-  #   #   - druid_shared:/opt/shared
-  #   #   - middle_var:/opt/druid/var
-  #   depends_on: 
-  #     - druid-zookeeper
-  #     - druid-postgres
-  #     - druid-coordinator
-  #   # ports:
-  #   #   - "8091:8091"
-  #   #   - "8100-8105:8100-8105"
-  #   command:
-  #     - middleManager
-  #   env_file:
-  #     - druid/druid.env
-
-  # druid-router:
-  #   image: apache/druid:29.0.1
-  #   # volumes:
-  #   #   - router_var:/opt/druid/var
-  #   depends_on:
-  #     - druid-zookeeper
-  #     - druid-postgres
-  #     - druid-coordinator
-  #   ports:
-  #     - "8888:8888"
-  #   command:
-  #     - router
-  #   env_file:
-  #     - druid/druid.env

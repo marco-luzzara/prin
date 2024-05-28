@@ -19,7 +19,7 @@ docker compose up -d
 The `watcher` service monitors the `./remote_machine/to-watch` folder for any new Excel file. Valid extensions are `.xls`, `.xlsx`, `.ods`. When a new Excel is detected, an event with the patient information are sent to the topic `filesystemwatcher.medical-records`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
 
 ```
-docker exec -it prin-trino-1 bash
+docker compose exec -it trino bash
 # on the trino shell then run...
 trino --catalog kafka --schema filesystemwatcher
 # on the trino cli then run...
@@ -40,7 +40,7 @@ kafka-console-producer.sh \
     --property parse.key=true \
     --property key.separator="|" \
     --broker-list localhost:9092 #,kafka-broker-1:9092
-100|{"prop1":"test", "prop2": 10}
+1|{"prop1":"test", "prop2": 10}
 ```
 
 ---

@@ -16,33 +16,3 @@ services:
   kafka-init:
     cpus: 0.5
     mem_limit: 500mb
-
-# ----------------------------- DRUID -----------------------------
-
-  # druid-postgres:
-  #   cpus: 0.3
-  #   mem_limit: 500mb
-
-  # druid-zookeeper:
-  #   cpus: 0.3
-  #   mem_limit: 500mb
-
-  # druid-coordinator:
-  #   cpus: 0.3
-  #   mem_limit: 200mb
-
-  # druid-broker:
-  #   cpus: 0.3
-  #   mem_limit: 500mb
-
-  # druid-historical:
-  #   cpus: 0.2
-  #   mem_limit: 200mb
-
-  # druid-middlemanager:
-  #   cpus: 0.3
-  #   mem_limit: 500mb
-
-  # druid-router:
-  #   cpus: 0.3
-  #   mem_limit: 500mb
