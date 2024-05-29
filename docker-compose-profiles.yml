@@ -1,0 +1,75 @@
+services:
+  watcher:
+    profiles:
+      - all
+
+# ----------------------------- KAFKA -----------------------------
+# https://github.com/bitnami/containers/blob/466fffb6f2fe8cef54f281f22e62a967f7d69b78/bitnami/kafka/README.md
+
+  kafka-broker-0:
+    profiles:
+      - all
+      - ranger-test
+
+  # kafka-broker-1:
+  #   profiles:
+  #     - all
+  #     - ranger-test
+
+  kafka-init:
+    profiles:
+      - all
+      - ranger-test
+
+# ----------------------------- HIVE METASTORE -----------------------------
+# https://github.com/naushadh/hive-metastore
+  hive-metastore:
+    profiles:
+      - all
+
+# ----------------------------- MINIO -----------------------------
+  minio:
+    profiles:
+      - all
+
+  minio-init:
+    profiles:
+      - all
+
+# ----------------------------- TRINO -----------------------------
+# https://trino.io/docs/current/installation/containers.html
+
+  trino:
+    profiles:
+      - all
+      - ranger-test
+
+# ----------------------------- CDC -----------------------------
+## Includes Kafka CLI and the Trino CLI. This container encompasses a CDC script
+## that copies the new Kafka messages to a Trino table (pointing to an S3 bucket)
+
+  cdc-script:
+    profiles:
+      - all
+
+# ----------------------------- RANGER -----------------------------
+
+  ranger:
+    profiles:
+      - all
+      - ranger-test
+
+  ranger-zk:
+    profiles:
+      - all
+      - ranger-test
+
+  ranger-solr:
+    profiles:
+      - all
+      - ranger-test
+
+  ranger-db:
+    profiles:
+      - all
+      - ranger-test

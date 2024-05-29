@@ -5,7 +5,7 @@ Ranger does not support the Trino plugin for the stable release (2.4 at the time
 ```bash
 git clone git@github.com:apache/ranger.git ranger # --depth=1 if you want to use the latest master release
 git reset --hard 301c8ff4155bb06b16037a2eb2bed237be4701c4 
-git -C ranger apply ranger-build.patch
+git -C ranger apply ../ranger-build.patch
 export ENABLED_RANGER_SERVICES="trino"
 cd ranger
 ./ranger_in_docker up

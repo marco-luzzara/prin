@@ -6,7 +6,7 @@ do
     START_TIMESTAMP="$END_TIMESTAMP"
     END_TIMESTAMP="$EPOCHSECONDS"
 
-    echo "Starting CDC with interval [$START_TIMESTAMP, $END_TIMESTAMP[ ..."
+    echo "$(date) - Starting CDC with interval [$START_TIMESTAMP, $END_TIMESTAMP[ ..."
 
     ./trino --server "$TRINO_ENDPOINT" --user trino --execute "
         INSERT INTO hive.default.patient_records (id, luogo_di_nascita, patologia, created_at)
