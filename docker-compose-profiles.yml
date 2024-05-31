@@ -1,75 +1,72 @@
 services:
+# ----------------------------- FILE WATCHER -----------------------------
   watcher:
     profiles:
-      - all
+      - minimal
 
 # ----------------------------- KAFKA -----------------------------
-# https://github.com/bitnami/containers/blob/466fffb6f2fe8cef54f281f22e62a967f7d69b78/bitnami/kafka/README.md
-
   kafka-broker-0:
     profiles:
-      - all
       - ranger-test
+      - minimal
 
   # kafka-broker-1:
   #   profiles:
-  #     - all
   #     - ranger-test
 
   kafka-init:
     profiles:
-      - all
       - ranger-test
+      - minimal
 
 # ----------------------------- HIVE METASTORE -----------------------------
-# https://github.com/naushadh/hive-metastore
   hive-metastore:
-    profiles:
-      - all
+    profiles: []
 
 # ----------------------------- MINIO -----------------------------
   minio:
-    profiles:
-      - all
+    profiles: []
 
   minio-init:
-    profiles:
-      - all
+    profiles: []
 
 # ----------------------------- TRINO -----------------------------
-# https://trino.io/docs/current/installation/containers.html
-
   trino:
     profiles:
-      - all
       - ranger-test
+      - sql-ui
+      - minimal
 
 # ----------------------------- CDC -----------------------------
-## Includes Kafka CLI and the Trino CLI. This container encompasses a CDC script
-## that copies the new Kafka messages to a Trino table (pointing to an S3 bucket)
-
   cdc-script:
+    profiles: []
+
+# ----------------------------- HUE -----------------------------
+  hue:
     profiles:
-      - all
+      - sql-ui
 
 # ----------------------------- RANGER -----------------------------
-
   ranger:
     profiles:
-      - all
       - ranger-test
+      - sql-ui
+      - minimal
 
   ranger-zk:
     profiles:
-      - all
       - ranger-test
+      - sql-ui
+      - minimal
 
   ranger-solr:
     profiles:
-      - all
       - ranger-test
+      - sql-ui
+      - minimal
 
   ranger-db:
     profiles:
-      - all
       - ranger-test
+      - sql-ui
+      - minimal

@@ -8,7 +8,7 @@ x-kafka-shared-healthcheck: &kafka-shared-healthcheck
     interval: 5s
     timeout: 5s
     retries: 10
-    start_period: 1m
+    start_period: 2m
     # start_interval: 10s
 
 x-kafka-shared-envs: &kafka-shared-envs
@@ -157,6 +157,20 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./trino/cli/scripts:/cdc/scripts
+
+# ----------------------------- HUE -----------------------------
+## https://hub.docker.com/r/gethue/hue
+  
+  hue:
+    image: gethue/hue:20240530-140101
+    ports:
+      - "8888:8888"
+    depends_on:
+      trino:
+        condition: service_healthy
+    volumes:
+      - ./hue/hue.ini:/usr/share/hue/desktop/conf/hue.ini
+    
 
 # ----------------------------- RANGER -----------------------------
 

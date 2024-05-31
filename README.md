@@ -93,3 +93,11 @@ mc get /data/prin/metadata/example/${object_name}
 Kafka is a pub/sub system that could store events indefinetely, but with Trino we cannot perform SQL INSERTs into kafka queues. That is why we need to store them on S3 too, and leverage the Trino integration with Ranger to possibly anonimize the stored data. We are using the Hive metastore to tell Trino where to keep the schema of S3 tables and the format they should have (Parquet). Then, there is a CDC script that periodically copies the Kafka events sent after start time and before the current time (`trino/cli/cdc.sh`) into S3, in a table called `hive.default.patient_records`.
 
 The "flush" delay is determined by the env variable `FLUSH_DELAY_SECONDS` (default 15 seconds)
+
+---
+
+## Issues
+
+### Cannot retrieve Metadata from Ranger
+
+- possibly caused by the exceptions in /var/log/ranger/ranger_admin_sql.log
