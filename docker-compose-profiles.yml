@@ -3,12 +3,14 @@ services:
   watcher:
     profiles:
       - minimal
+      - complete
 
 # ----------------------------- KAFKA -----------------------------
   kafka-broker-0:
     profiles:
       - ranger-test
       - minimal
+      - complete
 
   # kafka-broker-1:
   #   profiles:
@@ -18,17 +20,21 @@ services:
     profiles:
       - ranger-test
       - minimal
+      - complete
 
 # ----------------------------- HIVE METASTORE -----------------------------
   hive-metastore:
-    profiles: []
+    profiles:
+      - complete
 
 # ----------------------------- MINIO -----------------------------
   minio:
-    profiles: []
+    profiles:
+      - complete
 
   minio-init:
-    profiles: []
+    profiles:
+      - complete
 
 # ----------------------------- TRINO -----------------------------
   trino:
@@ -36,15 +42,24 @@ services:
       - ranger-test
       - sql-ui
       - minimal
+      - complete
 
 # ----------------------------- CDC -----------------------------
   cdc-script:
-    profiles: []
+    profiles:
+      - complete
 
 # ----------------------------- HUE -----------------------------
   hue:
     profiles:
       - sql-ui
+      - complete
+
+# ----------------------------- SUPERSET -----------------------------
+  superset:
+    profiles:
+      - sql-ui
+      - complete
 
 # ----------------------------- RANGER -----------------------------
   ranger:
@@ -52,21 +67,25 @@ services:
       - ranger-test
       - sql-ui
       - minimal
+      - complete
 
   ranger-zk:
     profiles:
       - ranger-test
       - sql-ui
       - minimal
+      - complete
 
   ranger-solr:
     profiles:
       - ranger-test
       - sql-ui
       - minimal
+      - complete
 
   ranger-db:
     profiles:
       - ranger-test
       - sql-ui
       - minimal
+      - complete

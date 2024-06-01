@@ -170,7 +170,27 @@ services:
         condition: service_healthy
     volumes:
       - ./hue/hue.ini:/usr/share/hue/desktop/conf/hue.ini
-    
+  
+# ----------------------------- SUPERSET -----------------------------
+## https://hub.docker.com/r/apache/superset
+
+  superset:
+    build:
+      context: ./superset
+    image: superset-with-trino
+    ports:
+      - "7890:8088"
+    depends_on:
+      trino:
+        condition: service_healthy
+    environment:
+      - SUPERSET_SECRET_KEY=supersetkey
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=admin
+      - ADMIN_EMAIL=admin@superset.com
+    volumes:
+      - ./superset/bootstrap.sh:/bootstrap.sh
+    entrypoint: ["/bootstrap.sh"]
 
 # ----------------------------- RANGER -----------------------------
 

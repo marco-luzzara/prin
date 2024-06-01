@@ -19,7 +19,7 @@ docker compose up -d
 To run different configurations of the docker compose, you can set profiles:
 
 ```bash
-docker compose --profile ranger-test -f docker-compose.yml -f docker-compose-profiles.yml up -d
+docker compose -f docker-compose.yml -f docker-compose-profiles.yml --profile sql-ui up -d
 ```
 
 Similarly, you can limit the resources of any container by including the `docker-compose-resource-limits.yml`.
