@@ -22,9 +22,9 @@ To run different configurations of the docker compose, you can set profiles:
 docker compose -f docker-compose.yml -f docker-compose-profiles.yml --profile sql-ui up -d
 ```
 
-Similarly, you can limit the resources of any container by including the `docker-compose-resource-limits.yml`.
+Similarly, you can limit the resources of any container by including the `docker-compose-resource-limits.yml`. In develop mode, make sure to include the `docker-compose-development.yml` among the composes.
 
-The `watcher` service monitors the `./remote_machine/to-watch` folder for any new Excel file. Valid extensions are `.xls`, `.xlsx`, `.ods`. When a new Excel is detected, an event with the patient information are sent to the topic `filesystemwatcher.medical-records`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
+The `data-loading-webapp` service monitors the `./remote_machine/to-watch` folder for any new Excel file. Valid extensions are `.xls`, `.xlsx`, `.ods`. When a new Excel is detected, an event with the patient information are sent to the topic `filesystemwatcher.medical-records`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
 
 ```bash
 docker compose exec -it trino bash

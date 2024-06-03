@@ -20,16 +20,16 @@ x-kafka-shared-envs: &kafka-shared-envs
   KAFKA_KRAFT_CLUSTER_ID: clusterid0with016bytes
 
 services:
-  watcher:
+  data-loading-webapp:
     build:
       context: remote_machine
       dockerfile: ./Dockerfile
+    ports:
+      - "5000:80"
     depends_on:
       - kafka-init
-    volumes:
-      - ./remote_machine/to-watch:/app/to-watch:ro
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092 #,kafka-broker-1:9092
+      - FLASK_KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092 #,kafka-broker-1:9092
 
 # ----------------------------- KAFKA -----------------------------
 # https://github.com/bitnami/containers/blob/466fffb6f2fe8cef54f281f22e62a967f7d69b78/bitnami/kafka/README.md

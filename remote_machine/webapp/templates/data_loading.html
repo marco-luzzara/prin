@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel File</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" enctype="multipart/form-data">
+        <h2>Carica i dati dei pazienti</h2>
+        <form id="uploadForm">
+            <input type="file" id="fileInput" accept=".xls,.xlsx,.odt" required>
+            <button type="submit">Invia</button>
+        </form>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const messageDiv = document.getElementById('message');
+
+            if (fileInput.files.length === 0) {
+                showMessage('Non hai caricato alcun file', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (!file.name.match(/\.(xls|xlsx|odt)$/)) {
+                showMessage('Il tipo di file non è valido. File compatibili: .xls,.xlsx,.odt', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('data_file', file);
+
+            fetch("{{ url_for('data-loading.load_from_excel') }}", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        console.log(response)
+                        throw new Error(response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    showMessage('File caricato correttamente', 'success');
+                    console.log(data);
+                })
+                .catch(error => {
+                    showMessage('Si è verificato un errore', 'error');
+                });
+        });
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+        }
+    </script>
+
+</body>
+
+</html>

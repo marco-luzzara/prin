@@ -1,5 +1,5 @@
 services:
-  watcher:
+  data-loading-webapp:
     cpus: 0.3
     mem_limit: 200mb
 

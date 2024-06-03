@@ -1,9 +1,10 @@
 services:
 # ----------------------------- FILE WATCHER -----------------------------
-  watcher:
+  data-loading-webapp:
     profiles:
       - minimal
       - complete
+      - data-loading-testing
 
 # ----------------------------- KAFKA -----------------------------
   kafka-broker-0:
@@ -11,6 +12,7 @@ services:
       - ranger-test
       - minimal
       - complete
+      - data-loading-testing
 
   # kafka-broker-1:
   #   profiles:
@@ -21,6 +23,7 @@ services:
       - ranger-test
       - minimal
       - complete
+      - data-loading-testing
 
 # ----------------------------- HIVE METASTORE -----------------------------
   hive-metastore:
