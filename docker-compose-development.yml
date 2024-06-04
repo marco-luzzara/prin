@@ -1,10 +1,9 @@
 services:
   data-loading-webapp:
     develop:
-      develop:
       watch:
         - action: sync+restart
-          path: ./webapp
+          path: ./remote_machine/webapp
           target: /app/webapp
         - action: rebuild
           path: ./remote_machine/requirements.txt

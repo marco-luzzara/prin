@@ -27,6 +27,7 @@ def load_from_excel():
         record_processor.consume(patient_record)
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
+    return ('', 204)
 
 
 def cast_excel_to_objs_list(readable: Any) -> List[PatientRecord]:

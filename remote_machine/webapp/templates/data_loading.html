@@ -34,6 +34,36 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+
+        .pretty-button {
+            background-color: #f8f9fa;
+            border: 1px solid #f8f9fa;
+            border-radius: 4px;
+            color: #3c4043;
+            cursor: pointer;
+            font-family: arial, sans-serif;
+            font-size: 14px;
+            height: 36px;
+            line-height: 27px;
+            min-width: 54px;
+            padding: 0 16px;
+            text-align: center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            white-space: pre;
+        }
+
+        .pretty-button:hover {
+            border-color: #dadce0;
+            box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+            color: #202124;
+        }
+
+        .pretty-button:focus {
+            border-color: #4285f4;
+            outline: none;
+        }
     </style>
 </head>
 
@@ -42,8 +72,8 @@
     <div class="container" enctype="multipart/form-data">
         <h2>Carica i dati dei pazienti</h2>
         <form id="uploadForm">
-            <input type="file" id="fileInput" accept=".xls,.xlsx,.odt" required>
-            <button type="submit">Invia</button>
+            <input class="pretty-button" type="file" id="fileInput" accept=".xls,.xlsx,.odt" required>
+            <button class="pretty-button" type="submit">Invia</button>
         </form>
         <div id="message" class="message"></div>
     </div>
@@ -77,7 +107,7 @@
                         console.log(response)
                         throw new Error(response.statusText);
                     }
-                    return response.json();
+                    return response.text();
                 })
                 .then(data => {
                     showMessage('File caricato correttamente', 'success');
@@ -85,6 +115,7 @@
                 })
                 .catch(error => {
                     showMessage('Si è verificato un errore', 'error');
+                    console.log(error);
                 });
         });
 

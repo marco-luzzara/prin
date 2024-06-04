@@ -38,18 +38,29 @@ SELECT * FROM "medical-records";
 
 ---
 
-## Produce Test Data with Kafka
+## Produce and Consume Test Data with Kafka
 
-To produce test data with Kafka, run:
+To produce test data with Kafka:
 
 ```bash
-docker exec -it prin-kafka-broker-0-1 bash
+docker compose exec -it kafka-broker-0 bash
 kafka-console-producer.sh \
     --topic filesystemwatcher.test \ # specify a previously created topic
     --property parse.key=true \
     --property key.separator="|" \
     --broker-list localhost:9092 #,kafka-broker-1:9092
 1|{"prop1":"test", "prop2": 10}
+```
+
+To consume data with Kafka:
+
+```bash
+docker compose exec -it kafka-broker-0 bash
+kafka-console-consumer.sh \
+    --topic filesystemwatcher.medical-records \
+    # --property print.key=true \ you cannot deserialize the key because it is a byte object
+    --property key.separator="-" \
+    --bootstrap-server localhost:9092 
 ```
 
 ---

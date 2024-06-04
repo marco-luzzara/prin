@@ -35,6 +35,10 @@ def create_app(test_config=None):
     from . import data_loading
     app.register_blueprint(data_loading.bp)
 
+    @app.get('/health')
+    def health_check():
+        return ('', 200)
+
     return app
 
 
