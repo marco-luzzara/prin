@@ -75,13 +75,13 @@ services:
     environment:
       - DATABASE_HOST=ranger-db
       - DATABASE_DB=hive_metastore_db
-      - DATABASE_USER=hive_metastore
-      - DATABASE_PASSWORD=hive-password
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - S3_ENDPOINT_URL
-      - S3_BUCKET
-      - S3_PREFIX
+      - DATABASE_USER=${HIVE_METASTORE_DATABASE_USER}
+      - DATABASE_PASSWORD=${HIVE_METASTORE_DATABASE_PASSWORD}
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_BUCKET=prin
+      - S3_PREFIX=metadata
     # ports:
     #   - '9083:9083'
 
@@ -94,8 +94,8 @@ services:
     # volumes:
     #   - 'minio_data:/data'
     environment:
-      - MINIO_ROOT_USER=miniouser
-      - MINIO_ROOT_PASSWORD=miniopassword
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
     healthcheck:
       test: curl --fail http://localhost:9000/minio/health/live
       start_period: 1m
@@ -113,7 +113,7 @@ services:
       - /bin/bash
       - -c
       - |
-        mc alias set local_minio http://minio:9000 miniouser miniopassword
+        mc alias set local_minio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
         mc rm -r --force local_minio/prin
         mc mb local_minio/prin
 
@@ -185,8 +185,8 @@ services:
         condition: service_healthy
     environment:
       - SUPERSET_SECRET_KEY=supersetkey
-      - ADMIN_USERNAME=admin
-      - ADMIN_PASSWORD=admin
+      - ADMIN_USERNAME=${SUPERSET_ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${SUPERSET_ADMIN_PASSWORD}
       - ADMIN_EMAIL=admin@superset.com
     volumes:
       - ./superset/bootstrap.sh:/bootstrap.sh

@@ -7,7 +7,22 @@
 
 ## Run
 
-First run the compose file:
+Create the `.env` file with the credentials:
+
+```ini
+HIVE_METASTORE_DATABASE_USER=hive_metastore
+HIVE_METASTORE_DATABASE_PASSWORD=hive-password
+
+MINIO_ROOT_USER=miniouser
+MINIO_ROOT_PASSWORD=miniopassword
+
+SUPERSET_ADMIN_USERNAME=admin
+SUPERSET_ADMIN_PASSWORD=admin
+```
+
+**Note:** if you want to change a credential, search (and replace) it in the entire repo because, for example, the `HIVE_METASTORE_DATABASE_PASSWORD` is created in the `postgres/init/hive-metastore-init.sql` script. 
+
+run the compose file:
 
 ```bash
 set -a
