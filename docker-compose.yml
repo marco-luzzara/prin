@@ -25,7 +25,7 @@ services:
       context: remote_machine
       dockerfile: ./Dockerfile
     ports:
-      - "5000:80"
+      - "${DATA_LOADING_WEBAPP_PORT}:80"
     depends_on:
       - kafka-init
     environment:
@@ -90,7 +90,7 @@ services:
     image: quay.io/minio/minio:latest
     ports:
     #   - '9000:9000'
-      - '9001:9001'
+      - '${MINIO_PORT}:9001'
     # volumes:
     #   - 'minio_data:/data'
     environment:
@@ -125,7 +125,7 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - 8081:8080
+      - "${TRINO_PORT}:8080"
     healthcheck:
       test: ["CMD-SHELL", "/usr/lib/trino/bin/health-check"]
       interval: 5s
@@ -164,7 +164,7 @@ services:
   hue:
     image: gethue/hue:20240530-140101
     ports:
-      - "8888:8888"
+      - "${HUE_PORT}:8888"
     depends_on:
       trino:
         condition: service_healthy
@@ -179,7 +179,7 @@ services:
       context: ./superset
     image: superset-with-trino
     ports:
-      - "7890:8088"
+      - "${SUPERSET_PORT}:8088"
     depends_on:
       trino:
         condition: service_healthy
@@ -199,7 +199,7 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - "6080:6080"
+      - "${RANGER_PORT}:6080"
     depends_on:
       ranger-zk:
         condition: service_started

@@ -18,6 +18,14 @@ MINIO_ROOT_PASSWORD=miniopassword
 
 SUPERSET_ADMIN_USERNAME=admin
 SUPERSET_ADMIN_PASSWORD=admin
+
+# EXPOSED PORTS
+DATA_LOADING_WEBAPP_PORT=5000
+MINIO_PORT=9001
+TRINO_PORT=8081
+HUE_PORT=8888
+SUPERSET_PORT=7890
+RANGER_PORT=6080
 ```
 
 **Note:** if you want to change a credential, search (and replace) it in the entire repo because, for example, the `HIVE_METASTORE_DATABASE_PASSWORD` is created in the `postgres/init/hive-metastore-init.sql` script. 
