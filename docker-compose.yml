@@ -121,7 +121,10 @@ services:
 # https://trino.io/docs/current/installation/containers.html
 
   trino:
-    image: ranger-trino
+    image: trino-with-ranger:latest
+    build:
+      dockerfile: ./Dockerfile
+      context: ./trino/docker
     stdin_open: true
     tty: true
     ports:
@@ -138,6 +141,14 @@ services:
     volumes:
       - ./trino/catalog:/etc/trino/catalog
       - ./trino/kafka-description-files:/etc/trino/kafka
+      - ./trino/configs/config.properties:/etc/trino/config.properties
+      - ./trino/configs/password-authenticator.properties:/etc/trino/password-authenticator.properties
+      - ./trino/configs/password.db:/etc/trino/sec-conf/password.db
+      - ./trino/https/server.pem:/etc/trino/sec-conf/server.pem
+      - ./trino/ranger-plugin-conf/access-control.properties:/etc/trino/access-control.properties
+      - ./trino/ranger-plugin-conf/ranger-policymgr-ssl.xml:/etc/trino/ranger-policymgr-ssl.xml
+      - ./trino/ranger-plugin-conf/ranger-trino-audit.xml:/etc/trino/ranger-trino-audit.xml
+      - ./trino/ranger-plugin-conf/ranger-trino-security.xml:/etc/trino/ranger-trino-security.xml
 
 # ----------------------------- CDC -----------------------------
 ## Includes Kafka CLI and the Trino CLI. This container encompasses a CDC script

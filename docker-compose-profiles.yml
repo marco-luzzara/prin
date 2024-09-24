@@ -29,15 +29,18 @@ services:
   hive-metastore:
     profiles:
       - complete
+      - ranger-test
 
 # ----------------------------- MINIO -----------------------------
   minio:
     profiles:
       - complete
+      - ranger-test
 
   minio-init:
     profiles:
       - complete
+      - ranger-test
 
 # ----------------------------- TRINO -----------------------------
   trino:
