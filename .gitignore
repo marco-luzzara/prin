@@ -166,6 +166,8 @@ remote_machine/test-files/
 
 postgres/data/
 solr/
+minio/data/
+kafka/data*/
 
 *.crt
 *.srl

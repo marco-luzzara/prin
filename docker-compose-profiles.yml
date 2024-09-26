@@ -2,7 +2,7 @@ services:
 # ----------------------------- FILE WATCHER -----------------------------
   data-loading-webapp:
     profiles:
-      - minimal
+      - without-visualization
       - complete
       - data-loading-testing
 
@@ -10,7 +10,7 @@ services:
   kafka-broker-0:
     profiles:
       - ranger-test
-      - minimal
+      - without-visualization
       - complete
       - data-loading-testing
 
@@ -21,7 +21,7 @@ services:
   kafka-init:
     profiles:
       - ranger-test
-      - minimal
+      - without-visualization
       - complete
       - data-loading-testing
 
@@ -30,30 +30,34 @@ services:
     profiles:
       - complete
       - ranger-test
+      - without-visualization
 
 # ----------------------------- MINIO -----------------------------
   minio:
     profiles:
       - complete
       - ranger-test
+      - without-visualization
 
   minio-init:
     profiles:
       - complete
       - ranger-test
+      - without-visualization
 
 # ----------------------------- TRINO -----------------------------
   trino:
     profiles:
       - ranger-test
       - sql-ui
-      - minimal
+      - without-visualization
       - complete
 
 # ----------------------------- CDC -----------------------------
   cdc-script:
     profiles:
       - complete
+      - without-visualization
 
 # ----------------------------- HUE -----------------------------
   hue:
@@ -72,26 +76,26 @@ services:
     profiles:
       - ranger-test
       - sql-ui
-      - minimal
+      - without-visualization
       - complete
 
   ranger-zk:
     profiles:
       - ranger-test
       - sql-ui
-      - minimal
+      - without-visualization
       - complete
 
   ranger-solr:
     profiles:
       - ranger-test
       - sql-ui
-      - minimal
+      - without-visualization
       - complete
 
   ranger-db:
     profiles:
       - ranger-test
       - sql-ui
-      - minimal
+      - without-visualization
       - complete

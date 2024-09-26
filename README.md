@@ -30,22 +30,26 @@ RANGER_PORT=6080
 
 **Note:** if you want to change a credential, search (and replace) it in the entire repo because, for example, the `HIVE_METASTORE_DATABASE_PASSWORD` is created in the `postgres/init/hive-metastore-init.sql` script. 
 
-run the compose file:
+Create the infrastructure with:
 
 ```bash
-set -a
-source .env
-set +a
-docker compose up -d
+make up
 ```
 
-To run different configurations of the docker compose, you can set profiles:
+To set profiles:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose-profiles.yml --profile sql-ui up -d
+make up COMPOSE_PROFILES=complete,ranger-test
 ```
 
-Similarly, you can limit the resources of any container by including the `docker-compose-resource-limits.yml`. In develop mode, make sure to include the `docker-compose-development.yml` among the composes.
+If `COMPOSE_PROFILES` is unset, then it defaults to `*` (all profiles are activated).
+
+Similarly, you can limit the resources of any container by including the `docker-compose-resource-limits.yml`. In develop mode, make sure to include the `docker-compose-development.yml` among the composes. For these additional compose files, run:
+
+```bash
+make up ADDITIONAL_COMPOSE_FILES="docker-compose-resource-limits.yml docker-compose-development.yml"
+```
+
 
 The `data-loading-webapp` service monitors the `./remote_machine/to-watch` folder for any new Excel file. Valid extensions are `.xls`, `.xlsx`, `.ods`. When a new Excel is detected, an event with the patient information are sent to the topic `devprin.medical-records`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
 

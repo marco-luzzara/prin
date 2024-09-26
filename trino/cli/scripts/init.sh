@@ -10,7 +10,7 @@ do
 done
 
 INIT_SQL_SCRIPT="
-    CREATE TABLE patient_records (
+    CREATE TABLE IF NOT EXISTS patient_records (
         id INT,
         luogo_di_nascita VARCHAR,
         patologia VARCHAR,
