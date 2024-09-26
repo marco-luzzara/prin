@@ -1,7 +1,7 @@
 {
     "tableName": "medical-records",
-    "schemaName": "filesystemwatcher",
-    "topicName": "filesystemwatcher.medical-records",
+    "schemaName": "devprin",
+    "topicName": "devprin.medical-records",
     "key": {
         "dataFormat": "raw",
         "fields": [

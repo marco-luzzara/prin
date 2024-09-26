@@ -1,7 +1,7 @@
 {
     "tableName": "test",
-    "schemaName": "filesystemwatcher",
-    "topicName": "filesystemwatcher.test",
+    "schemaName": "devprin",
+    "topicName": "devprin.test",
     "key": {
         "dataFormat": "raw",
         "fields": [

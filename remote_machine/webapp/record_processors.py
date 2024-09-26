@@ -28,6 +28,6 @@ class KafkaProcessor(RecordProcessor):
     def consume(self, patient_record: PatientRecord) -> None:
         patient_dict = dataclasses.asdict(patient_record)
         del patient_dict['id']
-        self.producer.produce('filesystemwatcher.medical-records', 
+        self.producer.produce('devprin.medical-records', 
                               key=patient_record.id.to_bytes(8, 'big'), 
                               value=json.dumps(patient_dict).encode())
