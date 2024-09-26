@@ -22,8 +22,8 @@ def load_from_excel():
     current_app.logger.info(f'File {secure_filename(data_file.filename)} is being processed...')
 
     patient_records = cast_excel_to_objs_list(data_file.stream)
-    for patient_record in patient_records:
-        current_app.logger.info(f'Patient found: {patient_record}')
+    for i, patient_record in enumerate(patient_records):
+        current_app.logger.info(f'Patient {i}: {patient_record}')
         record_processor.consume(patient_record)
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')

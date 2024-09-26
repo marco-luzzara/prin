@@ -232,6 +232,8 @@ services:
     image: ranger-solr
     # ports:
     #   - "8983:8983"
+    volumes:
+      - ./solr:/var/solr
     command:
       - solr-precreate
       - ranger_audits
@@ -240,7 +242,7 @@ services:
   ranger-db:
     image: ranger-postgres
     volumes:
-      # - ./postgres-db-mount:/var/lib/postgresql/data
+      - ./postgres/data:/var/lib/postgresql/data
       - ./postgres/init/hive-metastore-init.sql:/docker-entrypoint-initdb.d/hive-metastore-init.sql
     healthcheck:
       test: 'su -c "pg_isready -q" postgres'

@@ -88,6 +88,38 @@ kafka-console-consumer.sh \
 
 ---
 
+## Querying with Trino
+
+First enable authentication (see the properties in the config.properties file). Authentication requires TLS, but you can bypass it by setting:
+
+```
+http-server.authentication.allow-insecure-over-http=true
+```
+
+By the way, in the demo, HTTPS is used. Now you can authenticate to the server using a different user (`test_user1`), which must be stored in the `password.db` file. 
+
+```bash
+trino --server https://localhost:8443 --user test_user1 --password
+```
+
+Insert the password and run a simple query. It will return an error: 
+
+> Access Denied: Principal test_user1 cannot become user test_user1
+
+We have not added the user to Ranger yet. So, create a new Ranger User called `test_user1` and modify the Trino policies:
+
+- add to `test_user1` the `impersonate` permission for resource `Trino user: *`
+- add to `test_user1` all permissions for resources:
+    - Trino catalog: *
+    - Trino schema: *
+    - Trino table: *
+    - Trino column: *
+- add to `test_user1` the `execute` permission for resource `Query ID: *`
+
+In the dev deployment, these policies are already present and are called `all - trinouser`, `all - catalog, schema, table, column`, and `all - queryid`.
+
+---
+
 ## Insert on S3
 
 To test the insertion on S3, create a table from Trino:

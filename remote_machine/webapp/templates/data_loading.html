@@ -123,6 +123,7 @@
             const messageDiv = document.getElementById('message');
             messageDiv.textContent = message;
             messageDiv.className = `message ${type}`;
+            setTimeout(() => messageDiv.textContent = '', 10000)
         }
     </script>
 
