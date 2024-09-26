@@ -122,8 +122,15 @@
         function showMessage(message, type) {
             const messageDiv = document.getElementById('message');
             messageDiv.textContent = message;
-            messageDiv.className = `message ${type}`;
-            setTimeout(() => messageDiv.textContent = '', 10000)
+            messageDiv.classList.add('message', type);
+
+            const fileInput = document.getElementById('fileInput');
+            fileInput.value = ''
+
+            setTimeout(() => {
+                messageDiv.textContent = ''
+                messageDiv.classList.remove('message', type);
+            }, 10000)
         }
     </script>
 
