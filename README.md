@@ -130,7 +130,12 @@ To test the insertion on S3, create a table from Trino:
 
 ```bash
 trino --catalog hive --schema default
+
+# sql query to check the cdc
+SELECT * FROM patient_records;
 ```
+
+To create a new Table use the following commands:
 
 ```sql
 # query

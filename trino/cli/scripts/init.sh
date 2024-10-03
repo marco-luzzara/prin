@@ -11,9 +11,20 @@ done
 
 INIT_SQL_SCRIPT="
     CREATE TABLE IF NOT EXISTS patient_records (
-        id INT,
+        id BIGINT,
+        data_di_nascita DATE,
         luogo_di_nascita VARCHAR,
+        age INTEGER,
+        sex VARCHAR,
+        telefono VARCHAR,
+        destrimane_mancino VARCHAR,
+        egfr INTEGER,
+        prima_visita DATE,
+        data_diagnosi DATE,
         patologia VARCHAR,
+        a VARCHAR,
+        t VARCHAR,
+        n VARCHAR,
         created_at TIMESTAMP
     )
     WITH (

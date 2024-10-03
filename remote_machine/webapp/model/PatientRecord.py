@@ -7,15 +7,15 @@ Self = Any
 @dataclass
 class PatientRecord:
     id: int = field(metadata={'mapped_to': '#ID'})
-    data_di_nascita: int = field(metadata={'mapped_to': 'DATA DI NASCITA'})
+    data_di_nascita: str = field(metadata={'mapped_to': 'DATA DI NASCITA'})
     luogo_di_nascita: str = field(metadata={'mapped_to': 'LUOGO DI NASCITA'})
     age: int = field(metadata={'mapped_to': 'age'})
     sex: str = field(metadata={'mapped_to': 'sex'})
     telefono: str = field(metadata={'mapped_to': 'TELEFONO'})
     destrimane_mancino: Literal['destrimane', 'mancino'] = field(metadata={'mapped_to': 'DESTRIMANE/MANCINO'})
     egfr: int = field(metadata={'mapped_to': 'eGFR'})
-    prima_visita: int = field(metadata={'mapped_to': '1° visita'})
-    data_diagnosi: int = field(metadata={'mapped_to': 'Data diagnosi'})
+    prima_visita: str = field(metadata={'mapped_to': '1° visita'})
+    data_diagnosi: str = field(metadata={'mapped_to': 'Data diagnosi'})
     patologia: str = field(metadata={'mapped_to': 'PATOLOGIA'})
     a: str = field(metadata={'mapped_to': 'A'})
     t: str = field(metadata={'mapped_to': 'T'})

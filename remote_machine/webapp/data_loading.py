@@ -32,6 +32,9 @@ def load_from_excel():
 
 def cast_excel_to_objs_list(readable: Any) -> List[PatientRecord]:
     df = pd.read_excel(readable, engine='calamine', dtype={ 
-        'TELEFONO': str 
+        'TELEFONO': str ,
+        'DATA DI NASCITA': str,
+        '1° visita': str,
+        'Data diagnosi': str
     })
     return [PatientRecord.from_dict(obj) for obj in json.loads(df.to_json(orient='records'))]

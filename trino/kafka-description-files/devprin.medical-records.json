@@ -1,0 +1,92 @@
+{
+    "tableName": "medical-records",
+    "schemaName": "devprin",
+    "topicName": "devprin.medical-records",
+    "key": {
+        "dataFormat": "raw",
+        "fields": [
+            {
+                "name": "kafka_key",
+                "type": "BIGINT",
+                "dataFormat": "LONG",
+                "hidden": "false"
+            }
+        ]
+    },
+    "message": {
+        "dataFormat": "json",
+        "fields": [
+            {
+                "name": "data_di_nascita",
+                "mapping": "data_di_nascita",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "yyyy-dd-MM HH:mm:ss"
+            },
+            {
+                "name": "luogo_di_nascita",
+                "mapping": "luogo_di_nascita",
+                "type": "VARCHAR"
+            },
+            {
+                "name": "age",
+                "mapping": "age",
+                "type": "INTEGER"
+            },
+            {
+                "name": "sex",
+                "mapping": "sex",
+                "type": "VARCHAR"
+            },
+            {
+                "name": "telefono",
+                "mapping": "telefono",
+                "type": "VARCHAR"
+            },
+            {
+                "name": "destrimane_mancino",
+                "mapping": "destrimane_mancino",
+                "type": "VARCHAR"
+            },
+            {
+                "name": "egfr",
+                "mapping": "egfr",
+                "type": "INTEGER"
+            },
+            {
+                "name": "prima_visita",
+                "mapping": "prima_visita",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "yyyy-dd-MM HH:mm:ss"
+            },
+            {
+                "name": "data_diagnosi",
+                "mapping": "data_diagnosi",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "yyyy-dd-MM HH:mm:ss"
+            },
+            {
+                "name": "patologia",
+                "mapping": "patologia",
+                "type": "VARCHAR"
+            },
+            {
+                "name": "a",
+                "mapping": "a",
+                "type": "VARCHAR"
+            },
+            {
+                "name": "t",
+                "mapping": "t",
+                "type": "VARCHAR"
+            },
+            {
+                "name": "n",
+                "mapping": "n",
+                "type": "VARCHAR"
+            }
+        ]
+    }
+}

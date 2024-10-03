@@ -153,13 +153,15 @@ services:
       - ./trino/ranger-plugin-conf/ranger-trino-security.xml:/etc/trino/ranger-trino-security.xml
 
 # ----------------------------- CDC -----------------------------
-## Includes Kafka CLI and the Trino CLI. This container encompasses a CDC script
+## Includes the Trino CLI. This container encompasses a CDC script
 ## that copies the new Kafka messages to a Trino table (pointing to an S3 bucket)
 
   cdc-script:
     build:
       context: ./trino/cli
-    image: trino-cdc:377
+      args:
+        TRINO_VERSION: 459
+    image: trino-cdc:459
     environment:
       - TRINO_ENDPOINT=http://trino:8080
       - FLUSH_DELAY_SECONDS=15

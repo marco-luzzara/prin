@@ -1,7 +1,7 @@
 {
     "tableName": "medical-records",
-    "schemaName": "devprin",
-    "topicName": "devprin.medical-records",
+    "schemaName": "devprin-complete",
+    "topicName": "devprin-complete.medical-records",
     "key": {
         "dataFormat": "raw",
         "fields": [
