@@ -174,3 +174,5 @@ kafka/data*/
 *.pem
 *.key
 *.csr
+
+trino/docker/trino-ranger-plugin/

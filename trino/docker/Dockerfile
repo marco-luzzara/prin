@@ -1,13 +1,14 @@
-FROM trino:459-SNAPSHOT-amd64
+FROM trinodb/trino:459
 
 COPY rootCA.crt /etc/pki/ca-trust/source/anchors/
 
+# install ranger plugin for trino
+COPY trino-ranger-plugin/ /usr/lib/trino/plugin/ranger/
+
+# install root CA certificates 
 USER root
 
 RUN <<EOF
-    cd /usr/lib/trino/plugin/ranger
-    ln -s /etc/trino conf
-
     # add CA certificate to your system store
     update-ca-trust extract
 
