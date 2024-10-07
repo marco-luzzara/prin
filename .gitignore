@@ -175,4 +175,5 @@ kafka/data*/
 *.key
 *.csr
 
-trino/docker/trino-ranger-plugin/
+trino/docker/server/trino-ranger-plugin/
+trino/docker/server/trino-anonymization-udfs-1.0/

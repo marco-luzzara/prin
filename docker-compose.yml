@@ -125,8 +125,7 @@ services:
   trino:
     image: trino-with-ranger:latest
     build:
-      dockerfile: ./Dockerfile
-      context: ./trino/docker
+      context: ./trino/docker/server
     stdin_open: true
     tty: true
     ports:
@@ -158,7 +157,7 @@ services:
 
   cdc-script:
     build:
-      context: ./trino/cli
+      context: ./trino/docker/cdc
       args:
         TRINO_VERSION: 459
     image: trino-cdc:459
@@ -171,7 +170,7 @@ services:
       kafka-init:
         condition: service_completed_successfully
     volumes:
-      - ./trino/cli/scripts:/cdc/scripts
+      - ./trino/docker/cdc/scripts:/cdc/scripts
 
 # ----------------------------- HUE -----------------------------
 ## https://hub.docker.com/r/gethue/hue

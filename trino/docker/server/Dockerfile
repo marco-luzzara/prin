@@ -2,8 +2,9 @@ FROM trinodb/trino:459
 
 COPY rootCA.crt /etc/pki/ca-trust/source/anchors/
 
-# install ranger plugin for trino
+# install plugins
 COPY trino-ranger-plugin/ /usr/lib/trino/plugin/ranger/
+COPY trino-anonymization-udfs-1.0/ /usr/lib/trino/plugin/anonymization-udfs/
 
 # install root CA certificates 
 USER root
