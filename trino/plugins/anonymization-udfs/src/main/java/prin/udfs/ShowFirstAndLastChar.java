@@ -1,6 +1,7 @@
 package prin.udfs;
 
 import io.airlift.slice.Slice;
+import io.airlift.slice.Slices;
 
 import io.trino.spi.function.ScalarFunction;
 import io.trino.spi.function.Description;
@@ -10,15 +11,18 @@ import io.trino.spi.type.StandardTypes;
 
 public class ShowFirstAndLastChar {
     @ScalarFunction(value = "show_first_and_last", deterministic = true)
-    @Description("Show only the first and the last characters of a string, the others are hidden by '*'")
+    @Description("Show only the first and the last characters of input, the others are hidden by '*'")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice showFirstAndLastChar(
-            @SqlNullable @SqlType(StandardTypes.VARCHAR) Slice string) {
-        if (string == null)
-            return null;
+            @SqlNullable @SqlType(StandardTypes.VARCHAR) Slice input) {
+        if (input == null || input.length() <= 2)
+            return input;
 
-        var strLength = string.length();
+        String inputStr = input.toStringUtf8();
 
-        return string;
+        var anonymizedStr = inputStr.charAt(0) + "*".repeat(inputStr.length() - 2)
+                + inputStr.charAt(inputStr.length() - 1);
+
+        return Slices.utf8Slice(anonymizedStr);
     }
 }
