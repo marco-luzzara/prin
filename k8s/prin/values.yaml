@@ -1,0 +1,9 @@
+kafka:
+  image:
+    repo: apache/kafka
+    tag: "3.9.0"
+
+minio:
+  image:
+    repo: minio/minio
+    tag: RELEASE.2024-05-10T01-41-38Z

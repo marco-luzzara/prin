@@ -56,7 +56,7 @@ The `data-loading-webapp` service monitors the `./remote_machine/to-watch` folde
 ```bash
 docker compose exec -it trino bash
 # on the trino shell then run...
-trino --catalog kafka --schema devprin
+trino --server https://localhost:8443 --catalog kafka --schema devprin --user test_user1 --password
 ```
 ```sql
 -- on the trino cli you can select all the records

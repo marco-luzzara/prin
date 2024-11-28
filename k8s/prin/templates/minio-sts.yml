@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-minio-sts
+{{ $metaInfo := dict "PartOf" "minio" "Component" "node" "Global" . -}}
+{{ include "prin.commonMetadata" $metaInfo | indent 2 -}}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: "minio"
+      app.kubernetes.io/component: "node"
+  serviceName: {{ .Release.Name }}-minio-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: "minio"
+        app.kubernetes.io/component: "node"
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-minio
+          image: "{{ .Values.minio.image.repo }}:{{ .Values.minio.image.tag }}"
+          args: ["server", "/data", "--console-address", ":9001"]
+          ports:
+            - containerPort: 9001
+              name: console
+            - containerPort: 9000
+              name: api
+          # volumeMounts:
+          #   - name: {{ .Release.Name }}-minio-data
+          #     mountPath: /data
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-minio-secret
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+  # volumeClaimTemplates:
+  #   - metadata:
+  #       namespace: prin
+  #       name: minio-data
+  #       labels:
+  #         app.kubernetes.io/name: minio
+  #     spec:
+  #       accessModes: ["ReadWriteOnce"]
+  #       storageClassName: csi-hostpath-sc
+  #       resources:
+  #         requests:
+  #           storage: 1Gi

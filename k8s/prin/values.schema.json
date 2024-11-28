@@ -1,0 +1,61 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema#",
+    "properties": {
+        "kafka": {
+            "type": "object",
+            "description": "Kafka properties",
+            "properties": {
+                "image": {
+                    "type": "object",
+                    "description": "Container image",
+                    "properties": {
+                        "repo": {
+                            "type": "string"
+                        },
+                        "tag": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "repo",
+                        "tag"
+                    ]
+                }
+            },
+            "required": [
+                "image"
+            ]
+        },
+        "minio": {
+            "type": "object",
+            "description": "Minio properties",
+            "properties": {
+                "image": {
+                    "type": "object",
+                    "description": "Container image",
+                    "properties": {
+                        "repo": {
+                            "type": "string"
+                        },
+                        "tag": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "repo",
+                        "tag"
+                    ]
+                }
+            },
+            "required": [
+                "image"
+            ]
+        }
+    },
+    "required": [
+        "kafka",
+        "minio"
+    ],
+    "title": "Values",
+    "type": "object"
+}

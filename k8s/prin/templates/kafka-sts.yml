@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-kafka-sts
+{{ $metaInfo := dict "PartOf" "kafka" "Component" "node" "Global" . -}}
+{{ include "prin.commonMetadata" $metaInfo | indent 2 -}}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: "kafka"
+      app.kubernetes.io/component: "node"
+  serviceName: {{ .Release.Name }}-kafka-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: "kafka"
+        app.kubernetes.io/component: "node"
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-kafka
+          image: "{{ .Values.kafka.image.repo }}:{{ .Values.kafka.image.tag }}"
+          ports:
+            - containerPort: 9092
+              name: listening
+            - containerPort: 9093
+              name: control-plane
+          # volumeMounts:
+          #   - name: kafka-data
+          #     mountPath: /var/lib/kafka/data
+          env:
+            - name: KAFKA_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
+            - name: KAFKA_PROCESS_ROLES
+              value: "broker,controller"
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+            - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+              value: "0@kafka-0.kafka-service.prin:9093"
+            - name: KAFKA_LISTENERS
+              value: "PLAINTEXT://:9092,CONTROLLER://:9093"
+            - name: KAFKA_CONTROLLER_LISTENER_NAMES
+              value: "CONTROLLER"
+            - name: CLUSTER_ID
+              value: "clusterid0with016bytes"
+          livenessProbe:
+            exec:
+              command:
+                [
+                  "kafka-topics.sh",
+                  "--list",
+                  "--bootstrap-server",
+                  "{{ .Release.Name }}-kafka-0.{{ .Release.Name }}-kafka-svc.{{ .Release.Namespace }}:9092",
+                ]
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            timeoutSeconds: 5
