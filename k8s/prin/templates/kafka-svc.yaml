@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-kafka-svc
 {{ $metaInfo := dict "PartOf" "kafka" "Component" "svc" "Global" . -}}
-{{ include "prin.commonMetadata" $metaInfo | indent 2 -}}
+{{ include "prin.commonMetadata" $metaInfo | indent 2 }}
 spec:
   ports:
     - port: 9092
@@ -15,5 +15,4 @@ spec:
   type: ClusterIP
   clusterIP: None
   selector:
-    app.kubernetes.io/part-of: "kafka"
-    app.kubernetes.io/component: "node"
+{{ include "prin.commonLabels" ( dict "PartOf" "kafka" "Component" "node" "Global" . ) | indent 4 }}

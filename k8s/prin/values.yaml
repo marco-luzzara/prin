@@ -7,3 +7,8 @@ minio:
   image:
     repo: minio/minio
     tag: RELEASE.2024-05-10T01-41-38Z
+
+webapp:
+  image:
+    repo: maluz/prin-data-loading-webapp
+    tag: "1.0.0"

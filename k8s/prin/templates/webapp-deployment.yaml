@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-webapp-deployment
+{{ $metaInfo := dict "PartOf" "webapp" "Component" "node" "Global" . -}}
+{{ include "prin.commonMetadata" $metaInfo | indent 2 }}
+spec:
+  selector:
+    matchLabels:
+{{ include "prin.commonLabels" $metaInfo | indent 6 }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+{{ include "prin.commonLabels" $metaInfo | indent 8 }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-webapp
+          image: "{{ .Values.webapp.image.repo }}:{{ .Values.webapp.image.tag }}"
+          ports:
+            - containerPort: 80
+              name: webserver
+          env:
+            - name: FLASK_KAFKA_BOOTSTRAP_SERVERS
+              value: "{{ .Release.Name }}-kafka-0.{{ .Release.Name }}-kafka-svc.{{ .Release.Namespace }}:9092"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: webserver
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5

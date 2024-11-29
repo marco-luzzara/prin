@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-minio-svc
 {{ $metaInfo := dict "PartOf" "minio" "Component" "svc" "Global" . -}}
-{{ include "prin.commonMetadata" $metaInfo | indent 2 -}}
+{{ include "prin.commonMetadata" $metaInfo | indent 2 }}
 spec:
   ports:
     - port: 9000
@@ -12,5 +12,4 @@ spec:
   type: ClusterIP
   clusterIP: None
   selector:
-    app.kubernetes.io/part-of: "minio"
-    app.kubernetes.io/component: "node"
+{{ include "prin.commonLabels" ( dict "PartOf" "minio" "Component" "node" "Global" . ) | indent 4 }}

@@ -3,19 +3,17 @@ kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-minio-sts
 {{ $metaInfo := dict "PartOf" "minio" "Component" "node" "Global" . -}}
-{{ include "prin.commonMetadata" $metaInfo | indent 2 -}}
+{{ include "prin.commonMetadata" $metaInfo | indent 2 }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/part-of: "minio"
-      app.kubernetes.io/component: "node"
+{{ include "prin.commonLabels" $metaInfo | indent 6 }}
   serviceName: {{ .Release.Name }}-minio-svc
   replicas: 1
   template:
     metadata:
       labels:
-        app.kubernetes.io/part-of: "minio"
-        app.kubernetes.io/component: "node"
+{{ include "prin.commonLabels" $metaInfo | indent 8 }}
     spec:
       containers:
         - name: {{ .Release.Name }}-minio

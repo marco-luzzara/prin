@@ -2,3 +2,4 @@ apiVersion: v2
 name: prin
 description: The Helm chart for PRIN
 version: "1.0.0"
+icon: https://upload.wikimedia.org/wikipedia/commons/a/ad/Unimi-logo.png
