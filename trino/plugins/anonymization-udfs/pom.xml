@@ -10,19 +10,34 @@
     <version>1.0</version>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <!-- <maven.compiler.source>23</maven.compiler.source> -->
+        <maven.compiler.release>23</maven.compiler.release>
 
+        <dep.trino.version>471</dep.trino.version>
+
+        <!-- Extracted from https://github.com/trinodb/trino/blob/471/pom.xml -->
         <!-- deps versions -->
-        <dep.trino.version>460</dep.trino.version>
-        <dep.airlift.version>273</dep.airlift.version>
+        <dep.airlift.version>306</dep.airlift.version>
         <dep.airlift-junit-extension.version>2</dep.airlift-junit-extension.version>
         <dep.airlift-slice.version>2.3</dep.airlift-slice.version>
         <dep.opentelemetry.version>1.42.1</dep.opentelemetry.version>
         <dep.trino-maven-plugin.version>15</dep.trino-maven-plugin.version>
-        <dep.jackson-annotation.version>2.18.0</dep.jackson-annotation.version>
+        <!-- Extracted from jars found in /usr/lib/trino/lib -->
+        <dep.jackson-annotation.version>2.18.2</dep.jackson-annotation.version>
         <dep.junit.version>5.11.2</dep.junit.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.airlift</groupId>
+                <artifactId>bom</artifactId>
+                <version>${dep.airlift.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 

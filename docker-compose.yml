@@ -123,9 +123,10 @@ services:
 # https://trino.io/docs/current/installation/containers.html
 
   trino:
-    image: trino-with-ranger:latest
     build:
       context: ./trino/docker/server
+      args:
+        TRINO_VERSION: ${TRINO_VERSION}
     stdin_open: true
     tty: true
     ports:
@@ -146,7 +147,7 @@ services:
       - ./trino/configs/password-authenticator.properties:/etc/trino/password-authenticator.properties
       - ./trino/configs/password.db:/etc/trino/sec-conf/password.db
       - ./trino/https/server.pem:/etc/trino/sec-conf/server.pem
-      - ./trino/plugins/ranger/access-control.properties:/etc/trino/access-control.properties
+      - ./trino/plugins/ranger/access-control.properties:/etc/access-control.properties
       - ./trino/plugins/ranger/ranger-policymgr-ssl.xml:/etc/trino/ranger-policymgr-ssl.xml
       - ./trino/plugins/ranger/ranger-trino-audit.xml:/etc/trino/ranger-trino-audit.xml
       - ./trino/plugins/ranger/ranger-trino-security.xml:/etc/trino/ranger-trino-security.xml
@@ -159,8 +160,8 @@ services:
     build:
       context: ./trino/docker/cdc
       args:
-        TRINO_VERSION: 459
-    image: trino-cdc:459
+        TRINO_VERSION: ${TRINO_VERSION}
+    image: trino-cdc:${TRINO_VERSION}
     environment:
       - TRINO_ENDPOINT=http://trino:8080
       - FLUSH_DELAY_SECONDS=15
@@ -171,6 +172,57 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./trino/docker/cdc/scripts:/cdc/scripts
+
+# ----------------------------- RANGER -----------------------------
+
+  ranger:
+    image: apache/ranger:${RANGER_VERSION}
+    stdin_open: true
+    tty: true
+    ports:
+      - "${RANGER_PORT}:6080"
+    depends_on:
+      ranger-zk:
+        condition: service_started
+      ranger-db:
+        condition: service_healthy
+      ranger-solr:
+        condition: service_started
+    volumes:
+      - ./ranger/install.properties:/opt/ranger/admin/install.properties
+    environment:
+      - DEBUG_ADMIN=${DEBUG_ADMIN:-false}
+      - RANGER_VERSION
+      - RANGER_DB_TYPE=postgres
+    command:
+      - /home/ranger/scripts/ranger.sh
+
+  ranger-zk:
+    image: apache/ranger-zk:${RANGER_VERSION}
+    # ports:
+    #   - "2181:2181"
+
+  ranger-solr:
+    image: apache/ranger-solr:${RANGER_VERSION}
+    # ports:
+    #   - "8983:8983"
+    volumes:
+      - ./solr/data:/var/solr
+    command:
+      - solr-precreate
+      - ranger_audits
+      - /opt/solr/server/solr/configsets/ranger_audits/
+
+  ranger-db:
+    image: apache/ranger-db:${RANGER_VERSION}
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/init/hive-metastore-init.sql:/docker-entrypoint-initdb.d/hive-metastore-init.sql
+    healthcheck:
+      test: 'su -c "pg_isready -q" postgres'
+      interval: 10s
+      timeout: 2s
+      retries: 30
 
 # ----------------------------- HUE -----------------------------
 ## https://hub.docker.com/r/gethue/hue
@@ -205,50 +257,3 @@ services:
     volumes:
       - ./superset/bootstrap.sh:/bootstrap.sh
     entrypoint: ["/bootstrap.sh"]
-
-# ----------------------------- RANGER -----------------------------
-
-  ranger:
-    image: ranger:latest
-    stdin_open: true
-    tty: true
-    ports:
-      - "${RANGER_PORT}:6080"
-    depends_on:
-      ranger-zk:
-        condition: service_started
-      ranger-db:
-        condition: service_healthy
-      ranger-solr:
-        condition: service_started
-    environment:
-      - DEBUG_ADMIN=${DEBUG_ADMIN:-false}
-    command:
-      - /home/ranger/scripts/ranger.sh
-
-  ranger-zk:
-    image: ranger-zk
-    # ports:
-    #   - "2181:2181"
-
-  ranger-solr:
-    image: ranger-solr
-    # ports:
-    #   - "8983:8983"
-    volumes:
-      - ./solr:/var/solr
-    command:
-      - solr-precreate
-      - ranger_audits
-      - /opt/solr/server/solr/configsets/ranger_audits/
-
-  ranger-db:
-    image: ranger-postgres
-    volumes:
-      - ./postgres/data:/var/lib/postgresql/data
-      - ./postgres/init/hive-metastore-init.sql:/docker-entrypoint-initdb.d/hive-metastore-init.sql
-    healthcheck:
-      test: 'su -c "pg_isready -q" postgres'
-      interval: 10s
-      timeout: 2s
-      retries: 30

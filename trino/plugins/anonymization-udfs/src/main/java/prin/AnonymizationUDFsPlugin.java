@@ -1,6 +1,5 @@
 package prin;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import io.trino.spi.Plugin;

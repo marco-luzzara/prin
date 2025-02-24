@@ -1,9 +1,10 @@
-FROM trinodb/trino:459
+ARG TRINO_VERSION
+
+FROM trinodb/trino:${TRINO_VERSION}
 
 COPY rootCA.crt /etc/pki/ca-trust/source/anchors/
 
 # install plugins
-COPY trino-ranger-plugin/ /usr/lib/trino/plugin/ranger/
 COPY trino-anonymization-udfs-1.0/ /usr/lib/trino/plugin/anonymization-udfs/
 
 # install root CA certificates 
