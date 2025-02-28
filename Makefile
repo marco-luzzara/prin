@@ -15,7 +15,7 @@ init:
 	test -e ${ENV_FILE} || { echo "${ENV_FILE} file does not exist" ; exit 1; }
 
 	# trino
-	test -e trino/docker/server/rootCA.crt || { echo "rootCA.crt file does not exist. First create it with \`cd trino && make create-trino-crt\`" ; exit 1; }
+	test -e trino/docker/server/rootCA.crt || { echo "rootCA.crt file does not exist. First create it with \`cd trino && make create-crt\`" ; exit 1; }
 	test -d trino/docker/server/trino-anonymization-udfs-1.0 || { echo "trino-anonymization-udfs-1.0 directory does not exist. First create it with \`cd trino && make create-udf-package\`" ; exit 1; }
 
 up: init

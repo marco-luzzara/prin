@@ -29,7 +29,7 @@ function create_server_pem {
     cat server.key server.crt > server.pem
 }
 
-test -e rootCA.crt && echo "the rootCA.crt already exists." || create_rootCA
+test -e rootCA.crt && echo "the rootCA.crt already exists." || create_rootCA_crt
 test -e server.pem && echo "the server.pem already exists." || create_server_pem
 
 # Validate server.pem

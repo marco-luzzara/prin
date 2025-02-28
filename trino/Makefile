@@ -1,12 +1,14 @@
 SHELL = /bin/bash
 
-CREATE_CRT_SCRIPT_PATH=./https/create-crt.sh
+CREATE_CRT_SCRIPT_PATH=./create-crt.sh
 
 .PHONY: create-crt create-udf-package
 
 create-crt:
-	chmod +x ${CREATE_CRT_SCRIPT_PATH}
+	cd https && \
+	chmod +x ${CREATE_CRT_SCRIPT_PATH} && \
 	${CREATE_CRT_SCRIPT_PATH}
+	cp https/rootCA.crt docker/server/rootCA.crt
 
 create-udf-package:
 	cd plugins/anonymization-udfs && ./mvnw clean install
