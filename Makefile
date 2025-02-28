@@ -1,5 +1,6 @@
 SHELL = /bin/bash
 
+ENV_FILE ?= .env
 COMPOSE_PROFILES ?= *
 STANDARD_COMPOSE_FILES = docker-compose.yml docker-compose-profiles.yml
 ADDITIONAL_COMPOSE_FILES ?= 
@@ -11,7 +12,7 @@ init:
 	mkdir -p kafka/data0 minio/data solr/data postgres/data
 	chmod 777 solr/data
 
-	test -e .env || { echo ".env file does not exist" ; exit 1; }
+	test -e ${ENV_FILE} || { echo "${ENV_FILE} file does not exist" ; exit 1; }
 
 	# trino
 	test -e trino/docker/server/rootCA.crt || { echo "rootCA.crt file does not exist. First create it with \`cd trino && make create-trino-crt\`" ; exit 1; }
@@ -19,7 +20,7 @@ init:
 
 up: init
 	set -a && \
-	source .env && \
+	source ${ENV_FILE} && \
 	set +a && \
 	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up -d
 

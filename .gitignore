@@ -120,7 +120,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+# .env
 .venv
 env/
 venv/
@@ -165,7 +165,7 @@ remote_machine/to-watch/
 remote_machine/test-files/
 
 postgres/data/
-solr/
+solr/data
 minio/data/
 kafka/data*/
 
@@ -175,5 +175,4 @@ kafka/data*/
 *.key
 *.csr
 
-trino/docker/server/trino-ranger-plugin/
 trino/docker/server/trino-anonymization-udfs-1.0/
