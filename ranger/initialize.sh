@@ -2,10 +2,10 @@
 
 function help {
 cat <<EOF
-Initialize Ranger with 3 groups and 2 users per group:
+Initialize Ranger with 4 roles and 2 users per role:
 
 -----------------------------------------------------------------
-| Group         | User                  | Password              |
+| Role          | User                  | Password              |
 -----------------------------------------------------------------
 | specialistdoc | specialistdoc_user1   | Specialistdoc_user1   |
 |               | specialistdoc_user2   | Specialistdoc_user2   |
@@ -20,10 +20,10 @@ Initialize Ranger with 3 groups and 2 users per group:
 |               | nurse_user2           | Nurse_user2           |
 -----------------------------------------------------------------
 
-These groups are configured with different policies:
+These roles are configured with different policies:
 
 -----------------------------------------------------------------
-| Group         | Anonymized fields                             |
+| Role          | Anonymized fields                             |
 -----------------------------------------------------------------
 | specialistdoc | telefono                                      |
 |               |                                               |
@@ -31,8 +31,8 @@ These groups are configured with different policies:
 | researcher    | data_di_nascita, luogo_di_nascita, telefono,  |
 |               | prima_visita, data_diagnosi                   |
 -----------------------------------------------------------------
-| careworker    | data_di_nascita, luogo_di_nascita, telefono,  |
-|               | prima_visita, a, t, n                         |
+| careworker    | luogo_di_nascita, telefono, a, t, n           |
+|               |                                               |
 -----------------------------------------------------------------
 | nurse         | data_di_nascita, luogo_di_nascita, telefono,  |
 |               | egfr, prima_visita, data_diagnosi, patologia, |
@@ -67,62 +67,56 @@ function _get_policy_resource {
     }"
 }
 
-function _get_group_id {
-    curl -s -X 'GET' "$ENDPOINT/service/xusers/groups/groupName/$1" \
-        -H 'accept: application/json' \
-        -u "$CREDENTIALS" | jq -r ".id"
-}
-
 function main {
     dpkg -s jq > /dev/null || { echo "Please first install jq"; exit 1; }
 
-    for groupName in "specialistdoc" "researcher" "careworker" "nurse"
+    for roleName in "specialistdoc" "researcher" "careworker" "nurse"
     do
-        # create group if not exists
-        GROUP_ID=$(_get_group_id $groupName)
-        if [[ $GROUP_ID == null ]]
-        then
-            echo "Creating group $groupName..."
-            curl -X 'POST' "$ENDPOINT/service/xusers/groups" \
+        # create 2 users per role
+        for i in 1 2
+        do
+            echo "Creating user ${roleName}_user${i}..."
+            curl -X 'POST' "$ENDPOINT/service/xusers/secure/users" \
                 -H 'accept: application/json' \
                 -H 'Content-Type: application/json' \
                 -u "$CREDENTIALS" \
                 -d "{
-                    \"name\": \"$groupName\"
+                    \"name\": \"${roleName}_user${i}\",
+                    \"password\": \"${roleName^}_user${i}\",
+                    \"firstName\": \"user${i}\",
+                    \"userRoleList\": [
+                        \"ROLE_USER\"
+                    ]
                 }"
-            echo -e "\nCreated group $groupName"
-            GROUP_ID=$(_get_group_id $groupName)
-            
-            # create two users per group
-            for i in 1 2
-            do
-                echo "Creating user ${groupName}_user${i}..."
-                curl -X 'POST' "$ENDPOINT/service/xusers/secure/users" \
-                    -H 'accept: application/json' \
-                    -H 'Content-Type: application/json' \
-                    -u "$CREDENTIALS" \
-                    -d "{
-                        \"name\": \"${groupName}_user${i}\",
-                        \"password\": \"${groupName^}_user${i}\",
-                        \"firstName\": \"user${i}\",
-                        \"userRoleList\": [
-                            \"ROLE_USER\"
-                        ],
-                        \"groupIdList\": [
-                            $GROUP_ID
-                        ]
-                    }"
-                echo -e "\nCreated user ${groupName}_user${i}"
-            done
-        else
-            echo "Default groups have already been created"
-        fi
+            echo -e "\nCreated user ${roleName}_user${i}"
+        done
+
+        # create role
+        echo "Creating role ${roleName}..."
+        curl -X 'POST' "$ENDPOINT/service/roles/roles" \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -u "$CREDENTIALS" \
+            -d "{
+                \"name\": \"${roleName}\",
+                \"users\": [
+                    {
+                        \"name\": \"${roleName}_user1\",
+                        \"isAdmin\": false
+                    },
+                    {
+                        \"name\": \"${roleName}_user2\",
+                        \"isAdmin\": false
+                    }
+                ]
+            }"
+        echo -e "\nCreated role ${roleName}"
     done
     
     # create policies
     ## general access policies
 
-    echo "Creating policy groups_policy..."
+    echo "Creating policy roles_policy..."
     curl -X 'POST' "$ENDPOINT/service/plugins/policies" \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
@@ -139,9 +133,13 @@ function main {
                         {
                             \"type\": \"execute\",
                             \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"select\",
+                            \"isAllowed\": true
                         }
                     ],
-                    \"groups\": [\"specialistdoc\", \"researcher\", \"careworker\", \"nurse\"]
+                    \"roles\": [\"specialistdoc\", \"researcher\", \"careworker\", \"nurse\"]
                 }
             ],
             \"denyPolicyItems\": [],
@@ -152,7 +150,7 @@ function main {
             \"isAuditEnabled\": true,
             \"isDenyAllElse\": false,
             \"isEnabled\": true,
-            \"name\": \"groups_policy\",
+            \"name\": \"roles_policy\",
             \"policyLabels\": [],
             \"policyPriority\": \"0\",
             \"policyType\": \"0\",
@@ -189,7 +187,7 @@ function main {
             ],
             \"conditions\": []
         }"
-    echo -e "\nCreated policy groups_policy"
+    echo -e "\nCreated policy roles_policy"
 
     ## specialistdoc policies
     echo "Creating policy mask_specialistdoc..."
@@ -210,7 +208,7 @@ function main {
                             \"isAllowed\":true
                         }
                     ],
-                    \"groups\": [\"specialistdoc\"],
+                    \"roles\": [\"specialistdoc\"],
                     \"dataMaskInfo\": {
                         \"dataMaskType\": \"CUSTOM\",
                         \"valueExpr\": \"show_first_and_last({col})\"
@@ -252,7 +250,7 @@ function main {
                             \"isAllowed\":true
                         }
                     ],
-                    \"groups\": [\"researcher\"],
+                    \"roles\": [\"researcher\"],
                     \"dataMaskInfo\": {
                         \"dataMaskType\":\"MASK_NULL\"
                     }
@@ -298,7 +296,7 @@ function main {
                             \"isAllowed\": true
                         }
                     ],
-                    \"groups\": [\"careworker\"],
+                    \"roles\": [\"careworker\"],
                     \"dataMaskInfo\": {
                         \"dataMaskType\": \"MASK_HASH\"
                     }
@@ -314,11 +312,9 @@ function main {
             \"policyPriority\": \"0\",
             \"policyType\": \"1\",
             \"service\": \"dev_trino\", 
-            \"resources\": $(_get_policy_resource "data_di_nascita"),
+            \"resources\": $(_get_policy_resource "luogo_di_nascita"),
             \"additionalResources\": [
-                $(_get_policy_resource "luogo_di_nascita"),
                 $(_get_policy_resource "telefono"),
-                $(_get_policy_resource "prima_visita"),
                 $(_get_policy_resource "a"),
                 $(_get_policy_resource "t"),
                 $(_get_policy_resource "n")
@@ -346,7 +342,7 @@ function main {
                             \"isAllowed\":true
                         }
                     ],
-                    \"groups\": [\"nurse\"],
+                    \"roles\": [\"nurse\"],
                     \"dataMaskInfo\": {
                         \"dataMaskType\":\"MASK_NULL\"
                     }
@@ -379,9 +375,7 @@ function main {
     echo -e "\nCreated policy mask_nurse"
 }
 
-echo "$@"
 OPTS=$(getopt -o e:c:h --longoptions "endpoint:,credentials:,help" -n 'initialize_ranger.sh' -- "$@")
-echo "OPTS: $OPTS"
 eval set -- "$OPTS"
 
 while true; do
