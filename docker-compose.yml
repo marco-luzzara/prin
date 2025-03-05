@@ -224,6 +224,18 @@ services:
       timeout: 2s
       retries: 30
 
+# ----------------------------- ATLAS  -----------------------------
+## https://hub.docker.com/r/sburn/apache-atlas
+
+  atlas:
+    image: sburn/apache-atlas:2.3.0
+    ports:
+      - "21000:21000"
+    volumes:
+      # - ./atlas/pre-conf:/apache-atlas/conf
+      - ./atlas/data:/apache-atlas/data
+      - ./atlas/logs:/apache-atlas/logs
+
 # ----------------------------- HUE -----------------------------
 ## https://hub.docker.com/r/gethue/hue
   

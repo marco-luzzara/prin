@@ -168,6 +168,8 @@ postgres/data/
 solr/data
 minio/data/
 kafka/data*/
+atlas/data/
+atlas/logs/
 
 *.crt
 *.srl

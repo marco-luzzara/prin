@@ -89,3 +89,10 @@ services:
       - ranger-test
       - without-visualization
       - complete
+
+# ----------------------------- ATLAS  -----------------------------
+
+  atlas:
+    profiles:
+      - without-visualization
+      - complete

@@ -2,6 +2,7 @@
 
 function help {
 cat <<EOF
+**Created Resources**
 Initialize Ranger with 4 roles and 2 users per role:
 
 -----------------------------------------------------------------
@@ -39,12 +40,14 @@ These roles are configured with different policies:
 |               | a, t, n                                       |
 -----------------------------------------------------------------
 
-Options:
+It also creates the Atlas service.
+
+**Options**
     - --endpoint <url>                  ranger endpoint (e.g. http://localhost:6080)
     - --credentials <user:password>     User credentials in the form "username:password"
     - --help                            shows this help message
 
-Example:
+**Example**
 
     ./initialize.sh --endpoint http://localhost:6080 --credentials "admin:rangerR0cks!"
 EOF
@@ -67,9 +70,7 @@ function _get_policy_resource {
     }"
 }
 
-function main {
-    dpkg -s jq > /dev/null || { echo "Please first install jq"; exit 1; }
-
+function create_users_and_roles {
     for roleName in "specialistdoc" "researcher" "careworker" "nurse"
     do
         # create 2 users per role
@@ -112,8 +113,9 @@ function main {
             }"
         echo -e "\nCreated role ${roleName}"
     done
-    
-    # create policies
+}
+
+function create_policies {
     ## general access policies
 
     echo "Creating policy roles_policy..."
@@ -373,6 +375,34 @@ function main {
             \"conditions\":[]
         }"
     echo -e "\nCreated policy mask_nurse"
+}
+
+function create_additional_services {
+    curl -X 'POST' "$ENDPOINT/service/plugins/services" \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -u "$CREDENTIALS" \
+        -d "{
+            \"name\": \"dev_atlas\",
+            \"type\": \"atlas\",
+            \"tagService\": \"\",
+            \"isEnabled\": true,
+            \"configs\": {
+                \"username\": \"admin\",
+                \"atlas.rest.address\": \"http://atlas:21000\",
+                \"password\": \"admin\",
+                \"ranger.plugin.audit.filters\": \"[{'accessResult':'DENIED','isAudited':true},{'users':['atlas'],'isAudited':false},{'accessResult':'ALLOWED','isAudited':false,'actions':['entity-read'],'accessTypes':['entity-read'],'users':['nifi']}]\"
+            }
+        }"
+}
+
+function main {
+    dpkg -s jq > /dev/null || { echo "Please first install jq"; exit 1; }
+    
+    create_users_and_roles
+    create_policies
+
+    create_additional_services
 }
 
 OPTS=$(getopt -o e:c:h --longoptions "endpoint:,credentials:,help" -n 'initialize_ranger.sh' -- "$@")
