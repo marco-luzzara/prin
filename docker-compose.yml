@@ -67,25 +67,57 @@ services:
 
 # ----------------------------- HIVE METASTORE -----------------------------
 # https://github.com/naushadh/hive-metastore
+  # hive-metastore:
+  #   image: naushadh/hive-metastore
+  #   depends_on:
+  #     ranger-db:
+  #       condition: service_healthy
+  #     minio-init:
+  #       condition: service_completed_successfully
+  #   environment:
+  #     - DATABASE_HOST=ranger-db
+  #     - DATABASE_DB=hive_metastore_db
+  #     - DATABASE_USER=${HIVE_METASTORE_DATABASE_USER}
+  #     - DATABASE_PASSWORD=${HIVE_METASTORE_DATABASE_PASSWORD}
+  #     - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+  #     - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+  #     - S3_ENDPOINT_URL=http://minio:9000
+  #     - S3_BUCKET=prin
+  #     - S3_PREFIX=metadata
+  #   # ports:
+  #   #   - '9083:9083'
+
   hive-metastore:
-    image: naushadh/hive-metastore
+    image: apache/hive:4.0.1
     depends_on:
       ranger-db:
         condition: service_healthy
       minio-init:
         condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "cat /proc/net/tcp6 | sed -n '2p' | awk '{ print $$2 }' | grep 237B"]
+      start_period: 1m
+      retries: 5
+      timeout: 5s
+      interval: 5s
     environment:
-      - DATABASE_HOST=ranger-db
-      - DATABASE_DB=hive_metastore_db
-      - DATABASE_USER=${HIVE_METASTORE_DATABASE_USER}
-      - DATABASE_PASSWORD=${HIVE_METASTORE_DATABASE_PASSWORD}
+      - SERVICE_NAME=metastore
+      - HIVE_CUSTOM_CONF_DIR=/opt/hive/custom-conf
+      - DB_DRIVER=postgres
+      - DB_DRIVER_CLASSNAME=org.postgresql.Driver
+      - DB_CONNECTION_URL=jdbc:postgresql://ranger-db:5432/hive_metastore_db
+      - DB_USER=${HIVE_METASTORE_DATABASE_USER}
+      - DB_PASSWORD=${HIVE_METASTORE_DATABASE_PASSWORD}
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
       - S3_ENDPOINT_URL=http://minio:9000
       - S3_BUCKET=prin
       - S3_PREFIX=metadata
+    volumes:
+      - ./hive/conf:/opt/hive/custom-conf
     # ports:
     #   - '9083:9083'
+
 
 # ----------------------------- MINIO -----------------------------
   minio:
