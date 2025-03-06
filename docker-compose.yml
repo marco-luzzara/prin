@@ -88,7 +88,11 @@ services:
   #   #   - '9083:9083'
 
   hive-metastore:
-    image: apache/hive:4.0.1
+    build:
+      args:
+        HIVE_VERSION: ${HIVE_VERSION}
+      context: ./hive/docker
+    image: hive-with-postgres:${HIVE_VERSION}
     depends_on:
       ranger-db:
         condition: service_healthy

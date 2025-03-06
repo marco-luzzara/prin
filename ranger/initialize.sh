@@ -378,6 +378,29 @@ function create_policies {
 }
 
 function create_additional_services {
+    # update trino service
+    TRINO_SERVICE_ID=$(curl -X 'GET' "$ENDPOINT/service/plugins/services/name/dev_trino" \
+        -H 'accept: application/json' \
+        -u "$CREDENTIALS" | jq -r '.id')
+    
+    curl -X 'PUT' "$ENDPOINT/service/plugins/services/$TRINO_SERVICE_ID" \
+        -H 'Accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d "{
+            \"id\": \"$TRINO_SERVICE_ID\",
+            \"isEnabled\": true,
+            \"type\": \"trino\",
+            \"name\": \"dev_trino\",
+            \"tagService\": \"dev_tag\",
+            \"configs\": {
+                \"username\":\"trino\",
+                \"jdbc.driverClassName\": \"io.trino.jdbc.TrinoDriver\",
+                \"jdbc.url\": \"jdbc:trino://trino:8080\",
+                \"ranger.plugin.audit.filters\": \"[{'accessResult':'DENIED','isAudited':true},{'isAudited':false,'resources':{'queryid':{'values':['*']}},'accessTypes':['execute']},{'isAudited':false,'resources':{'trinouser':{'values':['{USER}']}},'accessTypes':['impersonate']}]\"
+            }
+        }"
+    
+    # create atlas service
     curl -X 'POST' "$ENDPOINT/service/plugins/services" \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
