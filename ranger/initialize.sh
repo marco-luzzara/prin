@@ -386,6 +386,7 @@ function create_additional_services {
     curl -X 'PUT' "$ENDPOINT/service/plugins/services/$TRINO_SERVICE_ID" \
         -H 'Accept: application/json' \
         -H 'Content-Type: application/json' \
+        -u "$CREDENTIALS" \
         -d "{
             \"id\": \"$TRINO_SERVICE_ID\",
             \"isEnabled\": true,

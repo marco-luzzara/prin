@@ -22,7 +22,7 @@ up: init
 	set -a && \
 	source ${ENV_FILE} && \
 	set +a && \
-	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up -d
+	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up -d --build
 
 down:
-	docker compose down -v
+	docker compose down

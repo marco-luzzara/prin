@@ -2,6 +2,41 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
+        <value>s3a://prin</value>
+    </property>
+    <property>
+        <name>fs.s3a.impl</name>
+        <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+    </property>
+    <property>
+        <name>fs.s3a.fast.upload</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>fs.s3a.endpoint</name>
+        <value>http://minio:9000</value>
+    </property>
+    <property>
+        <name>fs.s3a.access.key</name>
+        <value>miniouser</value>
+    </property>
+    <property>
+        <name>fs.s3a.secret.key</name>
+        <value>miniopassword</value>
+    </property>
+    <property>
+        <name>fs.s3a.connection.ssl.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>fs.s3a.path.style.access</name>
+        <value>true</value>
+    </property>
+</configuration>
+<!-- <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
         <value>s3a://${env:S3_BUCKET}</value>
     </property>
     <property>
@@ -32,4 +67,4 @@
         <name>fs.s3a.path.style.access</name>
         <value>true</value>
     </property>
-</configuration>
+</configuration> -->
