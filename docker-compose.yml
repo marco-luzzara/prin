@@ -268,7 +268,7 @@ services:
     ports:
       - "21000:21000"
     volumes:
-      # - ./atlas/pre-conf:/apache-atlas/conf
+      - ./atlas/conf/atlas-application.properties:/apache-atlas/conf/atlas-application.properties
       - ./atlas/data:/apache-atlas/data
       - ./atlas/logs:/apache-atlas/logs
 
