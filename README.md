@@ -7,7 +7,7 @@
 
 ## Run
 
-Create the `.env` file with the credentials:
+Modify the `.env` file with the credentials and global configs:
 
 ```ini
 HIVE_METASTORE_DATABASE_USER=hive_metastore
@@ -29,6 +29,7 @@ TRINO_PORT=8081
 HUE_PORT=8888
 SUPERSET_PORT=7890
 RANGER_PORT=6080
+ATLAS_PORT=21000
 ```
 
 **Note:** if you want to change a credential, search (and replace) it in the entire repo because, for example, the `HIVE_METASTORE_DATABASE_PASSWORD` is created in the `postgres/init/hive-metastore-init.sql` script. 
@@ -42,7 +43,7 @@ make up
 To set profiles:
 
 ```bash
-make up COMPOSE_PROFILES=complete,ranger-test
+make up COMPOSE_PROFILES=without-visualization
 ```
 
 If `COMPOSE_PROFILES` is unset, then it defaults to `*` (all profiles are activated).

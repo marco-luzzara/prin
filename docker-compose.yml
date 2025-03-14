@@ -27,7 +27,8 @@ services:
     ports:
       - "${DATA_LOADING_WEBAPP_PORT}:80"
     depends_on:
-      - kafka-init
+      kafka-init:
+        condition: service_completed_successfully
     environment:
       - FLASK_KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092 #,kafka-broker-1:9092
 
@@ -258,7 +259,7 @@ services:
       test: 'su -c "pg_isready -q" postgres'
       interval: 10s
       timeout: 2s
-      retries: 30
+      retries: 3
 
 # ----------------------------- ATLAS  -----------------------------
 ## https://hub.docker.com/r/sburn/apache-atlas
@@ -266,9 +267,18 @@ services:
   atlas:
     image: sburn/apache-atlas:2.3.0
     ports:
-      - "21000:21000"
+      - "${ATLAS_PORT}:21000"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:21000/login.jsp"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
     volumes:
       - ./atlas/conf/atlas-application.properties:/apache-atlas/conf/atlas-application.properties
+      - ./atlas/conf/users-credentials.properties:/apache-atlas/conf/users-credentials.properties
       - ./atlas/data:/apache-atlas/data
       - ./atlas/logs:/apache-atlas/logs
 
