@@ -12,9 +12,9 @@ RUN <<EOF
     apt install -y wget tar
 
     # install driver
-    pushd lib
+    cd lib
     wget https://jdbc.postgresql.org/download/postgresql-42.7.5.jar
-    popd
+    cd ..
 
     # enable hadoop-aws jars
     ln -s /opt/hadoop/share/hadoop/tools/lib/hadoop-aws* /opt/hadoop/share/hadoop/common/lib/
@@ -22,9 +22,9 @@ RUN <<EOF
 
     # install hive hook for atlas
     mkdir -p atlas/hook/hive
-    pushd /tmp/atlas-hook
+    cd /tmp/atlas-hook
     tar -xf ./apache-atlas-${ATLAS_VERSION}-hive-hook.tar.gz
-    popd
+    cd $HIVE_HOME
     cp -a /tmp/atlas-hook/apache-atlas-hive-hook-${ATLAS_VERSION}/hook/hive/. atlas/hook/hive
     rm -r /tmp/atlas-hook
 EOF

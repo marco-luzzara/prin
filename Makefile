@@ -25,4 +25,4 @@ up: init
 	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up -d --build
 
 down:
-	docker compose down
+	docker compose down -v
