@@ -282,6 +282,9 @@ services:
       - ./atlas/data:/apache-atlas/data
       - ./atlas/logs:/apache-atlas/logs
 
+  zookeeper:
+    image: zookeeper
+
 # ----------------------------- HUE -----------------------------
 ## https://hub.docker.com/r/gethue/hue
   
