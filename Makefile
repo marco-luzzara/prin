@@ -6,7 +6,7 @@ STANDARD_COMPOSE_FILES = docker-compose.yml docker-compose-profiles.yml
 ADDITIONAL_COMPOSE_FILES ?= 
 COMPOSE_FILES_OPTIONS = $(foreach cf,$(STANDARD_COMPOSE_FILES) $(ADDITIONAL_COMPOSE_FILES), -f $(cf))
 
-.PHONY: init up down
+.PHONY: init up down clean-all
 
 init:
 	mkdir -p kafka/data0 minio/data solr/data postgres/data atlas/data atlas/logs
@@ -33,3 +33,6 @@ up: init
 - SERVICES: (optional) services for which the docker compose action must be applied
 down:
 	docker compose down -v ${SERVICES}
+
+clean-all:
+	rm -r solr/data/ postgres/data/ atlas/data/ atlas/logs/

@@ -435,7 +435,7 @@ eval set -- "$OPTS"
 while true; do
     case "$1" in
         --help)
-            file="$2"
+            help
             exit 0
             ;;
         --endpoint)

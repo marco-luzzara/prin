@@ -120,6 +120,7 @@ services:
       - S3_PREFIX=metadata
     volumes:
       - ./hive/conf:/opt/hive/custom-conf
+      - ./hive/hooks/atlas/import-hive.sh:/opt/hive/import-hive.sh
     # ports:
     #   - '9083:9083'
 

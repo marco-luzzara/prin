@@ -4,7 +4,7 @@
 # Create this file in $HIVE_HOME/import-hive.sh and give it execution permission
 # change HIVE_HOOK_IMPL_DIR with the path of the impl folder for the atlas hive hook
 
-HIVE_HOOK_IMPL_DIR="atlas/hook/hive/atlas-hive-plugin-impl"
+HIVE_HOOK_IMPL_DIR="hive/atlas/hook/hive/atlas-hive-plugin-impl"
 
 PRG="${0}"
 
