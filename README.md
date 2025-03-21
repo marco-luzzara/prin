@@ -19,7 +19,7 @@ MINIO_ROOT_PASSWORD=miniopassword
 SUPERSET_ADMIN_USERNAME=admin
 SUPERSET_ADMIN_PASSWORD=admin
 
-RANGER_VERSION=2.5.0
+RANGER_VERSION=2.6.0
 TRINO_VERSION=471
 
 # EXPOSED PORTS
@@ -174,6 +174,12 @@ Kafka is a pub/sub system that could store events indefinetely, but with Trino w
 The "flush" delay is determined by the env variable `FLUSH_DELAY_SECONDS` (default 15 seconds)
 
 ---
+
+## Hive
+
+Hive runs the schema initialization script every time it starts, unless the env variable `IS_RESUME=true`. However, initializing the schema after it has been previously initialized causes the container failure (only in version 3.1.3, from 4.x this is not an issue, but we need 3.x for Atlas compatibility). This variable is set in the docker compose only when the `hive/.hive_initialized` file exists. This file:
+- is created/updated after a `docker compose up`
+- is deleted after running `make clean-all`. If you do not need a complete clean, do not execute it.
 
 ## Issues
 

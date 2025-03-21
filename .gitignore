@@ -171,6 +171,8 @@ kafka/data*/
 atlas/data/
 atlas/logs/
 
+hive/.hive_initialized
+
 *.crt
 *.srl
 *.pem

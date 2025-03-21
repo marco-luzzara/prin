@@ -18,6 +18,7 @@ init:
 	test -e trino/docker/server/rootCA.crt || { echo "rootCA.crt file does not exist. First create it with \`cd trino && make create-crt\`" ; exit 1; }
 	test -d trino/docker/server/trino-anonymization-udfs-1.0 || { echo "trino-anonymization-udfs-1.0 directory does not exist. First create it with \`cd trino && make create-udf-package\`" ; exit 1; }
 
+# 
 # Parameters: \
 - ENV_FILE: path of env file containing configuration properties (Default: .env)\
 - COMPOSE_PROFILES: compose profile to activate (Default: *) \
@@ -27,7 +28,9 @@ up: init
 	set -a && \
 	source ${ENV_FILE} && \
 	set +a && \
+	{ test -f hive/.hive_initialized && export SKIP_HIVE_SCHEMA_INIT=true; } && \
 	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up -d --build ${SERVICES}
+	touch hive/.hive_initialized
 
 # Parameters: \
 - SERVICES: (optional) services for which the docker compose action must be applied
@@ -36,3 +39,4 @@ down:
 
 clean-all:
 	rm -r solr/data/ postgres/data/ atlas/data/ atlas/logs/
+	rm -f hive/.hive_initialized

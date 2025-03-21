@@ -106,6 +106,7 @@ services:
       timeout: 5s
       interval: 5s
     environment:
+      - IS_RESUME=${SKIP_HIVE_SCHEMA_INIT:false}
       - SERVICE_NAME=metastore
       - HIVE_CUSTOM_CONF_DIR=/opt/hive/custom-conf
       - DB_DRIVER=postgres
