@@ -90,6 +90,12 @@ services:
       - without-visualization
       - complete
 
+  ranger-tagsync:
+    profiles:
+      - ranger-test
+      - without-visualization
+      - complete
+
 # ----------------------------- ATLAS  -----------------------------
 
   atlas:

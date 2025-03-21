@@ -262,6 +262,22 @@ services:
       timeout: 2s
       retries: 3
 
+  ranger-tagsync:
+    build:
+      context: ranger/tagsync/docker
+      args:
+        - TAGSYNC_VERSION=${RANGER_VERSION}
+    image: ranger-tagsync
+    depends_on:
+      ranger:
+        condition: service_started
+    volumes:
+      - ./ranger/tagsync/configs/ranger-tagsync-install.properties:/opt/ranger/tagsync/install.properties
+      - ./ranger/tagsync/configs/ranger-tagsync-tags.json:/opt/ranger/tagsync/data/tags.json
+    environment:
+      - TAGSYNC_VERSION=${RANGER_VERSION}
+      - DEBUG_TAGSYNC=${DEBUG_TAGSYNC:-false}
+
 # ----------------------------- ATLAS  -----------------------------
 ## https://hub.docker.com/r/sburn/apache-atlas
 
