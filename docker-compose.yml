@@ -106,7 +106,7 @@ services:
       timeout: 5s
       interval: 5s
     environment:
-      - IS_RESUME=${SKIP_HIVE_SCHEMA_INIT:false}
+      - IS_RESUME=${SKIP_HIVE_SCHEMA_INIT:-false}
       - SERVICE_NAME=metastore
       - HIVE_CUSTOM_CONF_DIR=/opt/hive/custom-conf
       - DB_DRIVER=postgres
@@ -263,21 +263,21 @@ services:
       timeout: 2s
       retries: 3
 
-  ranger-tagsync:
-    build:
-      context: ranger/tagsync/docker
-      args:
-        - TAGSYNC_VERSION=${RANGER_VERSION}
-    image: ranger-tagsync
-    depends_on:
-      ranger:
-        condition: service_started
-    volumes:
-      - ./ranger/tagsync/configs/ranger-tagsync-install.properties:/opt/ranger/tagsync/install.properties
-      - ./ranger/tagsync/configs/ranger-tagsync-tags.json:/opt/ranger/tagsync/data/tags.json
-    environment:
-      - TAGSYNC_VERSION=${RANGER_VERSION}
-      - DEBUG_TAGSYNC=${DEBUG_TAGSYNC:-false}
+  # ranger-tagsync:
+  #   build:
+  #     context: ranger/tagsync/docker
+  #     args:
+  #       - TAGSYNC_VERSION=${RANGER_VERSION}
+  #   image: ranger-tagsync
+  #   depends_on:
+  #     ranger:
+  #       condition: service_started
+  #   volumes:
+  #     - ./ranger/tagsync/configs/ranger-tagsync-install.properties:/opt/ranger/tagsync/install.properties
+  #     - ./ranger/tagsync/configs/ranger-tagsync-tags.json:/opt/ranger/tagsync/data/tags.json
+  #   environment:
+  #     - TAGSYNC_VERSION=${RANGER_VERSION}
+  #     - DEBUG_TAGSYNC=${DEBUG_TAGSYNC:-false}
 
 # ----------------------------- ATLAS  -----------------------------
 ## https://hub.docker.com/r/sburn/apache-atlas
@@ -315,15 +315,15 @@ services:
 # ----------------------------- HUE -----------------------------
 ## https://hub.docker.com/r/gethue/hue
   
-  hue:
-    image: gethue/hue:20240530-140101
-    ports:
-      - "${HUE_PORT}:8888"
-    depends_on:
-      trino:
-        condition: service_healthy
-    volumes:
-      - ./hue/hue.ini:/usr/share/hue/desktop/conf/hue.ini
+  # hue:
+  #   image: gethue/hue:20240530-140101
+  #   ports:
+  #     - "${HUE_PORT}:8888"
+  #   depends_on:
+  #     trino:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./hue/hue.ini:/usr/share/hue/desktop/conf/hue.ini
   
 # ----------------------------- SUPERSET -----------------------------
 ## https://hub.docker.com/r/apache/superset
@@ -331,7 +331,9 @@ services:
   superset:
     build:
       context: ./superset
-    image: superset-with-trino
+      args:
+        SUPERSET_VERSION: ${SUPERSET_VERSION}
+    image: superset-with-trino:${SUPERSET_VERSION}
     ports:
       - "${SUPERSET_PORT}:8088"
     depends_on:
@@ -339,9 +341,9 @@ services:
         condition: service_healthy
     environment:
       - SUPERSET_SECRET_KEY=supersetkey
-      - ADMIN_USERNAME=${SUPERSET_ADMIN_USERNAME}
-      - ADMIN_PASSWORD=${SUPERSET_ADMIN_PASSWORD}
-      - ADMIN_EMAIL=admin@superset.com
-    volumes:
-      - ./superset/bootstrap.sh:/bootstrap.sh
-    entrypoint: ["/bootstrap.sh"]
+      # - ADMIN_USERNAME=${SUPERSET_ADMIN_USERNAME}
+      # - ADMIN_PASSWORD=${SUPERSET_ADMIN_PASSWORD}
+      # - ADMIN_EMAIL=admin@superset.com
+    # volumes:
+    #   - ./superset/bootstrap.sh:/bootstrap.sh
+    # entrypoint: ["/bootstrap.sh"]

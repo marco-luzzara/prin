@@ -8,97 +8,87 @@ services:
 # ----------------------------- KAFKA -----------------------------
   kafka-broker-0:
     profiles:
-      - ranger-test
       - without-visualization
       - complete
 
   # kafka-broker-1:
   #   profiles:
-  #     - ranger-test
+  #     - without-visualization
+  #     - complete
 
   kafka-init:
     profiles:
-      - ranger-test
       - without-visualization
       - complete
 
 # ----------------------------- HIVE METASTORE -----------------------------
   hive-metastore:
     profiles:
-      - complete
-      - ranger-test
       - without-visualization
+      - complete
 
 # ----------------------------- MINIO -----------------------------
   minio:
     profiles:
-      - complete
-      - ranger-test
       - without-visualization
+      - complete
 
   minio-init:
     profiles:
-      - complete
-      - ranger-test
       - without-visualization
+      - complete
 
 # ----------------------------- TRINO -----------------------------
   trino:
     profiles:
-      - ranger-test
       - without-visualization
       - complete
 
 # ----------------------------- CDC -----------------------------
   cdc-script:
     profiles:
-      - complete
       - without-visualization
-
-# ----------------------------- HUE -----------------------------
-  hue:
-    profiles:
-      - complete
-
-# ----------------------------- SUPERSET -----------------------------
-  superset:
-    profiles:
       - complete
 
 # ----------------------------- RANGER -----------------------------
   ranger:
     profiles:
-      - ranger-test
       - without-visualization
       - complete
 
   ranger-zk:
     profiles:
-      - ranger-test
       - without-visualization
       - complete
 
   ranger-solr:
     profiles:
-      - ranger-test
       - without-visualization
       - complete
 
   ranger-db:
     profiles:
-      - ranger-test
       - without-visualization
       - complete
 
-  ranger-tagsync:
-    profiles:
-      - ranger-test
-      - without-visualization
-      - complete
+  # ranger-tagsync:
+  #   profiles:
+  #     - without-visualization
+  #     - complete
 
 # ----------------------------- ATLAS  -----------------------------
 
   atlas:
     profiles:
       - without-visualization
+      - complete
+
+# ----------------------------- HUE -----------------------------
+  # hue:
+  #   profiles:
+  #     - complete
+
+# ----------------------------- SUPERSET -----------------------------
+  superset:
+    profiles:
       - complete
