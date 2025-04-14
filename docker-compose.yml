@@ -22,7 +22,7 @@ x-kafka-shared-envs: &kafka-shared-envs
 services:
   data-loading-webapp:
     build:
-      context: remote_machine
+      context: edge-vm
       dockerfile: ./Dockerfile
     ports:
       - "${DATA_LOADING_WEBAPP_PORT}:80"

@@ -55,7 +55,7 @@ make up ADDITIONAL_COMPOSE_FILES="docker-compose-resource-limits.yml docker-comp
 ```
 
 
-The `data-loading-webapp` service monitors the `./remote_machine/to-watch` folder for any new Excel file. Valid extensions are `.xls`, `.xlsx`, `.ods`. When a new Excel is detected, an event with the patient information are sent to the topic `devprin.medical-records`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
+The `data-loading-webapp` service monitors the `./edge-vm/to-watch` folder for any new Excel file. Valid extensions are `.xls`, `.xlsx`, `.ods`. When a new Excel is detected, an event with the patient information are sent to the topic `devprin.medical-records`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
 
 ```bash
 docker compose exec -it trino bash

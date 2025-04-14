@@ -161,8 +161,6 @@ cython_debug/
 
 # custom
 todo
-remote_machine/to-watch/
-remote_machine/test-files/
 
 postgres/data/
 solr/data

@@ -1,10 +1,8 @@
 import dataclasses
 import json
 import socket
-from typing import Dict
+from typing import Dict, Any
 from confluent_kafka import Producer
-
-from .model.PatientRecord import PatientRecord
 
 from abc import ABC, abstractmethod
 
@@ -14,7 +12,7 @@ class RecordProcessor(ABC):
         pass
 
     @abstractmethod
-    def consume(self, patient_record: PatientRecord) -> None:
+    def consume(self, destionation, id, data) -> None:
         pass
 
 class KafkaProcessor(RecordProcessor):
@@ -25,9 +23,7 @@ class KafkaProcessor(RecordProcessor):
         }
         self.producer = Producer(kafka_conf)
 
-    def consume(self, patient_record: PatientRecord) -> None:
-        patient_dict = dataclasses.asdict(patient_record)
-        del patient_dict['id']
-        self.producer.produce('devprin.medical-records', 
-                              key=patient_record.id.to_bytes(8, 'big'), 
-                              value=json.dumps(patient_dict).encode())
+    def consume(self, destination, id, data: Dict[str, Any]) -> None:
+        self.producer.produce(destination, 
+                              key=json.dumps({ 'id': id }).encode(), 
+                              value=json.dumps(data).encode())

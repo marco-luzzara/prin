@@ -9,11 +9,11 @@ from werkzeug.utils import secure_filename
 from .model.PatientRecord import PatientRecord
 from . import record_processor
 
-bp = Blueprint('data-loading', __name__, url_prefix='/data-loading')
+bp = Blueprint('pcr-results-data-loading', __name__, url_prefix='/data-loading/pcr-results')
 
 @bp.get('/')
 def view_data_loading_dashboard():
-    return render_template('data_loading.html')
+    return render_template('pcr-results-data-loading.html')
 
 
 @bp.post('from-excel')

@@ -3,7 +3,7 @@ services:
     develop:
       watch:
         - action: sync+restart
-          path: ./remote_machine/webapp
+          path: ./edge-vm/webapp
           target: /app/webapp
         - action: rebuild
-          path: ./remote_machine/requirements.txt
+          path: ./edge-vm/requirements.txt

@@ -1,8 +1,6 @@
-import dataclasses
 import os
-import socket
+from typing import Dict, Any
 
-from confluent_kafka import Producer
 import flask
 import logging
 from . import record_processors
@@ -14,11 +12,14 @@ def create_app(test_config=None):
 
     app.logger.setLevel(logging.INFO)
     app.logger.info('Loading configurations...')
+    configs = {}
     if test_config is None:
-        app.config.from_prefixed_env()
-        app.config['RECORD_PROCESSOR_CLASS'] = 'KafkaProcessor'
+        configs['RECORD_PROCESSOR_CLASS'] = 'KafkaProcessor'
+        configs['KAFKA_BOOTSTRAP_SERVERS'] = os.environ['KAFKA_BOOTSTRAP_SERVERS']
+        configs['OWNER_ID'] = os.environ['OWNER_ID']
     else:
         app.config.from_mapping(test_config)
+        # configs = ...
     app.logger.info('Configurations loaded')
 
     try:
@@ -29,11 +30,12 @@ def create_app(test_config=None):
 
     app.logger.info('Initializing RecordProcessor...')
     global record_processor
-    record_processor = configure_record_processor(app)
+    record_processor = configure_record_processor(configs, app)
     app.logger.info('RecordProcessor initialized')
 
-    from . import data_loading
-    app.register_blueprint(data_loading.bp)
+    from .routes import patients_data_loading, pcr_results_data_loading
+    app.register_blueprint(patients_data_loading.bp)
+    app.register_blueprint(pcr_results_data_loading.bp)
 
     @app.get('/health')
     def health_check():
@@ -42,9 +44,9 @@ def create_app(test_config=None):
     return app
 
 
-def configure_record_processor(app: flask.Flask):
+def configure_record_processor(configs: Dict[str, Any], app: flask.Flask) -> record_processors.RecordProcessor:
     RecordProcessorClass: record_processors.RecordProcessor = \
-        getattr(record_processors, app.config['RECORD_PROCESSOR_CLASS'])
+        getattr(record_processors, configs['RECORD_PROCESSOR_CLASS'])
     app.logger.info(f'RecordProcessor set to {RecordProcessorClass.__name__}')
 
-    return RecordProcessorClass(dict(app.config))
+    return RecordProcessorClass(configs)
