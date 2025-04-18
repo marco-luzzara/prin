@@ -3,8 +3,6 @@ from pydantic.dataclasses import dataclass
 
 from .utils import null_if_empty, to_float
 
-# TODO: lines 5,19 contain '-'
-
 @dataclass
 class PatientRecord:
     id: str = field(metadata={'mapped_to': 'ID'})
@@ -35,9 +33,9 @@ class PatientRecord:
     comportamento_esordio: str | None = field(metadata={'mapped_to': 'Comportamento esordio', 'transform': lambda x: null_if_empty(x)})
     extrapiramidale: bool | None = field(metadata={'mapped_to': 'Extrapiramidale', 'transform': lambda x: null_if_empty(x, lambda v: bool(v))})
     adl: int | None = field(metadata={'mapped_to': 'ADL', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
-    iadl: int | None = field(metadata={'mapped_to': 'IADL', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
+    iadl: float | None = field(metadata={'mapped_to': 'IADL', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
     cdr: float | None = field(metadata={'mapped_to': 'CDR', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
-    cdr_sob: str | None = field(metadata={'mapped_to': 'CDR-SOB'}) # TODO: type?
+    cdr_sob: str | None = field(metadata={'mapped_to': 'CDR-SOB'})
     tau_totale_liquor: int | None = field(metadata={'mapped_to': 'Tau Totale Liquor', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     ptau_181_liquor: float | None = field(metadata={'mapped_to': 'pTAU-181 Liquor', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
     ttau_ptau: float | None = field(metadata={'mapped_to': 'tTAU/pTAU', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
@@ -46,7 +44,7 @@ class PatientRecord:
     koedam: int | None = field(metadata={'mapped_to': 'KOEDAM', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     gca: int | None = field(metadata={'mapped_to': 'GCA', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     vascular: int | None = field(metadata={'mapped_to': 'VASCULAR', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
-    pet_fdg: int | None = field(metadata={'mapped_to': 'PET-FDG', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
+    pet_fdg: bool | None = field(metadata={'mapped_to': 'PET-FDG', 'transform': lambda x: null_if_empty(x, lambda v: bool(v))})
     spect: int | None = field(metadata={'mapped_to': 'SPECT', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     pet_a: int | None = field(metadata={'mapped_to': 'PET-A?', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     mmse_raw: int | None = field(metadata={'mapped_to': 'MMSE [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
@@ -66,9 +64,9 @@ class PatientRecord:
     fcsrt_dtr: int | None = field(metadata={'mapped_to': 'FCSRT - DTR', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     ravlt_immediato_raw: int | None = field(metadata={'mapped_to': 'RAVLT - Immediato [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     ravlt_immediato_corr: float | None = field(metadata={'mapped_to': 'RAVLT - Immediato [corr]', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
-    ravlt_differito_raw: str | None = field(metadata={'mapped_to': 'RAVLT - Differito [raw]'}) # TODO: type?
-    ravlt_differito_corr: str | None = field(metadata={'mapped_to': 'RAVLT - Differito [corr]'}) # TODO: type?
-    ravlt_recognition: str | None = field(metadata={'mapped_to': 'RAVLT - Recognition'}) # TODO: type?
+    ravlt_differito_raw: int | None = field(metadata={'mapped_to': 'RAVLT - Differito [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
+    ravlt_differito_corr: float | None = field(metadata={'mapped_to': 'RAVLT - Differito [corr]', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
+    ravlt_recognition: float | None = field(metadata={'mapped_to': 'RAVLT - Recognition', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
     digit_span_diretto_raw: int | None = field(metadata={'mapped_to': 'Digit Span - diretto [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     digit_span_diretto_corr: float | None = field(metadata={'mapped_to': 'Digit Span - diretto [corr]', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
     digit_span_inverso_raw: int | None = field(metadata={'mapped_to': 'Digit Span - Inverso [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
@@ -81,7 +79,7 @@ class PatientRecord:
     matrici_attentive_corr: float | None = field(metadata={'mapped_to': 'Matrici Attentive [corr]', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
     tmt_a_raw: int | None = field(metadata={'mapped_to': 'TMT - A [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     tmt_a_corr: int | None = field(metadata={'mapped_to': 'TMT - A [corr]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
-    tmt_b_raw: int | None = field(metadata={'mapped_to': 'TMT - B [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))}) # TODO: '>283'?
+    tmt_b_raw: int | None = field(metadata={'mapped_to': 'TMT - B [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     tmt_b_corr: int | None = field(metadata={'mapped_to': 'TMT - B [corr]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     stroop_test_tempo_raw: float | None = field(metadata={'mapped_to': 'Stroop Test - tempo [raw]', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
     stroop_test_tempo_corr: float | None = field(metadata={'mapped_to': 'Stroop Test - tempo [corr]', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})
@@ -111,4 +109,4 @@ class PatientRecord:
     cri_tempo_libero_raw: int | None = field(metadata={'mapped_to': 'CRI - Tempo libero [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     cri_lavoro_raw: int | None = field(metadata={'mapped_to': 'CRI - Lavoro [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
     cri_scuola_raw: int | None = field(metadata={'mapped_to': 'CRI - Scuola [raw]', 'transform': lambda x: null_if_empty(x, lambda v: int(v))})
-    test_linguistici_nndd: str | None = field(metadata={'mapped_to': 'TEST LINGUISTICI NNDD'}) # TODO: type?
+    test_linguistici_nndd: float | None = field(metadata={'mapped_to': 'TEST LINGUISTICI NNDD', 'transform': lambda x: null_if_empty(x, lambda v: to_float(v))})

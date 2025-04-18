@@ -1,0 +1,306 @@
+{
+    "tableName": "mir-results",
+    "schemaName": "devprin",
+    "topicName": "devprin.mir-results",
+    "key": {
+        "dataFormat": "json",
+        "fields": [
+            {
+                "name": "owner_id",
+                "type": "VARCHAR",
+                "mapping": "owner_id",
+                "hidden": "false"
+            }
+        ]
+    },
+    "message": {
+        "dataFormat": "json",
+        "fields": [
+            {
+                "name": "id",
+                "mapping": "id",
+                "type": "VARCHAR"
+            },
+            {
+                "name": "hsa_miR_1539",
+                "mapping": "hsa_miR_1539",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6840_3p",
+                "mapping": "hsa_miR_6840_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6836_3p",
+                "mapping": "hsa_miR_6836_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4667_5p",
+                "mapping": "hsa_miR_4667_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_208a_5p",
+                "mapping": "hsa_miR_208a_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6885_5p",
+                "mapping": "hsa_miR_6885_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_1306_5p",
+                "mapping": "hsa_miR_1306_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_3184_5p",
+                "mapping": "hsa_miR_3184_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4649_5p",
+                "mapping": "hsa_miR_4649_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6859_3p",
+                "mapping": "hsa_miR_6859_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6829_3p",
+                "mapping": "hsa_miR_6829_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_3622a_3p",
+                "mapping": "hsa_miR_3622a_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4664_3p",
+                "mapping": "hsa_miR_4664_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6776_3p",
+                "mapping": "hsa_miR_6776_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_135a_3p",
+                "mapping": "hsa_miR_135a_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6875_5p",
+                "mapping": "hsa_miR_6875_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_3646",
+                "mapping": "hsa_miR_3646",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_3614_5p",
+                "mapping": "hsa_miR_3614_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_128_1_5p",
+                "mapping": "hsa_miR_128_1_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6813_3p",
+                "mapping": "hsa_miR_6813_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6752_5p",
+                "mapping": "hsa_miR_6752_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_204_3p",
+                "mapping": "hsa_miR_204_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6806_5p",
+                "mapping": "hsa_miR_6806_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_1538",
+                "mapping": "hsa_miR_1538",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6887_3p",
+                "mapping": "hsa_miR_6887_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_5088_3p",
+                "mapping": "hsa_miR_5088_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6743_5p",
+                "mapping": "hsa_miR_6743_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4274",
+                "mapping": "hsa_miR_4274",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_5585_3p",
+                "mapping": "hsa_miR_5585_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4787_5p",
+                "mapping": "hsa_miR_4787_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_320b",
+                "mapping": "hsa_miR_320b",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6870_3p",
+                "mapping": "hsa_miR_6870_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_199a_5p",
+                "mapping": "hsa_miR_199a_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4290",
+                "mapping": "hsa_miR_4290",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_6721_5p",
+                "mapping": "hsa_miR_6721_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4728_3p",
+                "mapping": "hsa_miR_4728_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_3691_5p",
+                "mapping": "hsa_miR_3691_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4440",
+                "mapping": "hsa_miR_4440",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_874_3p",
+                "mapping": "hsa_miR_874_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_27a_3p",
+                "mapping": "hsa_miR_27a_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_2278",
+                "mapping": "hsa_miR_2278",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_150_3p",
+                "mapping": "hsa_miR_150_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4716_3p",
+                "mapping": "hsa_miR_4716_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_211_5p",
+                "mapping": "hsa_miR_211_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_125a_5p",
+                "mapping": "hsa_miR_125a_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_4741",
+                "mapping": "hsa_miR_4741",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_3122",
+                "mapping": "hsa_miR_3122",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_3180_5p",
+                "mapping": "hsa_miR_3180_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_574_3p",
+                "mapping": "hsa_miR_574_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_150_5p",
+                "mapping": "hsa_miR_150_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_133b",
+                "mapping": "hsa_miR_133b",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_30c_5p",
+                "mapping": "hsa_miR_30c_5p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_212_3p",
+                "mapping": "hsa_miR_212_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_92b_3p",
+                "mapping": "hsa_miR_92b_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "hsa_miR_504_3p",
+                "mapping": "hsa_miR_504_3p",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "ath_miR_159a",
+                "mapping": "ath_miR_159a",
+                "type": "DOUBLE"
+            }
+        ]
+    }
+}

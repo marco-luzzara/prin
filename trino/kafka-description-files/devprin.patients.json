@@ -18,20 +18,13 @@
         "fields": [
             {
                 "name": "id",
-                "type": "VARCHAR",
-                "mapping": "id"
-            },
-            {
-                "name": "data_di_nascita",
-                "mapping": "data_di_nascita",
-                "type": "DATE",
-                "dataFormat": "custom-date-time",
-                "formatHint": "yyyy-dd-MM HH:mm:ss"
-            },
-            {
-                "name": "luogo_di_nascita",
-                "mapping": "luogo_di_nascita",
+                "mapping": "id",
                 "type": "VARCHAR"
+            },
+            {
+                "name": "current_diagnose",
+                "mapping": "current_diagnose",
+                "type": "INTEGER"
             },
             {
                 "name": "age",
@@ -41,17 +34,17 @@
             {
                 "name": "sex",
                 "mapping": "sex",
-                "type": "VARCHAR"
+                "type": "BOOLEAN"
             },
             {
-                "name": "telefono",
-                "mapping": "telefono",
-                "type": "VARCHAR"
+                "name": "right_handed",
+                "mapping": "right_handed",
+                "type": "BOOLEAN"
             },
             {
-                "name": "destrimane_mancino",
-                "mapping": "destrimane_mancino",
-                "type": "VARCHAR"
+                "name": "schooling",
+                "mapping": "schooling",
+                "type": "INTEGER"
             },
             {
                 "name": "egfr",
@@ -59,38 +52,512 @@
                 "type": "INTEGER"
             },
             {
-                "name": "prima_visita",
-                "mapping": "prima_visita",
+                "name": "first_visit",
+                "mapping": "first_visit",
                 "type": "DATE",
                 "dataFormat": "custom-date-time",
-                "formatHint": "yyyy-dd-MM HH:mm:ss"
+                "formatHint": "MM/dd/yyy"
             },
             {
-                "name": "data_diagnosi",
-                "mapping": "data_diagnosi",
+                "name": "diagnose_date",
+                "mapping": "diagnose_date",
                 "type": "DATE",
                 "dataFormat": "custom-date-time",
-                "formatHint": "yyyy-dd-MM HH:mm:ss"
-            },
-            {
-                "name": "patologia",
-                "mapping": "patologia",
-                "type": "VARCHAR"
+                "formatHint": "MM/dd/yyy"
             },
             {
                 "name": "a",
                 "mapping": "a",
-                "type": "VARCHAR"
+                "type": "BOOLEAN"
             },
             {
                 "name": "t",
                 "mapping": "t",
-                "type": "VARCHAR"
+                "type": "BOOLEAN"
             },
             {
                 "name": "n",
                 "mapping": "n",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "memoria",
+                "mapping": "memoria",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "memoria_esordio",
+                "mapping": "memoria_esordio",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "MM/dd/yyy"
+            },
+            {
+                "name": "fx_esecutive",
+                "mapping": "fx_esecutive",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "fx_esecutive_esordio",
+                "mapping": "fx_esecutive_esordio",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "MM/dd/yyy"
+            },
+            {
+                "name": "fx_visuo_spaziali",
+                "mapping": "fx_visuo_spaziali",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "fx_visuo_spaziali_esordio",
+                "mapping": "fx_visuo_spaziali_esordio",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "MM/dd/yyy"
+            },
+            {
+                "name": "linguaggio",
+                "mapping": "linguaggio",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "linguaggio_esordio",
+                "mapping": "linguaggio_esordio",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "MM/dd/yyy"
+            },
+            {
+                "name": "fx_pratto_gnosiche",
+                "mapping": "fx_pratto_gnosiche",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "fx_pratto_gnosiche_esordio",
+                "mapping": "fx_pratto_gnosiche_esordio",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "MM/dd/yyy"
+            },
+            {
+                "name": "social_cognition",
+                "mapping": "social_cognition",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "social_cognition_esordio",
+                "mapping": "social_cognition_esordio",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "MM/dd/yyy"
+            },
+            {
+                "name": "comportamento",
+                "mapping": "comportamento",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "comportamento_esordio",
+                "mapping": "comportamento_esordio",
+                "type": "DATE",
+                "dataFormat": "custom-date-time",
+                "formatHint": "MM/dd/yyy"
+            },
+            {
+                "name": "extrapiramidale",
+                "mapping": "extrapiramidale",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "adl",
+                "mapping": "adl",
+                "type": "INTEGER"
+            },
+            {
+                "name": "iadl",
+                "mapping": "iadl",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "cdr",
+                "mapping": "cdr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "cdr_sob",
+                "mapping": "cdr_sob",
                 "type": "VARCHAR"
+            },
+            {
+                "name": "tau_totale_liquor",
+                "mapping": "tau_totale_liquor",
+                "type": "INTEGER"
+            },
+            {
+                "name": "ptau_181_liquor",
+                "mapping": "ptau_181_liquor",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "ttau_ptau",
+                "mapping": "ttau_ptau",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "mta",
+                "mapping": "mta",
+                "type": "INTEGER"
+            },
+            {
+                "name": "fazekas",
+                "mapping": "fazekas",
+                "type": "INTEGER"
+            },
+            {
+                "name": "koedam",
+                "mapping": "koedam",
+                "type": "INTEGER"
+            },
+            {
+                "name": "gca",
+                "mapping": "gca",
+                "type": "INTEGER"
+            },
+            {
+                "name": "vascular",
+                "mapping": "vascular",
+                "type": "INTEGER"
+            },
+            {
+                "name": "pet_fdg",
+                "mapping": "pet_fdg",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "spect",
+                "mapping": "spect",
+                "type": "INTEGER"
+            },
+            {
+                "name": "pet_a",
+                "mapping": "pet_a",
+                "type": "INTEGER"
+            },
+            {
+                "name": "mmse_raw",
+                "mapping": "mmse_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "mmse_corr",
+                "mapping": "mmse_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "fab_raw",
+                "mapping": "fab_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "fab_corr",
+                "mapping": "fab_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "memoria_di_prosa_immediata_raw",
+                "mapping": "memoria_di_prosa_immediata_raw",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "memoria_di_prosa_immediata_corr",
+                "mapping": "memoria_di_prosa_immediata_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "memoria_di_prosa_differita_raw",
+                "mapping": "memoria_di_prosa_differita_raw",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "memoria_di_prosa_differita_corr",
+                "mapping": "memoria_di_prosa_differita_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "fcsrt_immediate_free_recall_raw",
+                "mapping": "fcsrt_immediate_free_recall_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "fcsrt_immediate_free_recall_corr",
+                "mapping": "fcsrt_immediate_free_recall_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "fcsrt_delayed_free_recall_raw",
+                "mapping": "fcsrt_delayed_free_recall_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "fcsrt_delayed_free_recall_corr",
+                "mapping": "fcsrt_delayed_free_recall_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "fcsrt_isc",
+                "mapping": "fcsrt_isc",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "fcsrt_itr",
+                "mapping": "fcsrt_itr",
+                "type": "INTEGER"
+            },
+            {
+                "name": "fcsrt_dtr",
+                "mapping": "fcsrt_dtr",
+                "type": "INTEGER"
+            },
+            {
+                "name": "ravlt_immediato_raw",
+                "mapping": "ravlt_immediato_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "ravlt_immediato_corr",
+                "mapping": "ravlt_immediato_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "ravlt_differito_raw",
+                "mapping": "ravlt_differito_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "ravlt_differito_corr",
+                "mapping": "ravlt_differito_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "ravlt_recognition",
+                "mapping": "ravlt_recognition",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "digit_span_diretto_raw",
+                "mapping": "digit_span_diretto_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "digit_span_diretto_corr",
+                "mapping": "digit_span_diretto_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "digit_span_inverso_raw",
+                "mapping": "digit_span_inverso_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "digit_span_inverso_corr",
+                "mapping": "digit_span_inverso_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "corsi_block_tapping_test_raw",
+                "mapping": "corsi_block_tapping_test_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "corsi_block_tapping_test_corr",
+                "mapping": "corsi_block_tapping_test_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "figura_di_rey_differita",
+                "mapping": "figura_di_rey_differita",
+                "type": "INTEGER"
+            },
+            {
+                "name": "figura_di_rey_differita_corr",
+                "mapping": "figura_di_rey_differita_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "matrici_attentive_raw",
+                "mapping": "matrici_attentive_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "matrici_attentive_corr",
+                "mapping": "matrici_attentive_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "tmt_a_raw",
+                "mapping": "tmt_a_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "tmt_a_corr",
+                "mapping": "tmt_a_corr",
+                "type": "INTEGER"
+            },
+            {
+                "name": "tmt_b_raw",
+                "mapping": "tmt_b_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "tmt_b_corr",
+                "mapping": "tmt_b_corr",
+                "type": "INTEGER"
+            },
+            {
+                "name": "stroop_test_tempo_raw",
+                "mapping": "stroop_test_tempo_raw",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "stroop_test_tempo_corr",
+                "mapping": "stroop_test_tempo_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "stroop_test_errori_raw",
+                "mapping": "stroop_test_errori_raw",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "stroop_test_errori_corr",
+                "mapping": "stroop_test_errori_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "fluenza_verbale_fonemica_raw",
+                "mapping": "fluenza_verbale_fonemica_raw",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "fluenza_verbale_fonemica_corr",
+                "mapping": "fluenza_verbale_fonemica_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "fluenza_verbale_semantica_raw",
+                "mapping": "fluenza_verbale_semantica_raw",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "fluenza_verbale_semantica_corr",
+                "mapping": "fluenza_verbale_semantica_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "clock_drawing_test_raw",
+                "mapping": "clock_drawing_test_raw",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "figura_di_rey_copia",
+                "mapping": "figura_di_rey_copia",
+                "type": "INTEGER"
+            },
+            {
+                "name": "test_di_prassia_costruttiva_raw",
+                "mapping": "test_di_prassia_costruttiva_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "test_di_prassia_costruttiva_corr",
+                "mapping": "test_di_prassia_costruttiva_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "gds",
+                "mapping": "gds",
+                "type": "INTEGER"
+            },
+            {
+                "name": "bdi",
+                "mapping": "bdi",
+                "type": "INTEGER"
+            },
+            {
+                "name": "stai_i",
+                "mapping": "stai_i",
+                "type": "INTEGER"
+            },
+            {
+                "name": "stai_ii",
+                "mapping": "stai_ii",
+                "type": "INTEGER"
+            },
+            {
+                "name": "social_cognition_gs_raw",
+                "mapping": "social_cognition_gs_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "social_cognition_gs_corr",
+                "mapping": "social_cognition_gs_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "social_cognition_ia_raw",
+                "mapping": "social_cognition_ia_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "social_cognition_ia_corr",
+                "mapping": "social_cognition_ia_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "social_cognition_ea_raw",
+                "mapping": "social_cognition_ea_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "social_cognition_ea_corr",
+                "mapping": "social_cognition_ea_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "social_cognition_ci_raw",
+                "mapping": "social_cognition_ci_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "social_cognition_ci_corr",
+                "mapping": "social_cognition_ci_corr",
+                "type": "DOUBLE"
+            },
+            {
+                "name": "cri_totale_raw",
+                "mapping": "cri_totale_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "cri_tempo_libero_raw",
+                "mapping": "cri_tempo_libero_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "cri_lavoro_raw",
+                "mapping": "cri_lavoro_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "cri_scuola_raw",
+                "mapping": "cri_scuola_raw",
+                "type": "INTEGER"
+            },
+            {
+                "name": "test_linguistici_nndd",
+                "mapping": "test_linguistici_nndd",
+                "type": "DOUBLE"
             }
         ]
     }
