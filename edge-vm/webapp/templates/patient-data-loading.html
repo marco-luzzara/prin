@@ -98,7 +98,7 @@
             const formData = new FormData();
             formData.append('data_file', file);
 
-            fetch("{{ url_for('data-loading.load_from_excel') }}", {
+            fetch("{{ url_for('patients-data-loading.load_from_excel') }}", {
                 method: 'POST',
                 body: formData
             })

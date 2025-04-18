@@ -12,11 +12,10 @@ def create_app(test_config=None):
 
     app.logger.setLevel(logging.INFO)
     app.logger.info('Loading configurations...')
-    configs = {}
     if test_config is None:
-        configs['RECORD_PROCESSOR_CLASS'] = 'KafkaProcessor'
-        configs['KAFKA_BOOTSTRAP_SERVERS'] = os.environ['KAFKA_BOOTSTRAP_SERVERS']
-        configs['OWNER_ID'] = os.environ['OWNER_ID']
+        app.config['RECORD_PROCESSOR_CLASS'] = os.environ.get('RECORD_PROCESSOR_CLASS', 'KafkaProcessor')
+        app.config['KAFKA_BOOTSTRAP_SERVERS'] = os.environ['KAFKA_BOOTSTRAP_SERVERS']
+        app.config['OWNER_ID'] = os.environ['OWNER_ID']
     else:
         app.config.from_mapping(test_config)
         # configs = ...
@@ -30,7 +29,7 @@ def create_app(test_config=None):
 
     app.logger.info('Initializing RecordProcessor...')
     global record_processor
-    record_processor = configure_record_processor(configs, app)
+    record_processor = configure_record_processor(app)
     app.logger.info('RecordProcessor initialized')
 
     from .routes import patients_data_loading, pcr_results_data_loading
@@ -44,9 +43,9 @@ def create_app(test_config=None):
     return app
 
 
-def configure_record_processor(configs: Dict[str, Any], app: flask.Flask) -> record_processors.RecordProcessor:
+def configure_record_processor(app: flask.Flask) -> record_processors.RecordProcessor:
     RecordProcessorClass: record_processors.RecordProcessor = \
-        getattr(record_processors, configs['RECORD_PROCESSOR_CLASS'])
+        getattr(record_processors, app.config['RECORD_PROCESSOR_CLASS'])
     app.logger.info(f'RecordProcessor set to {RecordProcessorClass.__name__}')
 
-    return RecordProcessorClass(configs)
+    return RecordProcessorClass(app)

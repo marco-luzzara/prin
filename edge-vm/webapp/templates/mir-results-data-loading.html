@@ -70,7 +70,7 @@
 <body>
 
     <div class="container" enctype="multipart/form-data">
-        <h2>Carica i risultati dell'analisi con PCR</h2>
+        <h2>Carica i risultati dell'analisi MiR</h2>
         <form id="uploadForm">
             <input class="pretty-button" type="file" id="fileInput" accept=".xls,.xlsx,.odt" required>
             <button class="pretty-button" type="submit">Invia</button>
@@ -98,7 +98,7 @@
             const formData = new FormData();
             formData.append('data_file', file);
 
-            fetch("{{ url_for('data-loading.load_from_excel') }}", {
+            fetch("{{ url_for('mir-results-data-loading.load_from_excel') }}", {
                 method: 'POST',
                 body: formData
             })
