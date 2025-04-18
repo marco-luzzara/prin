@@ -32,9 +32,9 @@ def create_app(test_config=None):
     record_processor = configure_record_processor(app)
     app.logger.info('RecordProcessor initialized')
 
-    from .routes import patients_data_loading, pcr_results_data_loading
+    from .routes import patients_data_loading, mir_results_data_loading
     app.register_blueprint(patients_data_loading.bp)
-    app.register_blueprint(pcr_results_data_loading.bp)
+    app.register_blueprint(mir_results_data_loading.bp)
 
     @app.get('/health')
     def health_check():

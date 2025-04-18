@@ -26,7 +26,7 @@ class KafkaProcessor(RecordProcessor):
 
     def consume(self, destination, id, data: Dict[str, Any]) -> None:
         self.producer.produce(destination, 
-                              key=json.dumps({ 'id': id }).encode(), 
+                              key=json.dumps({ 'owner_id': id }).encode(), 
                               value=json.dumps(data).encode())
         
 

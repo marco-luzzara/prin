@@ -5,6 +5,7 @@ from flask import (
 )
 import pandas as pd
 from werkzeug.utils import secure_filename
+import dataclasses
 
 from .model.PatientRecord import PatientRecord
 from .model.utils import from_dict
@@ -25,7 +26,8 @@ def load_from_excel():
     patient_records = cast_excel_to_objs_list(data_file.stream)
     for i, patient_record in enumerate(patient_records):
         current_app.logger.info(f'Patient {i}: {patient_record}')
-        record_processor.consume(patient_record)
+        owner_id = current_app.config['OWNER_ID']
+        record_processor.consume('devprin.patients', owner_id, dataclasses.asdict(patient_record))
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
     return ('', 204)

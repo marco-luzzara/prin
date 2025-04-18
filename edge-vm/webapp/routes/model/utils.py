@@ -6,7 +6,7 @@ T = TypeVar('T')
 def null_if_empty(val: T, transform_fn: Callable[[T], Any] = None):
     if transform_fn is None:
         transform_fn = lambda x: x
-    return None if val == '' else transform_fn(val)
+    return None if val in ['', None] else transform_fn(val)
 
 
 def to_float(val: str) -> float:

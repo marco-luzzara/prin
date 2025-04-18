@@ -1,14 +1,14 @@
 {
-    "tableName": "medical-records",
+    "tableName": "patients",
     "schemaName": "devprin",
-    "topicName": "devprin.medical-records",
+    "topicName": "devprin.patients",
     "key": {
-        "dataFormat": "raw",
+        "dataFormat": "json",
         "fields": [
             {
-                "name": "kafka_key",
-                "type": "BIGINT",
-                "dataFormat": "LONG",
+                "name": "owner_id",
+                "type": "VARCHAR",
+                "mapping": "owner_id",
                 "hidden": "false"
             }
         ]
@@ -16,6 +16,11 @@
     "message": {
         "dataFormat": "json",
         "fields": [
+            {
+                "name": "id",
+                "type": "VARCHAR",
+                "mapping": "id"
+            },
             {
                 "name": "data_di_nascita",
                 "mapping": "data_di_nascita",
