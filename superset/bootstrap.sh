@@ -51,7 +51,7 @@ curl 'http://localhost:8088/api/v1/database/' -X POST -H 'Content-Type: applicat
     "sqlalchemy_uri_placeholder": "engine+driver://user:password@host:port/dbname[?key=value&key=value...]",
     "extra": "{\"allows_virtual_table_explore\":true}",
     "expose_in_sqllab": true,
-    "sqlalchemy_uri": "trino://trino@trino:8080"
+    "sqlalchemy_uri": "trino://trino@trino:8080/hive"
 }'
 
 rm superset/csrf_cookies.txt

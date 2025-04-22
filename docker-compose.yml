@@ -347,9 +347,9 @@ services:
         condition: service_healthy
     environment:
       - SUPERSET_SECRET_KEY=supersetkey
-      # - ADMIN_USERNAME=${SUPERSET_ADMIN_USERNAME}
-      # - ADMIN_PASSWORD=${SUPERSET_ADMIN_PASSWORD}
-      # - ADMIN_EMAIL=admin@superset.com
+      - ADMIN_USERNAME=${SUPERSET_ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${SUPERSET_ADMIN_PASSWORD}
+      - ADMIN_EMAIL=admin@superset.com
     # volumes:
     #   - ./superset/bootstrap.sh:/bootstrap.sh
     # entrypoint: ["/bootstrap.sh"]

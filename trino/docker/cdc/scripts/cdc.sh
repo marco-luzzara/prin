@@ -14,7 +14,8 @@ do
 
     ./trino --server "$TRINO_ENDPOINT" --user trino --execute "
         -- READ UNCOMMITTED should be enough because we do not allow updates (only inserts) and we limit the results using the time interval
-        START TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+        -- transactions are not supported with Hive connector (see Iceberg connector or use temporary table on Postgres, which fully permits ACID operations)
+        -- START TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
 
         MERGE INTO hive.default.patients AS target_patients
@@ -45,7 +46,7 @@ do
             VALUES (kafka_source.owner_id, kafka_source.id, kafka_source.hsa_miR_1539, kafka_source.hsa_miR_6840_3p, kafka_source.hsa_miR_6836_3p, kafka_source.hsa_miR_4667_5p, kafka_source.hsa_miR_208a_5p, kafka_source.hsa_miR_6885_5p, kafka_source.hsa_miR_1306_5p, kafka_source.hsa_miR_3184_5p, kafka_source.hsa_miR_4649_5p, kafka_source.hsa_miR_6859_3p, kafka_source.hsa_miR_6829_3p, kafka_source.hsa_miR_3622a_3p, kafka_source.hsa_miR_4664_3p, kafka_source.hsa_miR_6776_3p, kafka_source.hsa_miR_135a_3p, kafka_source.hsa_miR_6875_5p, kafka_source.hsa_miR_3646, kafka_source.hsa_miR_3614_5p, kafka_source.hsa_miR_128_1_5p, kafka_source.hsa_miR_6813_3p, kafka_source.hsa_miR_6752_5p, kafka_source.hsa_miR_204_3p, kafka_source.hsa_miR_6806_5p, kafka_source.hsa_miR_1538, kafka_source.hsa_miR_6887_3p, kafka_source.hsa_miR_5088_3p, kafka_source.hsa_miR_6743_5p, kafka_source.hsa_miR_4274, kafka_source.hsa_miR_5585_3p, kafka_source.hsa_miR_4787_5p, kafka_source.hsa_miR_320b, kafka_source.hsa_miR_6870_3p, kafka_source.hsa_miR_199a_5p, kafka_source.hsa_miR_4290, kafka_source.hsa_miR_6721_5p, kafka_source.hsa_miR_4728_3p, kafka_source.hsa_miR_3691_5p, kafka_source.hsa_miR_4440, kafka_source.hsa_miR_874_3p, kafka_source.hsa_miR_27a_3p, kafka_source.hsa_miR_2278, kafka_source.hsa_miR_150_3p, kafka_source.hsa_miR_4716_3p, kafka_source.hsa_miR_211_5p, kafka_source.hsa_miR_125a_5p, kafka_source.hsa_miR_4741, kafka_source.hsa_miR_3122, kafka_source.hsa_miR_3180_5p, kafka_source.hsa_miR_574_3p, kafka_source.hsa_miR_150_5p, kafka_source.hsa_miR_133b, kafka_source.hsa_miR_30c_5p, kafka_source.hsa_miR_212_3p, kafka_source.hsa_miR_92b_3p, kafka_source.hsa_miR_504_3p, kafka_source.ath_miR_159a, kafka_source._timestamp);
     
 
-        COMMIT;
+        -- COMMIT;
     " && { echo "CDC Completed successfully"; RUN_SUCCESS=1; } || { echo "CDC process failed"; RUN_SUCCESS=0; }
 
     sleep "$FLUSH_DELAY_SECONDS"

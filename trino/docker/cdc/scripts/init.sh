@@ -184,7 +184,9 @@ INIT_SQL_SCRIPT="
         mir_results_upsert_at TIMESTAMP
     )
     WITH (
-        format = 'PARQUET'
+        --format = 'PARQUET'
+        format='ORC',
+        transactional=true
     );
 "
 

@@ -113,9 +113,7 @@ function create_users_and_roles {
             }"
         echo -e "\nCreated role ${roleName}"
     done
-}
 
-function create_policies {
     ## general access policies
 
     echo "Creating policy roles_policy..."
@@ -190,6 +188,9 @@ function create_policies {
             \"conditions\": []
         }"
     echo -e "\nCreated policy roles_policy"
+}
+
+function create_policies {
 
     ## specialistdoc policies
     echo "Creating policy mask_specialistdoc..."
