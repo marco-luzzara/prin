@@ -26,7 +26,7 @@ These roles are configured with different policies:
 -----------------------------------------------------------------
 | Role          | Anonymized fields                             |
 -----------------------------------------------------------------
-| specialistdoc | telefono                                      |
+| specialistdoc |                                               |
 |               |                                               |
 -----------------------------------------------------------------
 | researcher    | data_di_nascita, luogo_di_nascita, telefono,  |
@@ -424,7 +424,7 @@ function main {
     dpkg -s jq > /dev/null || { echo "Please first install jq"; exit 1; }
     
     create_users_and_roles
-    create_policies
+    # create_policies
 
     create_additional_services
 }
