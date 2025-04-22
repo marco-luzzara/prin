@@ -28,7 +28,7 @@ up: init
 	set -a && \
 	source ${ENV_FILE} && \
 	set +a && \
-	{ test -f hive/.hive_initialized && export SKIP_HIVE_SCHEMA_INIT=true; } && \
+	{ test -f hive/.hive_initialized && export SKIP_HIVE_SCHEMA_INIT=true || echo "Hive will initialize the schema..."; } && \
 	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up -d --build ${SERVICES}
 	touch hive/.hive_initialized
 
