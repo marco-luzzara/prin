@@ -37,6 +37,6 @@ up: init
 down:
 	docker compose down -v ${SERVICES}
 
-clean-all:
+clean-all: down
 	rm -r solr/data/ postgres/data/ atlas/data/ atlas/logs/
 	rm -f hive/.hive_initialized
