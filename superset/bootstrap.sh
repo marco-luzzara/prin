@@ -25,18 +25,18 @@ done
 
 # add trino database 
 # see APIs https://superset.apache.org/docs/api/
-ACCESS_TOKEN="$(curl 'http://localhost:8088/api/v1/security/login' -X POST -H 'Content-Type: application/json' --data-raw "{
+ACCESS_TOKEN="$(curl "http://localhost:${SUPERSET_PORT}/api/v1/security/login" -X POST -H 'Content-Type: application/json' --data-raw "{
     \"password\": \"$ADMIN_PASSWORD\",
     \"provider\": \"db\",
     \"refresh\": true,
     \"username\": \"$ADMIN_USERNAME\"
 }" 2> /dev/null | jq -rc '.access_token')"
 
-CSRF_TOKEN="$(curl -X GET "http://localhost:8088/api/v1/security/csrf_token/" -H "Content-Type: application/json" \
+CSRF_TOKEN="$(curl -X GET "http://localhost:${SUPERSET_PORT}/api/v1/security/csrf_token/" -H "Content-Type: application/json" \
     --cookie-jar superset/csrf_cookies.txt \
     -H "Authorization: Bearer $ACCESS_TOKEN" 2> /dev/null | jq -rc '.result')"
 
-curl 'http://localhost:8088/api/v1/database/' -X POST -H 'Content-Type: application/json' \
+curl "http://localhost:${SUPERSET_PORT}/api/v1/database/" -X POST -H 'Content-Type: application/json' \
     --cookie superset/csrf_cookies.txt \
     -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "X-CSRFToken: $CSRF_TOKEN" \

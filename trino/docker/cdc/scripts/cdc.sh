@@ -1,6 +1,7 @@
 #!/bin/bash
 
-END_TIMESTAMP=0
+# TODO: save the last used timestamp in a file, since the server might crash
+END_TIMESTAMP=$(test -s /cdc/data/latest_timestamp && cat /cdc/data/latest_timestamp || echo 0)
 RUN_SUCCESS=1
 while :
 do
@@ -48,6 +49,11 @@ do
 
         -- COMMIT;
     " && { echo "CDC Completed successfully"; RUN_SUCCESS=1; } || { echo "CDC process failed"; RUN_SUCCESS=0; }
+
+    if [[ $RUN_SUCCESS == 1 ]]
+    then
+        print "$END_TIMESTAMP" > /cdc/data/latest_timestamp
+    fi
 
     sleep "$FLUSH_DELAY_SECONDS"
 done

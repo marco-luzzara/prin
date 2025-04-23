@@ -9,7 +9,7 @@ COMPOSE_FILES_OPTIONS = $(foreach cf,$(STANDARD_COMPOSE_FILES) $(ADDITIONAL_COMP
 .PHONY: init up down clean-all
 
 init:
-	mkdir -p kafka/data0 minio/data solr/data postgres/data atlas/data atlas/logs
+	mkdir -p kafka/data0 minio/data solr/data postgres/data atlas/data atlas/logs trino/docker/cdc/data
 	chmod 777 solr/data
 
 	test -e ${ENV_FILE} || { echo "${ENV_FILE} file does not exist" ; exit 1; }

@@ -217,6 +217,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./trino/docker/cdc/scripts:/cdc/scripts
+      - ./trino/docker/cdc/data:/cdc/data
 
 # ----------------------------- RANGER -----------------------------
 
@@ -350,6 +351,6 @@ services:
       - ADMIN_USERNAME=${SUPERSET_ADMIN_USERNAME}
       - ADMIN_PASSWORD=${SUPERSET_ADMIN_PASSWORD}
       - ADMIN_EMAIL=admin@superset.com
-    # volumes:
-    #   - ./superset/bootstrap.sh:/bootstrap.sh
-    # entrypoint: ["/bootstrap.sh"]
+    volumes:
+      - ./superset/bootstrap.sh:/bootstrap.sh
+    entrypoint: ["/bootstrap.sh"]

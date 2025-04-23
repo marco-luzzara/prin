@@ -10,4 +10,8 @@ RUN <<EOF
     apt install -y jq
 EOF
 
+ENV ADMIN_USERNAME=admin
+ENV ADMIN_PASSWORD=admin
+ENV ADMIN_EMAIL=
+
 USER superset
