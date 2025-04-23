@@ -16,6 +16,6 @@ EOF
 ENV TRINO_ENDPOINT="http://trino:8080"
 ENV FLUSH_DELAY_SECONDS=15
 
-VOLUME /cdc/data/latest_timestamp
+VOLUME /cdc/data
 
 ENTRYPOINT ["bash", "-c", "./scripts/init.sh && ./scripts/cdc.sh"]

@@ -178,13 +178,13 @@ services:
       - "${TRINO_PORT}:8080"
     healthcheck:
       test: ["CMD-SHELL", "/usr/lib/trino/bin/health-check"]
-      interval: 5s
+      interval: 10s
       start_period: 2m
-      timeout: 10s
+      timeout: 5s
       retries: 10
     depends_on:
       ranger:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - ./trino/catalog:/etc/trino/catalog
       - ./trino/kafka-description-files:/etc/trino/kafka
@@ -234,6 +234,12 @@ services:
         condition: service_healthy
       ranger-solr:
         condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "http://localhost:6080", "--timeout", "5", "--spider", "--quiet"]
+      interval: 10s
+      start_period: 2m
+      timeout: 5s
+      retries: 10
     volumes:
       - ./ranger/install.properties:/opt/ranger/admin/install.properties
     environment:
