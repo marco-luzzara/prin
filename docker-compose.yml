@@ -235,7 +235,7 @@ services:
       ranger-solr:
         condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "http://localhost:6080", "--timeout", "5", "--spider", "--quiet"]
+      test: ["CMD-SHELL", "wget", "http://localhost:6080", "--timeout", "5", "--spider", "--quiet", "||", "exit 1"]
       interval: 10s
       start_period: 2m
       timeout: 5s
