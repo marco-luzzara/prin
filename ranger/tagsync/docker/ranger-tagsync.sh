@@ -30,6 +30,9 @@ then
   if ./setup.sh;
   then
     touch "${RANGER_HOME}"/.setupDone
+    # Missing dependency in the Uber jar of ranger-tagsync
+    wget -O "${RANGER_HOME}/ranger-2.6.0-tagsync/lib/guava-25.1-jre.jar" https://repo1.maven.org/maven2/com/google/guava/guava/25.1-jre/guava-25.1-jre.jar
+    chmod 755 "${RANGER_HOME}/ranger-2.6.0-tagsync/lib/guava-25.1-jre.jar"
   else
     echo "Ranger TagSync Setup Script didn't complete proper execution."
   fi
