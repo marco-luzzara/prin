@@ -1,5 +1,7 @@
 # Create TagSync Docker image
 
-Requirements: `ranger-base` docker image must be available locally and its version must be the same as the tagsync image version you want to create. See `../build-docker/README.md`.
+Dockerfiles have been [copied from the repo](https://github.com/apache/ranger/blob/release-ranger-2.6.0/dev-support/ranger-docker/Dockerfile.ranger-tagsync). Before building the image, download the tagsync package (inside the destination folder the current version is already present):
 
-Then modify the `Dockerfile.ranger-tagsync` in the ranger repo to allow configs customization through bind-mount volumes. See `ranger/tagsync/docker/Dockerfile`.
+```bash
+wget -O ./docker/ranger-2.6.0-tagsync.tar.gz https://downloads.apache.org/ranger/2.6.0/services/tagsync/ranger-2.6.0-tagsync.tar.gz
+```

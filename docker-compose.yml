@@ -215,6 +215,8 @@ services:
         condition: service_healthy
       kafka-init:
         condition: service_completed_successfully
+      atlas:
+        condition: service_healthy
     volumes:
       - ./trino/docker/cdc/scripts:/cdc/scripts
       - ./trino/docker/cdc/data:/cdc/data
@@ -237,7 +239,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "wget --timeout 5 --spider --quiet http://localhost:6080 || exit 1"]
       interval: 10s
-      start_period: 5m
+      start_period: 10m
       timeout: 5s
       retries: 10
     volumes:
@@ -276,21 +278,22 @@ services:
       timeout: 2s
       retries: 3
 
-  # ranger-tagsync:
-  #   build:
-  #     context: ranger/tagsync/docker
-  #     args:
-  #       - TAGSYNC_VERSION=${RANGER_VERSION}
-  #   image: ranger-tagsync
-  #   depends_on:
-  #     ranger:
-  #       condition: service_started
-  #   volumes:
-  #     - ./ranger/tagsync/configs/ranger-tagsync-install.properties:/opt/ranger/tagsync/install.properties
-  #     - ./ranger/tagsync/configs/ranger-tagsync-tags.json:/opt/ranger/tagsync/data/tags.json
-  #   environment:
-  #     - TAGSYNC_VERSION=${RANGER_VERSION}
-  #     - DEBUG_TAGSYNC=${DEBUG_TAGSYNC:-false}
+  ranger-tagsync:
+    build:
+      context: ranger/tagsync/docker
+      target: ranger-tagsync
+      args:
+        - TAGSYNC_VERSION=${RANGER_VERSION}
+    image: ranger-tagsync
+    depends_on:
+      ranger:
+        condition: service_healthy
+    volumes:
+      - ./ranger/tagsync/configs/ranger-tagsync-install.properties:/opt/ranger/tagsync/install.properties
+      - ./ranger/tagsync/configs/ranger-tagsync-tags.json:/opt/ranger/tagsync/data/tags.json
+    environment:
+      - TAGSYNC_VERSION=${RANGER_VERSION}
+      - DEBUG_TAGSYNC=${DEBUG_TAGSYNC:-false}
 
 # ----------------------------- ATLAS  -----------------------------
 ## https://hub.docker.com/r/sburn/apache-atlas

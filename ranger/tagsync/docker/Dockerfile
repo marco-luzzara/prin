@@ -14,9 +14,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ranger-base:latest
+# Copied from https://github.com/apache/ranger/blob/release-ranger-2.6.0/dev-support/ranger-docker/Dockerfile.ranger-base
 
-ARG TAGSYNC_VERSION
+ARG UBUNTU_VERSION=20.04
+FROM ubuntu:${UBUNTU_VERSION} AS ranger-base
+
+ARG TARGETARCH
+ARG RANGER_BASE_JAVA_VERSION=8
+ENV OS_NAME=UBUNTU
+
+# Install tzdata, Python, Java, python-requests
+RUN apt-get update && \
+    DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata vim\
+    python3 python3-pip openjdk-8-jdk openjdk-11-jdk openjdk-17-jdk bc iputils-ping ssh pdsh xmlstarlet && \
+    pip3 install apache-ranger && \
+    pip3 install requests
+
+# Set environment variables
+ENV JAVA_HOME=/usr/lib/jvm/java-${RANGER_BASE_JAVA_VERSION}-openjdk-${TARGETARCH}
+ENV RANGER_DIST=/home/ranger/dist
+ENV RANGER_SCRIPTS=/home/ranger/scripts
+ENV RANGER_HOME=/opt/ranger
+ENV PATH=/usr/java/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+RUN update-java-alternatives --set /usr/lib/jvm/java-1.${RANGER_BASE_JAVA_VERSION}.0-openjdk-${TARGETARCH}
+
+# setup groups, users, directories
+RUN groupadd ranger && \
+    useradd -g ranger -ms /bin/bash ranger && \
+    useradd -g ranger -ms /bin/bash rangeradmin && \
+    useradd -g ranger -ms /bin/bash rangerusersync && \
+    useradd -g ranger -ms /bin/bash rangertagsync && \
+    useradd -g ranger -ms /bin/bash rangerkms && \
+    groupadd hadoop && \
+    useradd -g hadoop -ms /bin/bash hdfs && \
+    useradd -g hadoop -ms /bin/bash yarn && \
+    useradd -g hadoop -ms /bin/bash hive && \
+    useradd -g hadoop -ms /bin/bash hbase && \
+    useradd -g hadoop -ms /bin/bash kafka && \
+    useradd -g hadoop -ms /bin/bash ozone && \
+    groupadd knox && \
+    useradd -g knox -ms /bin/bash knox && \
+    mkdir -p /home/ranger/dist && \
+    mkdir -p /home/ranger/scripts && \
+    chown -R ranger:ranger /home/ranger && \
+    mkdir -p /opt/ranger && \
+    chown -R ranger:ranger /opt/ranger
+
+ENTRYPOINT [ "/bin/bash" ]
+
+FROM ranger-base AS ranger-tagsync
+
+ARG TAGSYNC_VERSION=2.6.0
 
 # COPY ./dist/version                                  /home/ranger/dist/
 COPY ./ranger-${TAGSYNC_VERSION}-tagsync.tar.gz /home/ranger/dist/
