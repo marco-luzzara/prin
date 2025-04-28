@@ -17,9 +17,6 @@ Initialize Ranger with 4 roles and 2 users per role:
 | careworker    | careworker_user1      | Careworker_user1      |
 |               | careworker_user2      | Careworker_user2      |
 -----------------------------------------------------------------
-| nurse         | nurse_user1           | Nurse_user1           |
-|               | nurse_user2           | Nurse_user2           |
------------------------------------------------------------------
 
 These roles are configured with different policies:
 
@@ -29,15 +26,11 @@ These roles are configured with different policies:
 | specialistdoc |                                               |
 |               |                                               |
 -----------------------------------------------------------------
-| researcher    | data_di_nascita, luogo_di_nascita, telefono,  |
-|               | prima_visita, data_diagnosi                   |
------------------------------------------------------------------
-| careworker    | luogo_di_nascita, telefono, a, t, n           |
+| researcher    | first_visit, diagnose_date                    |
 |               |                                               |
 -----------------------------------------------------------------
-| nurse         | data_di_nascita, luogo_di_nascita, telefono,  |
-|               | egfr, prima_visita, data_diagnosi, patologia, |
-|               | a, t, n                                       |
+| careworker    | iadl, egfr                                    |
+|               |                                               |
 -----------------------------------------------------------------
 
 It also creates the Atlas service.
@@ -62,7 +55,7 @@ function _get_policy_resource {
             \"values\": [\"default\"]
         },
         \"table\": {
-            \"values\": [\"patient_records\"]
+            \"values\": [\"patients\"]
         },
         \"column\": {
             \"values\": [\"$1\"]
@@ -71,7 +64,7 @@ function _get_policy_resource {
 }
 
 function create_users_and_roles {
-    for roleName in "specialistdoc" "researcher" "careworker" "nurse"
+    for roleName in "specialistdoc" "researcher" "careworker"
     do
         # create 2 users per role
         for i in 1 2
@@ -113,9 +106,29 @@ function create_users_and_roles {
             }"
         echo -e "\nCreated role ${roleName}"
     done
+}
+
+function create_policies {
+    # Policy examples:
+    # - custom policy using a trino UDF
+        # \"dataMaskInfo\": {
+        #     \"dataMaskType\": \"CUSTOM\",
+        #     \"valueExpr\": \"show_first_and_last({col})\"
+        # }
+    # - fields are nullified
+        # \"dataMaskInfo\": {
+        #     \"dataMaskType\":\"MASK_NULL\"
+        # }
+    # - fields are hashed
+        # \"dataMaskInfo\": {
+        #     \"dataMaskType\": \"MASK_HASH\"
+        # }
+    # - only year is shown in date fields
+        # \"dataMaskInfo\": {
+        #     \"dataMaskType\": \"MASK_DATE_SHOW_YEAR\"
+        # }
 
     ## general access policies
-
     echo "Creating policy roles_policy..."
     curl -X 'POST' "$ENDPOINT/service/plugins/policies" \
         -H 'accept: application/json' \
@@ -188,12 +201,228 @@ function create_users_and_roles {
             \"conditions\": []
         }"
     echo -e "\nCreated policy roles_policy"
-}
 
-function create_policies {
+    # atlas tag-based policy
+    echo "Creating tag_based_policy..."
+    curl -X 'POST' "$ENDPOINT/service/plugins/policies" \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -u "$CREDENTIALS" \
+        -d "{
+            \"allowExceptions\": [],
+            \"policyItems\": [
+                {
+                    \"accesses\": [
+                        {
+                            \"type\": \"type-create\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"type-delete\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"type-read\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"type-update\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"entity-read\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"entity-create\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"entity-update\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"entity-delete\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"admin-purge\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"admin-import\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"admin-export\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"admin-audits\",
+                            \"isAllowed\": true
+                        }
+                    ],
+                    \"roles\": [
+                        \"specialistdoc\",
+                        \"researcher\",
+                        \"careworker\"
+                    ]
+                }
+            ],
+            \"denyPolicyItems\": [],
+            \"denyExceptions\": [],
+            \"dataMaskPolicyItems\": [],
+            \"rowFilterPolicyItems\": [],
+            \"description\": \"\",
+            \"isAuditEnabled\": true,
+            \"isDenyAllElse\": false,
+            \"isEnabled\": true,
+            \"name\": \"tag_based_policy\",
+            \"policyLabels\": [],
+            \"policyPriority\": \"0\",
+            \"policyType\": \"0\",
+            \"service\": \"dev_atlas\",
+            \"resources\": {
+                \"type-category\": {
+                    \"values\": [\"*\"],
+                    \"isExcludes\": false
+                },
+                \"type\": {
+                    \"values\": [\"*\"],
+                    \"isExcludes\": false
+                }
+            },
+            \"additionalResources\": [
+                {
+                    \"entity-type\": {
+                        \"values\": [\"*\"],
+                        \"isExcludes\": false
+                    },
+                    \"entity-classification\": {
+                        \"values\": [\"*\"],
+                        \"isExcludes\": false
+                    },
+                    \"entity\": {
+                        \"values\": [\"*\"],
+                        \"isExcludes\": false
+                    }
+                },
+                {
+                    \"atlas-service\": {
+                        \"values\": [\"atlas-service\"],
+                        \"isExcludes\": false
+                    }
+                }
+            ],
+            \"conditions\": []
+        }"
+    echo -e "\nCreated tag_based_policy"
 
-    ## specialistdoc policies
-    echo "Creating policy mask_specialistdoc..."
+    echo "Creating policy allow_access_TEST_CLASS..."
+    curl -X 'POST' "$ENDPOINT/service/plugins/policies" \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -u "$CREDENTIALS" \
+        -d "{
+            \"allowExceptions\": [],
+            \"policyItems\": [
+                {
+                    \"accesses\": [
+                        {
+                            \"type\": \"trino:select\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:insert\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:create\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:drop\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:delete\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:use\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:alter\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:grant\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:revoke\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:show\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:impersonate\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:all\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:execute\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:read_sysinfo\",
+                            \"isAllowed\": true
+                        },
+                        {
+                            \"type\": \"trino:write_sysinfo\",
+                            \"isAllowed\": true
+                        }
+                    ],
+                    \"roles\": [
+                        \"specialistdoc\",
+                        \"researcher\",
+                        \"careworker\"
+                    ],
+                    \"conditions\": []
+                }
+            ],
+            \"denyPolicyItems\": [],
+            \"denyExceptions\": [],
+            \"dataMaskPolicyItems\": [],
+            \"rowFilterPolicyItems\": [],
+            \"description\": \"\",
+            \"isAuditEnabled\": true,
+            \"isDenyAllElse\": false,
+            \"isEnabled\": true,
+            \"name\": \"allow_access_TEST_CLASS\",
+            \"policyLabels\": [],
+            \"policyPriority\": \"0\",
+            \"policyType\": \"0\",
+            \"service\": \"dev_tag\",
+            \"resources\": {
+                \"tag\": {
+                    \"values\": [
+                        \"TEST_CLASS\"
+                    ]
+                }
+            },
+            \"additionalResources\": [],
+            \"conditions\": []
+        }"
+    echo -e "\nCreated policy allow_access_TEST_CLASS"
+
+    echo "Creating policy mask_TEST_CLASS ..."
     curl -X 'POST' "$ENDPOINT/service/plugins/policies" \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
@@ -207,14 +436,17 @@ function create_policies {
                 {
                     \"accesses\": [
                         {
-                            \"type\":\"select\",
-                            \"isAllowed\":true
+                            \"type\": \"trino:select\",
+                            \"isAllowed\": true
                         }
                     ],
-                    \"roles\": [\"specialistdoc\"],
+                    \"roles\": [
+                        \"specialistdoc\",
+                        \"researcher\",
+                        \"careworker\"
+                    ],
                     \"dataMaskInfo\": {
-                        \"dataMaskType\": \"CUSTOM\",
-                        \"valueExpr\": \"show_first_and_last({col})\"
+                        \"dataMaskType\": \"trino:MASK_NULL\"
                     }
                 }
             ],
@@ -223,16 +455,22 @@ function create_policies {
             \"isAuditEnabled\": true,
             \"isDenyAllElse\": false,
             \"isEnabled\": true,
-            \"name\": \"mask_specialistdoc\",
+            \"name\": \"mask_TEST_CLASS\",
             \"policyLabels\": [],
             \"policyPriority\": \"0\",
             \"policyType\": \"1\",
-            \"service\": \"dev_trino\", 
-            \"resources\": $(_get_policy_resource "telefono"),
+            \"service\": \"dev_tag\",
+            \"resources\": {
+                \"tag\": {
+                    \"values\": [
+                        \"TEST_CLASS\"
+                    ]
+                }
+            },
             \"additionalResources\": [],
-            \"conditions\":[]
+            \"conditions\": []
         }"
-    echo -e "\nCreated policy mask_specialistdoc"
+    echo -e "\nCreated policy mask_TEST_CLASS"
 
     ## researcher policies
     echo "Creating policy mask_researcher..."
@@ -255,7 +493,7 @@ function create_policies {
                     ],
                     \"roles\": [\"researcher\"],
                     \"dataMaskInfo\": {
-                        \"dataMaskType\":\"MASK_NULL\"
+                        \"dataMaskType\":\"MASK_DATE_SHOW_YEAR\"
                     }
                 }
             ],
@@ -271,10 +509,8 @@ function create_policies {
             \"service\": \"dev_trino\", 
             \"resources\": $(_get_policy_resource "data_di_nascita"),
             \"additionalResources\": [
-                $(_get_policy_resource "luogo_di_nascita"),
-                $(_get_policy_resource "telefono"),
-                $(_get_policy_resource "prima_visita"),
-                $(_get_policy_resource "data_diagnosi")
+                $(_get_policy_resource "first_visit"),
+                $(_get_policy_resource "diagnose_date")
             ],
             \"conditions\":[]
         }"
@@ -317,70 +553,17 @@ function create_policies {
             \"service\": \"dev_trino\", 
             \"resources\": $(_get_policy_resource "luogo_di_nascita"),
             \"additionalResources\": [
-                $(_get_policy_resource "telefono"),
-                $(_get_policy_resource "a"),
-                $(_get_policy_resource "t"),
-                $(_get_policy_resource "n")
+                $(_get_policy_resource "iadl"),
+                $(_get_policy_resource "egfr")
             ],
             \"conditions\":[]
         }"
     echo -e "\nCreated policy mask_careworker"
-
-    ## nurse policies
-    echo "Creating policy mask_nurse..."
-    curl -X 'POST' "$ENDPOINT/service/plugins/policies" \
-        -H 'accept: application/json' \
-        -H 'Content-Type: application/json' \
-        -u "$CREDENTIALS" \
-        -d "{
-            \"allowExceptions\": [],
-            \"policyItems\": [],
-            \"denyPolicyItems\": [],
-            \"denyExceptions\": [],
-            \"dataMaskPolicyItems\": [
-                {
-                    \"accesses\": [
-                        {
-                            \"type\":\"select\",
-                            \"isAllowed\":true
-                        }
-                    ],
-                    \"roles\": [\"nurse\"],
-                    \"dataMaskInfo\": {
-                        \"dataMaskType\":\"MASK_NULL\"
-                    }
-                }
-            ],
-            \"rowFilterPolicyItems\": [],
-            \"description\": \"\",
-            \"isAuditEnabled\": true,
-            \"isDenyAllElse\": false,
-            \"isEnabled\": true,
-            \"name\": \"mask_nurse\",
-            \"policyLabels\": [],
-            \"policyPriority\": \"0\",
-            \"policyType\": \"1\",
-            \"service\": \"dev_trino\", 
-            \"resources\": $(_get_policy_resource "data_di_nascita"),
-            \"additionalResources\": [
-                $(_get_policy_resource "luogo_di_nascita"),
-                $(_get_policy_resource "telefono"),
-                $(_get_policy_resource "egfr"),
-                $(_get_policy_resource "prima_visita"),
-                $(_get_policy_resource "data_diagnosi"),
-                $(_get_policy_resource "patologia"),
-                $(_get_policy_resource "a"),
-                $(_get_policy_resource "t"),
-                $(_get_policy_resource "n")
-            ],
-            \"conditions\":[]
-        }"
-    echo -e "\nCreated policy mask_nurse"
 }
 
 function create_additional_services {
     # update trino service
-    TRINO_SERVICE_ID=$(curl -X 'GET' "$ENDPOINT/service/plugins/services/name/dev_trino" \
+    TRINO_SERVICE_ID=$(curl -s -X 'GET' "$ENDPOINT/service/plugins/services/name/dev_trino" \
         -H 'accept: application/json' \
         -u "$CREDENTIALS" | jq -r '.id')
     
@@ -425,7 +608,7 @@ function main {
     dpkg -s jq > /dev/null || { echo "Please first install jq"; exit 1; }
     
     create_users_and_roles
-    # create_policies
+    create_policies
 
     create_additional_services
 }
