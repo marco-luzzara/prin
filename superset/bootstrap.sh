@@ -41,18 +41,76 @@ curl "http://localhost:${SUPERSET_PORT}/api/v1/database/" -X POST -H 'Content-Ty
     -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "X-CSRFToken: $CSRF_TOKEN" \
     --data-raw '{
-    "database_name": "Trino",
-    "engine": "trino",
-    "configuration_method": "sqlalchemy_form",
-    "engine_information": {
-        "disable_ssh_tunneling": false,
-        "supports_file_upload": true
-    },
-    "sqlalchemy_uri_placeholder": "engine+driver://user:password@host:port/dbname[?key=value&key=value...]",
-    "extra": "{\"allows_virtual_table_explore\":true}",
-    "expose_in_sqllab": true,
-    "sqlalchemy_uri": "trino://trino@trino:8080/hive"
-}'
+        "database_name": "Trino",
+        "engine": "trino",
+        "configuration_method": "sqlalchemy_form",
+        "engine_information": {
+            "disable_ssh_tunneling": false,
+            "supports_dynamic_catalog": true,
+            "supports_file_upload": true
+        },
+        "sqlalchemy_uri_placeholder": "engine+driver://user:password@host:port/dbname[?key=value&key=value...]",
+        "extra": "{\"allows_virtual_table_explore\":true}",
+        "expose_in_sqllab": true,
+        "sqlalchemy_uri": "trino://trino@trino:8080/hive"
+    }'
+
+curl "http://localhost:${SUPERSET_PORT}/api/v1/database/" -X POST -H 'Content-Type: application/json' \
+    --cookie superset/csrf_cookies.txt \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -H "X-CSRFToken: $CSRF_TOKEN" \
+    --data-raw '{
+        "database_name": "Trino (specialistdoc_user1)",
+        "engine": "trino",
+        "configuration_method": "sqlalchemy_form",
+        "engine_information": {
+            "disable_ssh_tunneling": false,
+            "supports_dynamic_catalog": true,
+            "supports_file_upload": true
+        },
+        "sqlalchemy_uri_placeholder": "engine+driver://user:password@host:port/dbname[?key=value&key=value...]",
+        "extra": "{\"allows_virtual_table_explore\":true}",
+        "expose_in_sqllab": true,
+        "sqlalchemy_uri": "trino://specialistdoc_user1@trino:8080/hive"
+    }'
+
+curl "http://localhost:${SUPERSET_PORT}/api/v1/database/" -X POST -H 'Content-Type: application/json' \
+    --cookie superset/csrf_cookies.txt \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -H "X-CSRFToken: $CSRF_TOKEN" \
+    --data-raw '{
+        "database_name": "Trino (researcher_user1)",
+        "engine": "trino",
+        "configuration_method": "sqlalchemy_form",
+        "engine_information": {
+            "disable_ssh_tunneling": false,
+            "supports_dynamic_catalog": true,
+            "supports_file_upload": true
+        },
+        "sqlalchemy_uri_placeholder": "engine+driver://user:password@host:port/dbname[?key=value&key=value...]",
+        "extra": "{\"allows_virtual_table_explore\":true}",
+        "expose_in_sqllab": true,
+        "sqlalchemy_uri": "trino://researcher_user1@trino:8080/hive"
+    }'
+
+curl "http://localhost:${SUPERSET_PORT}/api/v1/database/" -X POST -H 'Content-Type: application/json' \
+    --cookie superset/csrf_cookies.txt \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -H "X-CSRFToken: $CSRF_TOKEN" \
+    --data-raw '{
+        "database_name": "Trino (careworker_user1)",
+        "engine": "trino",
+        "configuration_method": "sqlalchemy_form",
+        "engine_information": {
+            "disable_ssh_tunneling": false,
+            "supports_dynamic_catalog": true,
+            "supports_file_upload": true
+        },
+        "sqlalchemy_uri_placeholder": "engine+driver://user:password@host:port/dbname[?key=value&key=value...]",
+        "extra": "{\"allows_virtual_table_explore\":true}",
+        "expose_in_sqllab": true,
+        "sqlalchemy_uri": "trino://careworker_user1@trino:8080/hive"
+    }'
 
 rm superset/csrf_cookies.txt
 

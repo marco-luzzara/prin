@@ -507,9 +507,8 @@ function create_policies {
             \"policyPriority\": \"0\",
             \"policyType\": \"1\",
             \"service\": \"dev_trino\", 
-            \"resources\": $(_get_policy_resource "data_di_nascita"),
+            \"resources\": $(_get_policy_resource "first_visit"),
             \"additionalResources\": [
-                $(_get_policy_resource "first_visit"),
                 $(_get_policy_resource "diagnose_date")
             ],
             \"conditions\":[]
@@ -537,7 +536,7 @@ function create_policies {
                     ],
                     \"roles\": [\"careworker\"],
                     \"dataMaskInfo\": {
-                        \"dataMaskType\": \"MASK_HASH\"
+                        \"dataMaskType\": \"MASK_NULL\"
                     }
                 }
             ],
@@ -551,9 +550,8 @@ function create_policies {
             \"policyPriority\": \"0\",
             \"policyType\": \"1\",
             \"service\": \"dev_trino\", 
-            \"resources\": $(_get_policy_resource "luogo_di_nascita"),
+            \"resources\": $(_get_policy_resource "iadl"),
             \"additionalResources\": [
-                $(_get_policy_resource "iadl"),
                 $(_get_policy_resource "egfr")
             ],
             \"conditions\":[]
