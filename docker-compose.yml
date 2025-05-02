@@ -189,6 +189,7 @@ services:
       - ./trino/catalog:/etc/trino/catalog
       - ./trino/kafka-description-files:/etc/trino/kafka
       - ./trino/configs/config.properties:/etc/trino/config.properties
+      - ./trino/configs/log.properties:/etc/trino/log.properties
       - ./trino/configs/password-authenticator.properties:/etc/trino/password-authenticator.properties
       - ./trino/configs/password.db:/etc/trino/sec-conf/password.db
       - ./trino/https/server.pem:/etc/trino/sec-conf/server.pem
