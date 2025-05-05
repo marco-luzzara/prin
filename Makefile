@@ -9,7 +9,7 @@ COMPOSE_FILES_OPTIONS = $(foreach cf,$(STANDARD_COMPOSE_FILES) $(ADDITIONAL_COMP
 .PHONY: init up down clean-all
 
 init:
-	mkdir -p kafka/data0 minio/data solr/data postgres/data atlas/data atlas/logs trino/docker/cdc/data
+	mkdir -p kafka/data0 minio/data solr/data postgres/data atlas/data atlas/logs trino/docker/cdc/data superset/data
 	chmod 777 solr/data
 
 	test -e ${ENV_FILE} || { echo "${ENV_FILE} file does not exist" ; exit 1; }
@@ -38,5 +38,5 @@ down:
 	docker compose down -v ${SERVICES}
 
 clean-all: down
-	rm -r solr/data/ postgres/data/ atlas/data/ atlas/logs/
+	rm -r solr/data/ postgres/data/ atlas/data/ atlas/logs/ superset/data
 	rm -f hive/.hive_initialized

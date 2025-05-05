@@ -309,7 +309,7 @@ function create_policies {
                 },
                 {
                     \"atlas-service\": {
-                        \"values\": [\"atlas-service\"],
+                        \"values\": [\"*\"],
                         \"isExcludes\": false
                     }
                 }
@@ -394,7 +394,12 @@ function create_policies {
                         \"researcher\",
                         \"careworker\"
                     ],
-                    \"conditions\": []
+                    \"conditions\": [
+                        {
+                            \"type\": \"expression\", 
+                            \"values\": [\"val = 100\"]
+                        }
+                    ]
                 }
             ],
             \"denyPolicyItems\": [],
@@ -444,6 +449,12 @@ function create_policies {
                         \"specialistdoc\",
                         \"researcher\",
                         \"careworker\"
+                    ],
+                    \"conditions\": [
+                        {
+                            \"type\": \"expression\",
+                            \"values\": [\"val = 100\"]
+                        }
                     ],
                     \"dataMaskInfo\": {
                         \"dataMaskType\": \"trino:MASK_NULL\"
