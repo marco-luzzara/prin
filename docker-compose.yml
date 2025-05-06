@@ -295,6 +295,9 @@ services:
     environment:
       - TAGSYNC_VERSION=${RANGER_VERSION}
       - DEBUG_TAGSYNC=${DEBUG_TAGSYNC:-false}
+      - TRINO_SERVICE_NAME=dev_trino
+      - TRINO_CATALOG_NAME=hive
+      - TRINO_SCHEMA_NAME=default
 
 # ----------------------------- ATLAS  -----------------------------
 ## https://hub.docker.com/r/sburn/apache-atlas

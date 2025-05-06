@@ -98,6 +98,8 @@ RUN <<EOF
     chmod 744 ${RANGER_SCRIPTS}/ranger-tagsync.sh
 EOF
 
+COPY ./ranger-tagsync-extension-${TAGSYNC_VERSION}.jar /opt/ranger/ranger-${TAGSYNC_VERSION}-tagsync/dist/
+
 USER ranger
 
 ENTRYPOINT [ "/home/ranger/scripts/ranger-tagsync.sh" ]

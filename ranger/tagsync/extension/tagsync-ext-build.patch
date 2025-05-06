@@ -1,0 +1,142 @@
+diff --git a/dev-support/ranger-docker/.env b/dev-support/ranger-docker/.env
+index e3dc419..040d42d 100644
+--- a/dev-support/ranger-docker/.env
++++ b/dev-support/ranger-docker/.env
+@@ -2,8 +2,8 @@ BUILD_HOST_SRC=true
+ SKIPTESTS=true
+ GIT_URL=https://github.com/apache/ranger.git
+ BRANCH=ranger-2.6
+-PROFILE=
+-BUILD_OPTS=
++PROFILE=tagsync-extension
++BUILD_OPTS="-Denunciate.skip=true -pl tagsync-extension -am"
+ 
+ # To build Trino plugins package, use following PROFILE
+ # PROFILE=ranger-jdk11,!all,!linux
+diff --git a/dev-support/ranger-docker/scripts/ranger-build.sh b/dev-support/ranger-docker/scripts/ranger-build.sh
+index 4f60780..ba658fe 100755
+--- a/dev-support/ranger-docker/scripts/ranger-build.sh
++++ b/dev-support/ranger-docker/scripts/ranger-build.sh
+@@ -84,6 +84,7 @@ else
+   done
+ fi
+ 
++echo "mvn ${ARG_PROFILES} ${BUILD_OPTS} ${ARG_SKIPTESTS} -DskipDocs clean package"
+ mvn ${ARG_PROFILES} ${BUILD_OPTS} ${ARG_SKIPTESTS} -DskipDocs clean package
+ 
+ mv -f target/version /home/ranger/dist/
+diff --git a/pom.xml b/pom.xml
+index 344dadb..85664c7 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -885,6 +885,12 @@
+                 <module>ugsync-util</module>
+             </modules>
+         </profile>
++        <profile>
++            <id>tagsync-extension</id>
++            <modules>
++                <module>tagsync-extension</module>
++            </modules>
++        </profile>
+         <profile>
+             <id>ranger-hdfs-plugin</id>
+             <modules>
+diff --git a/ranger_in_docker b/ranger_in_docker
+index 99089f8..dcdc2d1 100755
+--- a/ranger_in_docker
++++ b/ranger_in_docker
+@@ -68,7 +68,8 @@ else
+     DB_SERVICE_NAME="ranger-${RANGER_DB_TYPE}"
+ fi
+ 
+-CORE_SERVICES="ranger-base,ranger,${DB_SERVICE_NAME},ranger-usersync"
++#CORE_SERVICES="ranger-base,ranger,${DB_SERVICE_NAME},ranger-usersync"
++CORE_SERVICES="ranger-base,ranger"
+ 
+ if [ -z "${ENABLED_RANGER_SERVICES}" ]
+ then
+@@ -133,7 +134,7 @@ then
+     exit 1
+ fi
+ 
+-docker-compose --version > /dev/null 2>&1
++docker compose version > /dev/null 2>&1
+ 
+ if [ $? -ne 0 ]
+ then
+@@ -158,6 +159,7 @@ fi
+ 
+ build_ranger=0
+ build_base_image=0
++RANGER_REBUILD=1
+ 
+ cd ${RD_HOME}
+ 
+@@ -199,8 +201,8 @@ then
+ 
+     if [ ${build_base_image} -eq 1 ]
+     then
+-        echo "+ docker-compose -f docker-compose.ranger-base.yml build --no-cache"
+-        docker-compose -f docker-compose.ranger-base.yml build --no-cache
++        echo "+ docker compose -f docker-compose.ranger-base.yml build"
++        docker compose -f docker-compose.ranger-base.yml build
+     fi
+ 
+     if [ ${build_ranger} -eq 1 ]
+@@ -209,11 +211,11 @@ then
+         then
+             cd ${RD_HOME}
+ 
+-            echo "+ docker-compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml down --remove-orphans"
+-            docker-compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml down --remove-orphans
++            echo "+ docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml down --remove-orphans"
++            docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml down --remove-orphans
+ 
+-            echo "+ docker-compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up"
+-            docker-compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up
++            echo "+ docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up"
++            docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up --build
+             if [ $? -ne 0 ]
+             then
+                 echo "ERROR: Unable to complete RANGER build using DOCKER. Exiting ...."
+@@ -237,21 +239,21 @@ fi
+ 
+ cd ${RD_HOME}
+ 
+-docker-compose ${OPT} ${DOCKER_ACTION} ${DOCKER_COMPOSE_FLAGS}
+-
+-echo
+-echo "################### LIST OF DOCKER PROCESSES EXPOSING PORTS #####################"
+-echo
+-docker container ls --format "table {{.Names}}\t{{.Ports}}" -a | grep ranger | \
+-        grep -v '^$' | awk '{ for(i = 2 ; i <= NF; i++) { print $1, $i } }' | \
+-        grep  -- '->' | sed -e 's:,::g' | awk '{ s = $2 ; split(s,a, "->") ; f = split(a[1],b,":");  print $1, b[f] }' | \
+-        sort  | uniq | awk '{ printf("SERVICE: %25s ExposedPort: %10s\n", $1, $2 ) ; }'
+-echo
+-echo "###################################################################################"
+-echo
+-if [ "${DOCKER_ACTION}" == "up" ]
+-then
+-    echo
+-    echo "Now, You can run  access RANGER portal via http://localhost:6080 (admin/rangerR0cks!)"
+-    echo
+-fi
++# docker compose ${OPT} ${DOCKER_ACTION} ${DOCKER_COMPOSE_FLAGS}
++
++# echo
++# echo "################### LIST OF DOCKER PROCESSES EXPOSING PORTS #####################"
++# echo
++# docker container ls --format "table {{.Names}}\t{{.Ports}}" -a | grep ranger | \
++#         grep -v '^$' | awk '{ for(i = 2 ; i <= NF; i++) { print $1, $i } }' | \
++#         grep  -- '->' | sed -e 's:,::g' | awk '{ s = $2 ; split(s,a, "->") ; f = split(a[1],b,":");  print $1, b[f] }' | \
++#         sort  | uniq | awk '{ printf("SERVICE: %25s ExposedPort: %10s\n", $1, $2 ) ; }'
++# echo
++# echo "###################################################################################"
++# echo
++# if [ "${DOCKER_ACTION}" == "up" ]
++# then
++#     echo
++#     echo "Now, You can run  access RANGER portal via http://localhost:6080 (admin/rangerR0cks!)"
++#     echo
++# fi
