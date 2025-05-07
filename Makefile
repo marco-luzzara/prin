@@ -38,5 +38,5 @@ down:
 	docker compose down -v ${SERVICES}
 
 clean-all: down
-	rm -r solr/data/ postgres/data/ atlas/data/ atlas/logs/ superset/data
+	rm -rf kafka/data0 minio/data solr/data/ postgres/data/ atlas/data/ atlas/logs/ trino/docker/cdc/data superset/data
 	rm -f hive/.hive_initialized

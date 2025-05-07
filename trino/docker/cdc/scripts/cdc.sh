@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# TODO: save the last used timestamp in a file, since the server might crash
 END_TIMESTAMP=$(test -s /cdc/data/latest_timestamp && cat /cdc/data/latest_timestamp || echo 0)
 RUN_SUCCESS=1
 while :
@@ -23,7 +22,7 @@ do
         -- insert into history table of mir_results
         INSERT INTO hive.default.mir_results_history (owner_id, id, hsa_miR_1539, hsa_miR_6840_3p, hsa_miR_6836_3p, hsa_miR_4667_5p, hsa_miR_208a_5p, hsa_miR_6885_5p, hsa_miR_1306_5p, hsa_miR_3184_5p, hsa_miR_4649_5p, hsa_miR_6859_3p, hsa_miR_6829_3p, hsa_miR_3622a_3p, hsa_miR_4664_3p, hsa_miR_6776_3p, hsa_miR_135a_3p, hsa_miR_6875_5p, hsa_miR_3646, hsa_miR_3614_5p, hsa_miR_128_1_5p, hsa_miR_6813_3p, hsa_miR_6752_5p, hsa_miR_204_3p, hsa_miR_6806_5p, hsa_miR_1538, hsa_miR_6887_3p, hsa_miR_5088_3p, hsa_miR_6743_5p, hsa_miR_4274, hsa_miR_5585_3p, hsa_miR_4787_5p, hsa_miR_320b, hsa_miR_6870_3p, hsa_miR_199a_5p, hsa_miR_4290, hsa_miR_6721_5p, hsa_miR_4728_3p, hsa_miR_3691_5p, hsa_miR_4440, hsa_miR_874_3p, hsa_miR_27a_3p, hsa_miR_2278, hsa_miR_150_3p, hsa_miR_4716_3p, hsa_miR_211_5p, hsa_miR_125a_5p, hsa_miR_4741, hsa_miR_3122, hsa_miR_3180_5p, hsa_miR_574_3p, hsa_miR_150_5p, hsa_miR_133b, hsa_miR_30c_5p, hsa_miR_212_3p, hsa_miR_92b_3p, hsa_miR_504_3p, ath_miR_159a, upsert_at)
         SELECT owner_id, id, hsa_miR_1539, hsa_miR_6840_3p, hsa_miR_6836_3p, hsa_miR_4667_5p, hsa_miR_208a_5p, hsa_miR_6885_5p, hsa_miR_1306_5p, hsa_miR_3184_5p, hsa_miR_4649_5p, hsa_miR_6859_3p, hsa_miR_6829_3p, hsa_miR_3622a_3p, hsa_miR_4664_3p, hsa_miR_6776_3p, hsa_miR_135a_3p, hsa_miR_6875_5p, hsa_miR_3646, hsa_miR_3614_5p, hsa_miR_128_1_5p, hsa_miR_6813_3p, hsa_miR_6752_5p, hsa_miR_204_3p, hsa_miR_6806_5p, hsa_miR_1538, hsa_miR_6887_3p, hsa_miR_5088_3p, hsa_miR_6743_5p, hsa_miR_4274, hsa_miR_5585_3p, hsa_miR_4787_5p, hsa_miR_320b, hsa_miR_6870_3p, hsa_miR_199a_5p, hsa_miR_4290, hsa_miR_6721_5p, hsa_miR_4728_3p, hsa_miR_3691_5p, hsa_miR_4440, hsa_miR_874_3p, hsa_miR_27a_3p, hsa_miR_2278, hsa_miR_150_3p, hsa_miR_4716_3p, hsa_miR_211_5p, hsa_miR_125a_5p, hsa_miR_4741, hsa_miR_3122, hsa_miR_3180_5p, hsa_miR_574_3p, hsa_miR_150_5p, hsa_miR_133b, hsa_miR_30c_5p, hsa_miR_212_3p, hsa_miR_92b_3p, hsa_miR_504_3p, ath_miR_159a, _timestamp 
-        FROM kafka.devprin.patients
+        FROM kafka.devprin.\"mir-results\"
         WHERE _timestamp >= from_unixtime($START_TIMESTAMP) AND _timestamp < from_unixtime($END_TIMESTAMP);
 
         -- READ UNCOMMITTED should be enough because we do not allow updates (only inserts) and we limit the results using the time interval
@@ -64,7 +63,7 @@ do
 
     if [[ $RUN_SUCCESS == 1 ]]
     then
-        print "$END_TIMESTAMP" > /cdc/data/latest_timestamp
+        printf "$END_TIMESTAMP" > /cdc/data/latest_timestamp
     fi
 
     sleep "$FLUSH_DELAY_SECONDS"
