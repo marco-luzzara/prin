@@ -617,6 +617,13 @@ function main {
     dpkg -s jq > /dev/null || { echo "Please first install jq"; exit 1; }
     
     create_users_and_roles
+
+    # TODO: an additional row-level filtering policy for the group (which could be the project owner), but
+    # the policy 
+    # ${{UGNAMES}} = '[ "' || owner_id || '" ]'
+    # does not work because of 
+    # trino error: Cannot invoke "javax.script.ScriptEngine.createBindings()" because "scriptEngine" is null
+    # Should be fixed in ranger 2.7: https://issues.apache.org/jira/browse/RANGER-5174
     create_policies
 
     create_additional_services

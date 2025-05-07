@@ -14,7 +14,7 @@
 
   <property>
     <name>ranger.plugin.trino.use.rangerGroups</name>
-    <value>false</value>
+    <value>true</value>
     <description>Boolean flag to specify whether user-to-groups mapping should be obtained from in Apache Ranger. Default: false</description>
   </property>
 

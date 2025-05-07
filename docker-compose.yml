@@ -344,7 +344,21 @@ services:
   #       condition: service_healthy
   #   volumes:
   #     - ./hue/hue.ini:/usr/share/hue/desktop/conf/hue.ini
-  
+
+# ----------------------------- MODEL INFERENCE -----------------------------
+  model-inference:
+    build:
+      context: ./model-inference
+    image: model-inference
+    depends_on:
+      trino:
+        condition: service_healthy
+    environment:
+      - TRINO_USER=trino
+      - TRINO_ENDPOINT=trino:8080
+      - TRINO_CATALOG=hive
+      - TRINO_SCHEMA=default
+
 # ----------------------------- SUPERSET -----------------------------
 ## https://hub.docker.com/r/apache/superset
 

@@ -71,10 +71,10 @@ services:
       - without-visualization
       - complete
 
-  # ranger-tagsync:
-  #   profiles:
-  #     - without-visualization
-  #     - complete
+  ranger-tagsync:
+    profiles:
+      - without-visualization
+      - complete
 
 # ----------------------------- ATLAS  -----------------------------
 
@@ -82,11 +82,6 @@ services:
     profiles:
       - without-visualization
       - complete
-
-# ----------------------------- HUE -----------------------------
-  # hue:
-  #   profiles:
-  #     - complete
 
 # ----------------------------- SUPERSET -----------------------------
   superset:
