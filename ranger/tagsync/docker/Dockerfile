@@ -98,7 +98,7 @@ RUN <<EOF
     chmod 744 ${RANGER_SCRIPTS}/ranger-tagsync.sh
 EOF
 
-COPY ./ranger-tagsync-extension-${TAGSYNC_VERSION}.jar /opt/ranger/ranger-${TAGSYNC_VERSION}-tagsync/dist/
+COPY --chown=ranger:ranger --chmod=755 ./ranger-tagsync-extension-${TAGSYNC_VERSION}.jar /opt/ranger/ranger-${TAGSYNC_VERSION}-tagsync/dist/
 
 USER ranger
 
