@@ -162,6 +162,7 @@ cython_debug/
 # custom
 todo
 
+trino/docker/cdc/data/
 postgres/data/
 solr/data
 minio/data/

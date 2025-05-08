@@ -181,6 +181,30 @@ Hive runs the schema initialization script every time it starts, unless the env 
 - is created/updated after a `docker compose up`
 - is deleted after running `make clean-all`. If you do not need a complete clean, do not execute it.
 
+It might happen that the schema initialization step fails during the Metastore startup. Even if it depends on the `ranger-db` service health, it unexpectedly throws with a failure connection error. Just restart the `hive-metastore` container and should work.
+
+---
+
+## Atlas
+
+To import Hive columns in Atlas:
+
+```bash
+docker compose exec -it --user root hive-metastore bash
+./import-hive.sh
+
+# Username: admin
+# Password: admin
+
+```
+
+Then exit from the container and run the atlas initialization script:
+
+```bash
+./atlas/initialize.sh --endpoint http://localhost:21000 --credentials "admin:admin"
+```
+
+
 ## Issues
 
 ### Cannot retrieve Metadata from Ranger

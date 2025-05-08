@@ -19,6 +19,7 @@ EOF
 function main {
     dpkg -s jq > /dev/null || { echo "Please first install jq"; exit 1; }
 
+    # create classification
     curl -X 'POST' "$ENDPOINT/api/atlas/v2/types/typedefs?type=classification" \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
@@ -54,6 +55,7 @@ function main {
         -u "$CREDENTIALS" | jq -r '.searchResults.entities[0].guid' \
     )"
     
+    # assign tag to age with val = 100
     curl -X 'POST' "$ENDPOINT/api/atlas/v2/entity/bulk/classification" \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \

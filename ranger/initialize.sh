@@ -152,7 +152,7 @@ function create_policies {
                             \"isAllowed\": true
                         }
                     ],
-                    \"roles\": [\"specialistdoc\", \"researcher\", \"careworker\", \"nurse\"]
+                    \"roles\": [\"specialistdoc\", \"researcher\", \"careworker\"]
                 }
             ],
             \"denyPolicyItems\": [],
