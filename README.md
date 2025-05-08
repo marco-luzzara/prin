@@ -204,6 +204,23 @@ Then exit from the container and run the atlas initialization script:
 ./atlas/initialize.sh --endpoint http://localhost:21000 --credentials "admin:admin"
 ```
 
+---
+
+## Ranger
+
+Initialize ranger with:
+
+```bash
+./ranger/initialize.sh --endpoint http://localhost:6080 --credentials "admin:rangerR0cks!"
+```
+
+Then restart superset:
+
+```bash
+docker compose restart superset
+```
+
+---
 
 ## Issues
 

@@ -394,12 +394,7 @@ function create_policies {
                         \"researcher\",
                         \"careworker\"
                     ],
-                    \"conditions\": [
-                        {
-                            \"type\": \"expression\", 
-                            \"values\": [\"val = 100\"]
-                        }
-                    ]
+                    \"conditions\": []
                 }
             ],
             \"denyPolicyItems\": [],
@@ -450,12 +445,7 @@ function create_policies {
                         \"researcher\",
                         \"careworker\"
                     ],
-                    \"conditions\": [
-                        {
-                            \"type\": \"expression\",
-                            \"values\": [\"val = 100\"]
-                        }
-                    ],
+                    \"conditions\": [],
                     \"dataMaskInfo\": {
                         \"dataMaskType\": \"trino:MASK_NULL\"
                     }
