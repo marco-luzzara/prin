@@ -85,9 +85,9 @@ services:
       context: ./inference-scheduler
       dockerfile_inline: |
         FROM apache/kafka:3.7.2
+        # user root is necessary to use the docker socket
         USER root
         RUN apk add jq curl
-        USER appuser
     entrypoint: ["/scheduler/entrypoint.sh"]
     depends_on:
       kafka-init:

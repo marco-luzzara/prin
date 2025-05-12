@@ -5,7 +5,11 @@ function start_container {
         -d "{\"Image\": \"$INFERENCE_DOCKER_IMAGE\", \"Cmd\": [\"python\", \"main.py\"]}" \
         -X POST http://localhost/containers/create | jq -r '.Id')"
 
+    echo "$(date -u +"%Y-%m-%dT%H:%M:%S") - Inference container created"
+
     curl -s --unix-socket /var/run/docker.sock -X POST "http://localhost/containers/$CONTAINER_ID/start"
+
+    echo "$(date -u +"%Y-%m-%dT%H:%M:%S") - Inference container started"
 }
 
 /opt/kafka/bin/kafka-console-consumer.sh \
