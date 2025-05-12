@@ -16,7 +16,7 @@ def trigger_inference():
     processor = KafkaProcessor(current_app)
 
     current_app.logger.info(f'Sending notification for inference triggering...')
-    processor.consume("devprin.model-inference", current_app.config['OWNER_ID'], {})
+    processor.consume("devprin.model-inference", current_app.config['OWNER_ID'], { "trigger_type": 'manual' })
 
     current_app.logger.info(f'Notification for inference triggering sent')
     return ('', 204)

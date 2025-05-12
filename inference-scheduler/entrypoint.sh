@@ -5,7 +5,7 @@ function start_container {
         -d "{\"Image\": \"$INFERENCE_DOCKER_IMAGE\", \"Cmd\": [\"python\", \"main.py\"]}" \
         -X POST http://localhost/containers/create | jq -r '.Id')"
 
-    curl --unix-socket /var/run/docker.sock -X POST "http://localhost/containers/$CONTAINER_ID/start"
+    curl -s --unix-socket /var/run/docker.sock -X POST "http://localhost/containers/$CONTAINER_ID/start"
 }
 
 /opt/kafka/bin/kafka-console-consumer.sh \

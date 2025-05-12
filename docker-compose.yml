@@ -90,11 +90,11 @@ services:
         USER appuser
     entrypoint: ["/scheduler/entrypoint.sh"]
     depends_on:
-      kafka-broker-0:
-        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
     volumes:
       - ./inference-scheduler/entrypoint.sh:/scheduler/entrypoint.sh:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - KAFKA_BOOTSTRAP_SERVER=kafka-broker-0:9092
       - KAFKA_TOPIC_NAME=devprin.model-inference
