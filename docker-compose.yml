@@ -1,5 +1,6 @@
+# TODO: change to apache/kafka
 x-kafka-shared-image: &kafka-shared-image
-  image: 'bitnami/kafka:3.6.2'
+  image: bitnami/kafka:${KAFKA_VERSION}
 
 # cannot keep image and healtcheck together because the kafka-init does not need a healthcheck
 x-kafka-shared-healthcheck: &kafka-shared-healthcheck
@@ -70,7 +71,34 @@ services:
           --if-not-exists \
           --topic "devprin.mir-results" \
           --replication-factor=1 \
+          --bootstrap-server kafka-broker-0:9092 && \
+        kafka-topics.sh --create \
+          --if-not-exists \
+          --topic "devprin.model-inference" \
+          --replication-factor=1 \
           --bootstrap-server kafka-broker-0:9092 #,kafka-broker-1:9092
+
+# ----------------------------- INFERENCE SCHEDULER -----------------------------
+# TODO: align kafka version with KAFKA_VERSION (first, use image apache/kafka everywhere)
+  inference-scheduler:
+    build:
+      context: ./inference-scheduler
+      dockerfile_inline: |
+        FROM apache/kafka:3.7.2
+        USER root
+        RUN apk add jq curl
+        USER appuser
+    entrypoint: ["/scheduler/entrypoint.sh"]
+    depends_on:
+      kafka-broker-0:
+        condition: service_healthy
+    volumes:
+      - ./inference-scheduler/entrypoint.sh:/scheduler/entrypoint.sh:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - KAFKA_BOOTSTRAP_SERVER=kafka-broker-0:9092
+      - KAFKA_TOPIC_NAME=devprin.model-inference
+      - INFERENCE_DOCKER_IMAGE=model-inference
 
 # ----------------------------- HIVE METASTORE -----------------------------
 # https://github.com/naushadh/hive-metastore
@@ -246,7 +274,7 @@ services:
     volumes:
       - ./ranger/install.properties:/opt/ranger/admin/install.properties
     environment:
-      - DEBUG_ADMIN=${DEBUG_ADMIN:-false}
+      - DEBUG_ADMIN=${RANGER_DEBUG_ADMIN:-false}
       - RANGER_VERSION
       - RANGER_DB_TYPE=postgres
     command:
