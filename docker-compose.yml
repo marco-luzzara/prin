@@ -87,12 +87,12 @@ services:
         # user root is necessary to use the docker socket
         USER root
         RUN apk add jq curl
+        COPY . /scheduler/
     entrypoint: ["/scheduler/entrypoint.sh"]
     depends_on:
       kafka-init:
         condition: service_completed_successfully
     volumes:
-      - ./inference-scheduler/entrypoint.sh:/scheduler/entrypoint.sh:ro
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - KAFKA_BOOTSTRAP_SERVER=kafka-broker-0:9092

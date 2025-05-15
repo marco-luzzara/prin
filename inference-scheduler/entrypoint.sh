@@ -1,6 +1,14 @@
 #!/bin/bash
 
+function log_with_date {
+    local msg="$1"
+    echo "$(date -u +"%Y-%m-%dT%H:%M:%S") - $msg"
+}
+
 function start_container {
+    local trinoUser="$1"
+    log_with_date "Inference started by user $trinoUser"
+
     # https://stackoverflow.com/a/78009946/5587393
     THIS_CONTAINER_ID="$(cat /proc/self/mountinfo | grep -m1 -oE 'docker/containers/([a-f0-9]+)/' |\
         xargs basename)"
@@ -22,7 +30,7 @@ function start_container {
     "Image": "$INFERENCE_DOCKER_IMAGE",
     "Cmd": ["python", "main.py"],
     "Env": [
-        "TRINO_USER=$1"
+        "TRINO_USER=$trinoUser"
     ],
     "NetworkingConfig": {
         "EndpointsConfig": {
@@ -33,12 +41,12 @@ function start_container {
 JSON
     } | jq -r '.Id'
     )"
-    echo "$(date -u +"%Y-%m-%dT%H:%M:%S") - Inference container created"
+    log_with_date "Inference container created"
 
     # start container
     curl -s --unix-socket /var/run/docker.sock -X POST \
         "http://localhost/containers/$SPAWNED_CONTAINER_ID/start"
-    echo "$(date -u +"%Y-%m-%dT%H:%M:%S") - Inference container started"
+    log_with_date "Inference container started, remove it with \`docker container rm $SPAWNED_CONTAINER_ID\`"
 }
 
 /opt/kafka/bin/kafka-console-consumer.sh \
@@ -46,7 +54,7 @@ JSON
     --topic $KAFKA_TOPIC_NAME | \
 while read -r msg
 do
-    echo "Message received: $msg"
+    log_with_date "Message received: $msg"
     trinoUser="$(echo "$msg" | jq -r '.username')"
     start_container "$trinoUser"
 done
