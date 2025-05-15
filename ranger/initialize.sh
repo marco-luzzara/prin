@@ -64,6 +64,24 @@ function _get_policy_resource {
 }
 
 function create_users_and_roles {
+    # associative array that maps a group name to its id
+    declare -A groups
+
+    for i in 1 2
+    do
+        echo "Creating group test-group${i}..."
+        groups[$i]="$(curl -X 'POST' "$ENDPOINT/service/xusers/secure/groups" \
+            -H 'accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -u "$CREDENTIALS" \
+            -d "{
+                    \"name\": \"test-group${i}\",
+                    \"description\": \"\"
+            }" | jq -r '.id'
+        )"
+        echo -e "\nCreated group test-group${i}"
+    done
+
     for roleName in "specialistdoc" "researcher" "careworker"
     do
         # create 2 users per role
@@ -80,7 +98,8 @@ function create_users_and_roles {
                     \"firstName\": \"user${i}\",
                     \"userRoleList\": [
                         \"ROLE_USER\"
-                    ]
+                    ],
+                    \"groupIdList\" : [${groups[$i]}]
                 }"
             echo -e "\nCreated user ${roleName}_user${i}"
         done
@@ -558,6 +577,73 @@ function create_policies {
             \"conditions\":[]
         }"
     echo -e "\nCreated policy mask_careworker"
+
+    # row level filtering policy for access by ownership
+    echo "Creating policy access_by_ownership..."
+    curl -X 'POST' "$ENDPOINT/service/plugins/policies" \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -u "$CREDENTIALS" \
+        -d "{
+            \"allowExceptions\": [],
+            \"policyItems\": [],
+            \"denyPolicyItems\": [],
+            \"denyExceptions\": [],
+            \"dataMaskPolicyItems\": [],
+            \"rowFilterPolicyItems\": [
+                {
+                    \"accesses\": [
+                        {
+                            \"type\": \"select\",
+                            \"isAllowed\": true
+                        }
+                    ],
+                    \"groups\": [
+                        \"test-group1\"
+                    ],
+                    \"rowFilterInfo\": {
+                        \"filterExpr\":\"owner_id = 'test-group1'\"
+                    }
+                },
+                {
+                    \"accesses\": [
+                        {
+                            \"type\": \"select\",
+                            \"isAllowed\": true
+                        }
+                    ],
+                    \"groups\": [
+                        \"test-group2\"
+                    ],
+                    \"rowFilterInfo\": {
+                        \"filterExpr\":\"owner_id = \'test-group2\'\"
+                    }
+                }
+            ],
+            \"description\": \"\",
+            \"isAuditEnabled\": true,
+            \"isDenyAllElse\": false,
+            \"isEnabled\": true,
+            \"name\": \"access_by_ownership\",
+            \"policyLabels\": [],
+            \"policyPriority\": \"0\",
+            \"policyType\": \"2\",
+            \"service\": \"dev_trino\",
+            \"resources\": {
+                \"catalog\": {
+                    \"values\": [\"hive\"]
+                },
+                \"schema\": {
+                    \"values\": [\"default\"]
+                },
+                \"table\": {
+                    \"values\": [\"patients\"]
+                }
+            },
+            \"additionalResources\": [],
+            \"conditions\": []
+        }"
+    echo -e "\nCreated policy access_by_ownership"
 }
 
 function create_additional_services {
