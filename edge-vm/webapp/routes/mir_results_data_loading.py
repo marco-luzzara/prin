@@ -28,7 +28,7 @@ def load_from_excel():
     mir_records = cast_excel_to_objs_list(data_file.stream)
     for i, mir_record in enumerate(mir_records):
         current_app.logger.info(f'Mir record {i}: {mir_record}')
-        owner_id = current_app.config['OWNER_ID']
+        owner_id = current_app.config['GROUP_NAME']
         record_processor.consume('devprin.mir-results', owner_id, dataclasses.asdict(mir_record))
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
