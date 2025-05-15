@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>BA-PHERD - {% block title %}{% endblock %}</title>
+    <style>
+        {% block common_css %}
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+        }
+        .container {
+            width: 75%;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .pretty-button {
+            background-color: #f8f9fa;
+            border: 1px solid #f8f9fa;
+            border-radius: 4px;
+            color: #3c4043;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            height: 36px;
+            line-height: 27px;
+            min-width: 100px;
+            padding: 0 16px;
+            user-select: none;
+            transition: all 0.1s ease-in-out;
+        }
+        .pretty-button:hover {
+            border-color: #dadce0;
+            box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+            color: #202124;
+        }
+        .pretty-button:focus {
+            border-color: #4285f4;
+            outline: none;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        .top-right-form {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: rgba(0,0,0,0.1) 0 2px 4px;
+            font-size: 14px;
+        }
+        .top-right-form input {
+            margin: 4px 0;
+            padding: 6px;
+            width: 140px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .top-right-form button {
+            margin-top: 6px;
+        }
+        {% endblock %}
+    </style>
+</head>
+<body>
+    <div class="top-right-form">
+        <form id="login-form" data-login-step="change">
+            <label>
+                Group Name<br>
+                <input type="text" id="group-name" name="group_name"
+                       value="{{ group_name }}" readonly required minlength="1">
+            </label><br>
+            <label>
+                Username<br>
+                <input type="text" id="username" name="username"
+                       value="{{ username }}" readonly required minlength="1">
+            </label><br>
+            <button type="submit" class="pretty-button" id="login-submit-btn">Modifica</button>
+        </form>
+        <div id="login-message" class="message"></div>
+    </div>
+
+    <div class="container">
+        {% block container_content %}{% endblock %}
+    </div>
+
+    {% block js %}{% endblock %}
+
+    <script>
+        const group = document.getElementById('group-name');
+        const user  = document.getElementById('username');
+        const loginMessage = document.getElementById('login-message');
+        const loginSubmitBtn = document.getElementById('login-submit-btn');
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (loginForm.dataset.loginStep === 'change') {
+                group.readOnly = false;
+                user.readOnly = false;
+                loginSubmitBtn.textContent = 'Login'
+                loginForm.dataset.loginStep = 'login';
+
+                return;
+            }
+            
+            loginSubmitBtn.disabled = true;
+            group.readOnly = true;
+            user.readOnly = true;
+            loginSubmitBtn.textContent = 'Modifica'
+            loginForm.dataset.loginStep = 'change';
+
+            fetch("{{ url_for('users.login_user') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ group_name: group.value, username: user.value })
+            })
+            .then(res => {
+                loginSubmitBtn.disabled = false;
+                console.log(res);
+
+                if (res.ok) {
+                    showLoginMessage(`Login con utente ${group.value}:${user.value}`, 'success');
+                } 
+                else {
+                    throw new Error(`The response returned status ${res.status}`);
+                }
+            })
+            .catch(err => {
+                loginSubmitBtn.disabled = false;
+                showLoginMessage('Si è verificato un errore', 'error');
+                console.error(err);
+            });
+        });
+
+        function showLoginMessage(text, type) {
+            loginMessage.textContent = text;
+            loginMessage.className = `message ${type}`;
+
+            setTimeout(() => {
+                loginMessage.textContent = ''
+                loginMessage.className = 'message';
+            }, 10000)
+        }
+    </script>
+</body>
+</html>

@@ -32,7 +32,6 @@ services:
         condition: service_completed_successfully
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092 #,kafka-broker-1:9092
-      - OWNER_ID=test-group
 
 # ----------------------------- KAFKA -----------------------------
 # https://github.com/bitnami/containers/blob/466fffb6f2fe8cef54f281f22e62a967f7d69b78/bitnami/kafka/README.md

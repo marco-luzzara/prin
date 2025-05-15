@@ -16,7 +16,9 @@ producer = Producer(kafka_conf)
 
 @bp.get('/')
 def view_inference_dashboard():
-    return render_template('model-inference.html')
+    return render_template('model-inference.html',
+                           group_name = current_app.config['GROUP_NAME'],
+                           username = current_app.config['USERNAME'])
 
 
 @bp.post('/trigger')
