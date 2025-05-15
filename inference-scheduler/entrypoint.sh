@@ -21,6 +21,9 @@ function start_container {
 {
     "Image": "$INFERENCE_DOCKER_IMAGE",
     "Cmd": ["python", "main.py"],
+    "Env": [
+        "TRINO_USER=$1"
+    ],
     "NetworkingConfig": {
         "EndpointsConfig": {
             "$THIS_CONTAINER_NETWORK": {}
@@ -44,5 +47,6 @@ JSON
 while read -r msg
 do
     echo "Message received: $msg"
-    start_container
+    trinoUser="$(echo "$msg" | jq -r '.username')"
+    start_container "$trinoUser"
 done

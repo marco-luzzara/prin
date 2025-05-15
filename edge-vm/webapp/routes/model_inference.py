@@ -25,8 +25,12 @@ def view_inference_dashboard():
 def trigger_inference():
     current_app.logger.info(f'Sending notification for inference triggering...')
     producer.produce("devprin.model-inference", 
-                     key=json.dumps({ 'owner_id': current_app.config['OWNER_ID'] }).encode(), 
-                     value=json.dumps({ "trigger_type": 'manual' }).encode())
+        key=json.dumps({ 'group_name': current_app.config['GROUP_NAME'] }).encode(), 
+        value=json.dumps({ 
+            "trigger_type": 'manual', 
+            'group_name': current_app.config['GROUP_NAME'], 
+            'username': current_app.config['USERNAME']
+        }).encode())
 
     current_app.logger.info(f'Notification for inference triggering sent')
     return ('', 204)
