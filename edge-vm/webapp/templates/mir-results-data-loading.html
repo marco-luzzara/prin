@@ -5,28 +5,29 @@
 {% endblock %}
 {% block container_content %}
     <h2>Carica i risultati dell'analisi MiR</h2>
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input class="pretty-button" type="file" id="fileInput" accept=".xls,.xlsx,.odt" required>
+    <form id="upload-file-form" enctype="multipart/form-data">
+        <input class="pretty-button" type="file" id="file-input" accept=".xls,.xlsx,.odt" required>
         <button class="pretty-button" id="submit-file-btn" type="submit">Invia</button>
     </form>
-    <div id="message" class="message"></div>
+    <div id="upload-result-msg" class="message"></div>
 {% endblock %}
 {% block js %}
 <script>
-    const fileInput = document.getElementById('fileInput');
-    const messageDiv = document.getElementById('message');
-    const submitBtn = document.getElementById('submit-file-btn');
-    document.getElementById('uploadForm').addEventListener('submit', function (event) {
-        submitBtn.disabled = true;
+    const fileInput = document.getElementById('file-input');
+    const uploadResultMsg = document.getElementById('upload-result-msg');
+    const submitFileBtn = document.getElementById('submit-file-btn');
+    document.getElementById('upload-file-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        submitFileBtn.disabled = true;
 
         if (fileInput.files.length === 0) {
-            showMessage('Non hai caricato alcun file', 'error');
+            showUploadResultMsg('Non hai caricato alcun file', 'error');
             return;
         }
 
         const file = fileInput.files[0];
         if (!file.name.match(/\.(xls|xlsx|odt)$/)) {
-            showMessage('Il tipo di file non è valido. File compatibili: .xls,.xlsx,.odt', 'error');
+            showUploadResultMsg('Il tipo di file non è valido. File compatibili: .xls,.xlsx,.odt', 'error');
             return;
         }
 
@@ -38,32 +39,32 @@
             body: formData
         })
         .then(res => {
-            submitBtn.disabled = false;
+            submitFileBtn.disabled = false;
             console.log(res);
 
             if (res.ok) {
-                showMessage('File caricato correttamente', 'success');
+                showUploadResultMsg('File caricato correttamente', 'success');
             }
             else {
                 throw new Error(`The response returned status ${res.status}`);
             }
         })
         .catch(error => {
-            submitBtn.disabled = false;
-            showMessage('Si è verificato un errore', 'error');
+            submitFileBtn.disabled = false;
+            showUploadResultMsg('Si è verificato un errore', 'error');
             console.error(error);
         });
     });
 
-    function showMessage(text, type) {
-        messageDiv.textContent = text;
-        messageDiv.className = `message ${type}`;
+    function showUploadResultMsg(text, type) {
+        uploadResultMsg.textContent = text;
+        uploadResultMsg.className = `message ${type}`;
 
         fileInput.value = ''
 
         setTimeout(() => {
-            messageDiv.textContent = ''
-            messageDiv.className = 'message';
+            uploadResultMsg.textContent = ''
+            uploadResultMsg.className = 'message';
         }, 10000)
     }
 </script>

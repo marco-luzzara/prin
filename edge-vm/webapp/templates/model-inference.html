@@ -4,46 +4,46 @@
     {{ super() }}
 {% endblock %}
 {% block container_content %}
-    <button id="actionBtn" class="pretty-button">Avvia inferenza</button>
-    <div id="message" class="message"></div>
+    <button id="start-inference-btn" class="pretty-button">Avvia inferenza</button>
+    <div id="inference-result-msg" class="message"></div>
 {% endblock %}
 {% block js %}
 <script>
-    const btn = document.getElementById('actionBtn');
-    const msg = document.getElementById('message');
+    const startInferenceBtn = document.getElementById('start-inference-btn');
+    const inferenceResultMsg = document.getElementById('inference-result-msg');
 
-    btn.addEventListener('click', () => {
-        btn.disabled = true;
+    startInferenceBtn.addEventListener('click', () => {
+        startInferenceBtn.disabled = true;
 
         fetch("{{ url_for('model-inference.trigger_inference') }}", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         })
         .then(res => {
-            btn.disabled = false;
+            startInferenceBtn.disabled = false;
             console.log(res);
 
             if (res.ok) {
-                showMessage("Inferenza avviata", 'success');
+                showInferenceResultMsg("Inferenza avviata", 'success');
             } 
             else {
                 throw new Error(`The response returned status ${res.status}`);
             }
         })
         .catch(err => {
-            btn.disabled = false;
-            showMessage('Si è verificato un errore', 'error');
+            startInferenceBtn.disabled = false;
+            showInferenceResultMsg('Si è verificato un errore', 'error');
             console.error(err);
         });
     });
 
-    function showMessage(text, type) {
-        msg.textContent = text;
-        msg.className = `message ${type}`;
+    function showInferenceResultMsg(text, type) {
+        inferenceResultMsg.textContent = text;
+        inferenceResultMsg.className = `message ${type}`;
         
         setTimeout(() => {
-            msg.textContent = '';
-            msg.className = 'message';
+            inferenceResultMsg.textContent = '';
+            inferenceResultMsg.className = 'message';
         }, 10000);
     }
 </script>
