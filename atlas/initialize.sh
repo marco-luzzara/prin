@@ -27,8 +27,8 @@ function main {
         -d "{
                 \"classificationDefs\": [
                     {
-                        \"name\": \"TEST_CLASS\",
-                        \"description\": \"<p>Classification for testing Atlas</p>\",
+                        \"name\": \"PII\",
+                        \"description\": \"<p>PII</p>\",
                         \"superTypes\": [],
                         \"attributeDefs\": [
                             {
@@ -49,7 +49,7 @@ function main {
                 \"structDefs\":[]
             }"
 
-    AGE_ENTITY_GUID="$(curl -s "$ENDPOINT/api/atlas/v2/search/quick?query=age" \
+    AGE_ENTITY_GUID="$(curl -s "$ENDPOINT/api/atlas/v2/search/quick?query=default.patients.age" \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
         -u "$CREDENTIALS" | jq -r '.searchResults.entities[0].guid' \
@@ -62,7 +62,7 @@ function main {
         -u "$CREDENTIALS" \
         -d "{
                 \"classification\": {
-                    \"typeName\": \"TEST_CLASS\",
+                    \"typeName\": \"PII\",
                     \"attributes\": {
                         \"val\": \"100\"
                     },

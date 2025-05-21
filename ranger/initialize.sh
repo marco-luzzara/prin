@@ -337,7 +337,7 @@ function create_policies {
         }"
     echo -e "\nCreated tag_based_policy"
 
-    echo "Creating policy allow_access_TEST_CLASS..."
+    echo "Creating policy allow_access_PII..."
     curl -X 'POST' "$ENDPOINT/service/plugins/policies" \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
@@ -424,7 +424,7 @@ function create_policies {
             \"isAuditEnabled\": true,
             \"isDenyAllElse\": false,
             \"isEnabled\": true,
-            \"name\": \"allow_access_TEST_CLASS\",
+            \"name\": \"allow_access_PII\",
             \"policyLabels\": [],
             \"policyPriority\": \"0\",
             \"policyType\": \"0\",
@@ -432,16 +432,16 @@ function create_policies {
             \"resources\": {
                 \"tag\": {
                     \"values\": [
-                        \"TEST_CLASS\"
+                        \"PII\"
                     ]
                 }
             },
             \"additionalResources\": [],
             \"conditions\": []
         }"
-    echo -e "\nCreated policy allow_access_TEST_CLASS"
+    echo -e "\nCreated policy allow_access_PII"
 
-    echo "Creating policy mask_TEST_CLASS ..."
+    echo "Creating policy mask_PII ..."
     curl -X 'POST' "$ENDPOINT/service/plugins/policies" \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
@@ -475,7 +475,7 @@ function create_policies {
             \"isAuditEnabled\": true,
             \"isDenyAllElse\": false,
             \"isEnabled\": true,
-            \"name\": \"mask_TEST_CLASS\",
+            \"name\": \"mask_PII\",
             \"policyLabels\": [],
             \"policyPriority\": \"0\",
             \"policyType\": \"1\",
@@ -483,14 +483,14 @@ function create_policies {
             \"resources\": {
                 \"tag\": {
                     \"values\": [
-                        \"TEST_CLASS\"
+                        \"PII\"
                     ]
                 }
             },
             \"additionalResources\": [],
             \"conditions\": []
         }"
-    echo -e "\nCreated policy mask_TEST_CLASS"
+    echo -e "\nCreated policy mask_PII"
 
     ## researcher policies
     echo "Creating policy mask_researcher..."
