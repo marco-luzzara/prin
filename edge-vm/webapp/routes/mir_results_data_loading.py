@@ -29,7 +29,7 @@ def load_from_excel():
     for i, mir_record in enumerate(mir_records):
         current_app.logger.info(f'Mir record {i}: {mir_record}')
         owner_id = current_app.config['GROUP_NAME']
-        record_processor.consume('devprin.mir-results', owner_id, dataclasses.asdict(mir_record))
+        record_processor.process('devprin.mir-results', owner_id, dataclasses.asdict(mir_record))
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
     return ('', 204)

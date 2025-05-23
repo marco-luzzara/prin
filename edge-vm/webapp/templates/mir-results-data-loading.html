@@ -1,71 +1,45 @@
 {% extends "layout.html" %}
 {% block title %}Caricamento risultati analisi{% endblock %}
-{% block common_css %}
+{% block css %}
     {{ super() }}
 {% endblock %}
 {% block container_content %}
-    <h2>Carica i risultati dell'analisi MiR</h2>
-    <form id="upload-file-form" enctype="multipart/form-data">
-        <input class="pretty-button" type="file" id="file-input" accept=".xls,.xlsx,.odt" required>
-        <button class="pretty-button" id="submit-file-btn" type="submit">Invia</button>
+    <h2>Carica i risultati dell'analisi MiR - Training</h2>
+    <form id="upload-training-data-form" enctype="multipart/form-data">
+        <input class="pretty-button" type="file" id="training-data-input" accept=".xls,.xlsx,.odt" required>
+        <button class="pretty-button" id="submit-training-data-btn" type="submit">Invia</button>
     </form>
-    <div id="upload-result-msg" class="message"></div>
+    <div id="upload-training-data-result-msg" class="message"></div>
+    <hr />
+    <h2>Carica i risultati dell'analisi MiR - Inferenza</h2>
+    <form id="upload-inference-data-form" enctype="multipart/form-data">
+        <input class="pretty-button" type="file" id="inference-data-input" accept=".xls,.xlsx,.odt" required>
+        <button class="pretty-button" id="submit-inference-data-btn" type="submit">Invia</button>
+    </form>
+    <div id="upload-inference-data-result-msg" class="message"></div>
 {% endblock %}
 {% block js %}
 <script>
-    const fileInput = document.getElementById('file-input');
-    const uploadResultMsg = document.getElementById('upload-result-msg');
-    const submitFileBtn = document.getElementById('submit-file-btn');
-    document.getElementById('upload-file-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-        submitFileBtn.disabled = true;
+    const trainingDataInput = document.getElementById('training-data-input');
+    const uploadTrainingDataResultMsg = document.getElementById('upload-training-data-result-msg');
+    const submitTrainingDataBtn = document.getElementById('submit-training-data-btn');
 
-        if (fileInput.files.length === 0) {
-            showUploadResultMsg('Non hai caricato alcun file', 'error');
-            return;
-        }
+    addFileUploadSubmitListener(document.getElementById('upload-training-data-form'),
+        submitTrainingDataBtn,
+        "{{ url_for('mir-results-data-loading.load_from_excel') }}?scope=training",
+        trainingDataInput,
+        uploadTrainingDataResultMsg
+    )
+    
+    const inferenceDataInput = document.getElementById('inference-data-input');
+    const uploadInferenceDataResultMsg = document.getElementById('upload-inference-data-result-msg');
+    const submitInferenceDataBtn = document.getElementById('submit-inference-data-btn');
 
-        const file = fileInput.files[0];
-        if (!file.name.match(/\.(xls|xlsx|odt)$/)) {
-            showUploadResultMsg('Il tipo di file non è valido. File compatibili: .xls,.xlsx,.odt', 'error');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('data_file', file);
-
-        fetch("{{ url_for('mir-results-data-loading.load_from_excel') }}", {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => {
-            submitFileBtn.disabled = false;
-            console.log(res);
-
-            if (res.ok) {
-                showUploadResultMsg('File caricato correttamente', 'success');
-            }
-            else {
-                throw new Error(`The response returned status ${res.status}`);
-            }
-        })
-        .catch(error => {
-            submitFileBtn.disabled = false;
-            showUploadResultMsg('Si è verificato un errore', 'error');
-            console.error(error);
-        });
-    });
-
-    function showUploadResultMsg(text, type) {
-        uploadResultMsg.textContent = text;
-        uploadResultMsg.className = `message ${type}`;
-
-        fileInput.value = ''
-
-        setTimeout(() => {
-            uploadResultMsg.textContent = ''
-            uploadResultMsg.className = 'message';
-        }, 10000)
-    }
+    addFileUploadSubmitListener(document.getElementById('upload-inference-data-form'),
+        submitInferenceDataBtn,
+        "{{ url_for('mir-results-data-loading.load_from_excel') }}?scope=inference",
+        inferenceDataInput,
+        uploadInferenceDataResultMsg
+    )
 </script>
 {% endblock %}

@@ -29,7 +29,7 @@ def load_from_excel():
     for i, patient_record in enumerate(patient_records):
         current_app.logger.info(f'Patient {i}: {patient_record}')
         owner_id = current_app.config['GROUP_NAME']
-        record_processor.consume('devprin.patients', owner_id, dataclasses.asdict(patient_record))
+        record_processor.process('devprin.patients', owner_id, dataclasses.asdict(patient_record))
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
     return ('', 204)

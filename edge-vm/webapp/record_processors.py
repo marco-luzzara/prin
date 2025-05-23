@@ -13,7 +13,7 @@ class RecordProcessor(ABC):
         pass
 
     @abstractmethod
-    def consume(self, destionation, id, data) -> None:
+    def process(self, destionation, id, data) -> None:
         pass
 
 class KafkaProcessor(RecordProcessor):
@@ -24,7 +24,7 @@ class KafkaProcessor(RecordProcessor):
         }
         self.producer = Producer(kafka_conf)
 
-    def consume(self, destination, id, data: Dict[str, Any]) -> None:
+    def process(self, destination, id, data: Dict[str, Any]) -> None:
         self.producer.produce(destination, 
                               key=json.dumps({ 'owner_id': id }).encode(), 
                               value=json.dumps(data).encode())
@@ -34,7 +34,7 @@ class ConsoleProcessor(RecordProcessor):
     def __init__(self, app: flask.Flask):
         self.logger = app.logger
 
-    def consume(self, destination, id, data: Dict[str, Any]) -> None:
+    def process(self, destination, id, data: Dict[str, Any]) -> None:
         self.logger.info("""
                          Destination: %s
                          Id: %s

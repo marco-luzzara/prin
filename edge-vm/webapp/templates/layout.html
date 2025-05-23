@@ -4,8 +4,63 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>BA-PHERD - {% block title %}{% endblock %}</title>
+    <script>
+        function showMsg(msgDiv, text, type) {
+            msgDiv.textContent = text;
+            msgDiv.className = `message ${type}`;
+
+            setTimeout(() => {
+                msgDiv.textContent = ''
+                msgDiv.className = 'message';
+            }, 10000)
+        }
+
+        function addFileUploadSubmitListener(form, submitBtn, apiEndpoint, fileInput, msgDiv) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                submitBtn.disabled = true;
+
+                if (fileInput.files.length === 0) {
+                    showMsg(msgDiv, 'Non hai caricato alcun file', 'error');
+                    return;
+                }
+
+                const file = fileInput.files[0];
+                if (!file.name.match(/\.(xls|xlsx|odt)$/)) {
+                    showMsg(msgDiv, 'Il tipo di file non è valido. File compatibili: .xls,.xlsx,.odt', 'error');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('data_file', file);
+
+                fetch(apiEndpoint, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => {
+                    console.log(res);
+
+                    if (res.ok) {
+                        showMsg(msgDiv, 'File caricato correttamente', 'success');
+                    }
+                    else {
+                        throw new Error(`The response returned status ${res.status}`);
+                    }
+                })
+                .catch(error => {
+                    showMsg(msgDiv, 'Si è verificato un errore', 'error');
+                    console.error(error);
+                })
+                .then(_ => {
+                    btn.disabled = false;
+                    fileInput.value = ''
+                });
+            });
+        }
+    </script>
     <style>
-        {% block common_css %}
+        {% block css %}
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -139,32 +194,23 @@
                 body: JSON.stringify({ group_name: group.value, username: user.value })
             })
             .then(res => {
-                loginSubmitBtn.disabled = false;
                 console.log(res);
 
                 if (res.ok) {
-                    showLoginMessage(`Login con utente ${group.value}:${user.value}`, 'success');
+                    showMsg(loginMessage, `Login con utente ${group.value}:${user.value}`, 'success');
                 } 
                 else {
                     throw new Error(`The response returned status ${res.status}`);
                 }
             })
             .catch(err => {
-                loginSubmitBtn.disabled = false;
-                showLoginMessage('Si è verificato un errore', 'error');
+                showMsg(loginMessage, 'Si è verificato un errore', 'error');
                 console.error(err);
+            })
+            .then(_ => {
+                loginSubmitBtn.disabled = false;
             });
         });
-
-        function showLoginMessage(text, type) {
-            loginMessage.textContent = text;
-            loginMessage.className = `message ${type}`;
-
-            setTimeout(() => {
-                loginMessage.textContent = ''
-                loginMessage.className = 'message';
-            }, 10000)
-        }
     </script>
 </body>
 </html>

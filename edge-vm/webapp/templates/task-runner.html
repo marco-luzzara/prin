@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block title %}Trigger inferenza{% endblock %}
+{% block css %}
+    {{ super() }}
+{% endblock %}
+{% block container_content %}
+    <button id="start-training-btn" class="pretty-button">Avvia training</button>
+    <div id="training-result-msg" class="message"></div>
+    <hr />
+    <button id="start-inference-btn" class="pretty-button">Avvia inferenza</button>
+    <div id="inference-result-msg" class="message"></div>
+{% endblock %}
+{% block js %}
+<script>
+    function addClickListenerForTask(taskType, apiEndpoint, btn, msgDiv) {
+        btn.addEventListener('click', () => {
+            btn.disabled = true;
+
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => {
+                console.log(res);
+
+                if (res.ok) {
+                    showMsg(msgDiv, `Task di ${taskType} avviato`, 'success');
+                } 
+                else {
+                    throw new Error(`The response returned status ${res.status}`);
+                }
+            })
+            .catch(err => {
+                showMsg(msgDiv, 'Si è verificato un errore', 'error');
+                console.error(err);
+            })
+            .then(_ => {
+                btn.disabled = false;
+            });
+        });
+    }
+
+    const startTrainingBtn = document.getElementById('start-training-btn');
+    const trainingResultMsg = document.getElementById('training-result-msg');
+
+    addClickListenerForTask('training', 
+        "{{ url_for('task-runner.trigger_training') }}",
+        startTrainingBtn,
+        trainingResultMsg
+    )
+
+    const startInferenceBtn = document.getElementById('start-inference-btn');
+    const inferenceResultMsg = document.getElementById('inference-result-msg');
+
+    addClickListenerForTask('inferenza', 
+        "{{ url_for('task-runner.trigger_inference') }}",
+        startInferenceBtn,
+        inferenceResultMsg
+    )
+</script>
+{% endblock %}
