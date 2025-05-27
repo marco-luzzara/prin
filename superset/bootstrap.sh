@@ -50,8 +50,11 @@ curl "http://localhost:${SUPERSET_PORT}/api/v1/database/" -X POST -H 'Content-Ty
             "supports_file_upload": true
         },
         "sqlalchemy_uri_placeholder": "engine+driver://user:password@host:port/dbname[?key=value&key=value...]",
-        "extra": "{\"allows_virtual_table_explore\":true}",
+        "extra": "{\"allows_virtual_table_explore\":true, \"cost_estimate_enabled\":true}",
         "expose_in_sqllab": true,
+        "allow_ctas": true,
+        "allow_cvas": true,
+        "allow_dml": true,
         "sqlalchemy_uri": "trino://trino@trino:8080/hive"
     }'
 
