@@ -2,88 +2,92 @@ services:
 # ----------------------------- FILE WATCHER -----------------------------
   data-loading-webapp:
     profiles:
-      - without-visualization
-      - complete
+      - local-dev
+      - all
 
 # ----------------------------- KAFKA -----------------------------
   kafka-broker-0:
     profiles:
-      - without-visualization
-      - complete
+      - local-dev
+      - all
 
   # kafka-broker-1:
-  #   profiles:
-  #     - without-visualization
-  #     - complete
+  #   profiles: []
 
   kafka-init:
     profiles:
-      - without-visualization
-      - complete
+      - local-dev
+      - all
+
+  task-dispatcher:
+    profiles:
+      - local-dev
+      - all
 
 # ----------------------------- HIVE METASTORE -----------------------------
   hive-metastore:
     profiles:
-      - without-visualization
-      - complete
+      - local-dev
+      - all
 
 # ----------------------------- MINIO -----------------------------
   minio:
     profiles:
-      - without-visualization
-      - complete
+      - local-dev
+      - all
 
   minio-init:
     profiles:
-      - without-visualization
-      - complete
+      - local-dev
+      - all
 
 # ----------------------------- TRINO -----------------------------
   trino:
     profiles:
-      - without-visualization
-      - complete
+      - local-dev
+      - all
 
 # ----------------------------- CDC -----------------------------
   cdc-script:
     profiles:
-      - without-visualization
-      - complete
+      - local-dev
+      - all
 
 # ----------------------------- RANGER -----------------------------
   ranger:
     profiles:
-      - without-visualization
-      - complete
+      - all
 
   ranger-zk:
-    profiles:
-      - without-visualization
-      - complete
+    profiles: 
+      - all
 
   ranger-solr:
     profiles:
-      - without-visualization
-      - complete
+      - all
 
   ranger-db:
     profiles:
-      - without-visualization
-      - complete
+      - local-dev
+      - all
 
   ranger-tagsync:
     profiles:
-      - without-visualization
-      - complete
+      - all
 
 # ----------------------------- ATLAS  -----------------------------
 
   atlas:
     profiles:
-      - without-visualization
-      - complete
+      - all
+
+# ----------------------------- TEST TASK -----------------------------
+
+  test-task:
+    profiles:
+      - local-dev
 
 # ----------------------------- SUPERSET -----------------------------
   superset:
     profiles:
-      - complete
+      - all

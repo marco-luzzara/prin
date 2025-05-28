@@ -21,4 +21,4 @@ ENV TRINO_ENDPOINT=trino:8080
 ENV TRINO_CATALOG=hive
 ENV TRINO_SCHEMA=default
 
-CMD ["sleep", "inf"]
+CMD ["python", "main.py"]

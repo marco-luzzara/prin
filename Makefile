@@ -1,18 +1,10 @@
 SHELL = /bin/bash
 
 ENV_FILE ?= .env
-IS_DEV ?= false
-COMPOSE_PROFILES ?= *
+COMPOSE_PROFILES ?= all
 STANDARD_COMPOSE_FILES = docker-compose.yml docker-compose-profiles.yml
-
-ifeq ($(IS_DEV),true)
-COMPOSE_OPTIONS ?= --watch
-ADDITIONAL_COMPOSE_FILES ?= docker-compose-development.yml
-else
-COMPOSE_OPTIONS ?= -d
+COMPOSE_COMMAND_OPTIONS ?= -d --build
 ADDITIONAL_COMPOSE_FILES ?= 
-endif
-
 COMPOSE_FILES_OPTIONS = $(foreach cf,$(STANDARD_COMPOSE_FILES) $(ADDITIONAL_COMPOSE_FILES), -f $(cf))
 
 .PHONY: init up down clean-all
@@ -25,6 +17,9 @@ init:
 
 	test -e ${ENV_FILE} || { echo "${ENV_FILE} file does not exist" ; exit 1; }
 
+	echo "Building Docker image for task (inference/training)"
+	docker build -t prin-task:latest ./task-base
+
 	# trino
 	test -e trino/docker/server/rootCA.crt || { echo "rootCA.crt file does not exist. First create it with \`cd trino && make create-crt\`" ; exit 1; }
 	test -d trino/docker/server/trino-anonymization-udfs-1.0 || { echo "trino-anonymization-udfs-1.0 directory does not exist. First create it with \`cd trino && make create-udf-package\`" ; exit 1; }
@@ -32,24 +27,27 @@ init:
 # Parameters: \
 - ENV_FILE: path of env file containing configuration properties (Default: .env)\
 - COMPOSE_PROFILES: compose profile to activate (Default: *) \
-- ADDITIONAL_COMPOSE_FILES: (optional) path to additional compose files
-print-rendered:
+- ADDITIONAL_COMPOSE_FILES: (optional) path to additional compose files \
+- SERVICES: (optional) services for which the docker compose action must be applied \
+- COMPOSE_COMMAND_OPTIONS: options for the compose subcommand (e.g. "-d --build" for `up`)
+up-rendered:
 	set -a && \
 	source ${ENV_FILE} && \
 	set +a && \
-	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) config
+	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) config $(COMPOSE_COMMAND_OPTIONS) ${SERVICES}
 
 # Parameters: \
 - ENV_FILE: path of env file containing configuration properties (Default: .env)\
 - COMPOSE_PROFILES: compose profile to activate (Default: *) \
 - ADDITIONAL_COMPOSE_FILES: (optional) path to additional compose files \
-- SERVICES: (optional) services for which the docker compose action must be applied
+- SERVICES: (optional) services for which the docker compose action must be applied \
+- COMPOSE_COMMAND_OPTIONS: options for the compose subcommand (e.g. "-d --build" for `up`)
 up: init
 	set -a && \
 	source ${ENV_FILE} && \
 	set +a && \
 	{ test -f hive/.hive_initialized && export SKIP_HIVE_SCHEMA_INIT=true || echo "Hive will initialize the schema..."; } && \
-	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up $(COMPOSE_OPTIONS) --build ${SERVICES}
+	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up $(COMPOSE_COMMAND_OPTIONS) ${SERVICES}
 	touch hive/.hive_initialized
 
 # Parameters: \

@@ -77,18 +77,18 @@ services:
           --replication-factor=1 \
           --bootstrap-server kafka-broker-0:9092 #,kafka-broker-1:9092
 
-# ----------------------------- INFERENCE SCHEDULER -----------------------------
+# ----------------------------- TASK DISPATCHER -----------------------------
 # TODO: align kafka version with KAFKA_VERSION (first, use image apache/kafka everywhere)
-  inference-scheduler:
+  task-dispatcher:
     build:
-      context: ./inference-scheduler
+      context: ./task-dispatcher
       dockerfile_inline: |
         FROM apache/kafka:3.7.2
         # user root is necessary to use the docker socket
         USER root
         RUN apk add jq curl
-        COPY . /scheduler/
-    entrypoint: ["/scheduler/entrypoint.sh"]
+        COPY . /dispatcher/
+    entrypoint: ["/dispatcher/entrypoint.sh"]
     depends_on:
       kafka-init:
         condition: service_completed_successfully
@@ -96,31 +96,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - KAFKA_BOOTSTRAP_SERVER=kafka-broker-0:9092
-      - KAFKA_TOPIC_NAME=devprin.model-inference
-      - INFERENCE_DOCKER_IMAGE=model-inference
+      - KAFKA_TOPIC_NAME=devprin.task.trigger
+      - INFERENCE_DOCKER_IMAGE=prin-task
 
 # ----------------------------- HIVE METASTORE -----------------------------
-# https://github.com/naushadh/hive-metastore
-  # hive-metastore:
-  #   image: naushadh/hive-metastore
-  #   depends_on:
-  #     ranger-db:
-  #       condition: service_healthy
-  #     minio-init:
-  #       condition: service_completed_successfully
-  #   environment:
-  #     - DATABASE_HOST=ranger-db
-  #     - DATABASE_DB=hive_metastore_db
-  #     - DATABASE_USER=${HIVE_METASTORE_DATABASE_USER}
-  #     - DATABASE_PASSWORD=${HIVE_METASTORE_DATABASE_PASSWORD}
-  #     - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
-  #     - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
-  #     - S3_ENDPOINT_URL=http://minio:9000
-  #     - S3_BUCKET=prin
-  #     - S3_PREFIX=metadata
-  #   # ports:
-  #   #   - '9083:9083'
-
   hive-metastore:
     build:
       args:
@@ -359,24 +338,9 @@ services:
   #     timeout: 10s
   #     retries: 5
 
-# ----------------------------- HUE -----------------------------
-## https://hub.docker.com/r/gethue/hue
-  
-  # hue:
-  #   image: gethue/hue:20240530-140101
-  #   ports:
-  #     - "${HUE_PORT}:8888"
-  #   depends_on:
-  #     trino:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./hue/hue.ini:/usr/share/hue/desktop/conf/hue.ini
-
-# ----------------------------- MODEL INFERENCE -----------------------------
-  model-inference:
-    build:
-      context: ./model-inference
-    image: model-inference
+# ----------------------------- TEST TASK -----------------------------
+  test-task:
+    image: prin-task:latest
     depends_on:
       trino:
         condition: service_healthy
@@ -385,6 +349,7 @@ services:
       - TRINO_ENDPOINT=trino:8080
       - TRINO_CATALOG=hive
       - TRINO_SCHEMA=default
+    entrypoint: ["sleep", "inf"]
 
 # ----------------------------- SUPERSET -----------------------------
 ## https://hub.docker.com/r/apache/superset

@@ -43,16 +43,31 @@ make up
 To set profiles:
 
 ```bash
-make up COMPOSE_PROFILES=without-visualization
+make up COMPOSE_PROFILES=your-profile
 ```
 
 If `COMPOSE_PROFILES` is unset, then it defaults to `*` (all profiles are activated).
 
-Similarly, you can limit the resources of any container by including the `docker-compose-resource-limits.yml`. To enable the development mode, run:
+You can also limit the resources of any container by including the `docker-compose-resource-limits.yml`. To add further compose files:
 
 ```bash
-make up SERVICES=data-loading-webapp IS_DEV=true
+make up ADDITIONAL_COMPOSE_FILES=docker-compose-resource-limits.yml
 ```
+
+Besides, you can specify:
+- An env file by setting `ENV_FILE` to the env file path (Default: `.env`)
+- A limited number of services, by filling the `SERVICES` variable with the name of the services you want to run
+- Which options should be passed to `docker compose up` with `COMPOSE_COMMAND_OPTIONS=...`
+
+For instance, to enable the development mode, run:
+
+```bash
+make up COMPOSE_PROFILES=local-dev \
+    ADDITIONAL_COMPOSE_FILES=docker-compose-development.yml \
+    COMPOSE_COMMAND_OPTIONS="--build --watch"
+```
+
+To first render your Docker Compose template, replace `make up` with `make up-rendered`.
 
 The `data-loading-webapp` service exposes a dashboard for uploading patients and MiR results at `/data-loading/patients` and `/data-loading/mir-results`, respectively. Valid extensions for uploaded files are `.xls`, `.xlsx`, `.ods`. When a new Excel is uplaoded, an event with the collected data are sent to the topic `devprin.patients`/`devprin.mir-results`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
 

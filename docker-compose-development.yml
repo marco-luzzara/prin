@@ -10,3 +10,13 @@ services:
           target: /app/webapp/templates
         - action: rebuild
           path: ./edge-vm/requirements.txt
+
+  trino:
+    depends_on: !reset []
+
+  cdc-script:
+    depends_on: !override
+      trino:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
