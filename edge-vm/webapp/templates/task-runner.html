@@ -44,7 +44,7 @@
     const trainingResultMsg = document.getElementById('training-result-msg');
 
     addClickListenerForTask('training', 
-        "{{ url_for('task-runner.trigger_training') }}",
+        "{{ url_for('task-runner.trigger_task') }}?scope=training",
         startTrainingBtn,
         trainingResultMsg
     )
@@ -53,7 +53,7 @@
     const inferenceResultMsg = document.getElementById('inference-result-msg');
 
     addClickListenerForTask('inferenza', 
-        "{{ url_for('task-runner.trigger_inference') }}",
+        "{{ url_for('task-runner.trigger_task') }}?scope=inference",
         startInferenceBtn,
         inferenceResultMsg
     )

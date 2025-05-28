@@ -10,6 +10,7 @@ import dataclasses
 from .model.MiRRecord import MiRRecord
 from .model.utils import from_dict
 from .. import record_processor
+from .utils.validation import validate_scope
 
 bp = Blueprint('mir-results-data-loading', __name__, url_prefix='/data-loading/mir-results')
 
@@ -23,15 +24,21 @@ def view_data_loading_dashboard():
 @bp.post('/from-excel')
 def load_from_excel():
     data_file = request.files['data_file']
-    current_app.logger.info(f'File {secure_filename(data_file.filename)} is being processed...')
+    task_scope = request.args.get('scope', '')
+    validate_scope(task_scope)
+
+    current_app.logger.info(f'File {secure_filename(data_file.filename)} is being processed for scope {task_scope}...')
 
     mir_records = cast_excel_to_objs_list(data_file.stream)
     for i, mir_record in enumerate(mir_records):
         current_app.logger.info(f'Mir record {i}: {mir_record}')
         owner_id = current_app.config['GROUP_NAME']
-        record_processor.process('devprin.mir-results', owner_id, dataclasses.asdict(mir_record))
+        record_processor.process('devprin.mir-results', 
+                                 owner_id, 
+                                 dataclasses.asdict(mir_record) | { 'scope': task_scope })
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
+
     return ('', 204)
 
 

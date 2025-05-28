@@ -5,5 +5,8 @@ services:
         - action: sync+restart
           path: ./edge-vm/webapp
           target: /app/webapp
+        - action: sync
+          path: ./edge-vm/webapp/templates
+          target: /app/webapp/templates
         - action: rebuild
           path: ./edge-vm/requirements.txt

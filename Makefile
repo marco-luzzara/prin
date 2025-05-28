@@ -1,9 +1,18 @@
 SHELL = /bin/bash
 
 ENV_FILE ?= .env
+IS_DEV ?= false
 COMPOSE_PROFILES ?= *
 STANDARD_COMPOSE_FILES = docker-compose.yml docker-compose-profiles.yml
+
+ifeq ($(IS_DEV),true)
+COMPOSE_OPTIONS ?= --watch
+ADDITIONAL_COMPOSE_FILES ?= docker-compose-development.yml
+else
+COMPOSE_OPTIONS ?= -d
 ADDITIONAL_COMPOSE_FILES ?= 
+endif
+
 COMPOSE_FILES_OPTIONS = $(foreach cf,$(STANDARD_COMPOSE_FILES) $(ADDITIONAL_COMPOSE_FILES), -f $(cf))
 
 .PHONY: init up down clean-all
@@ -40,7 +49,7 @@ up: init
 	source ${ENV_FILE} && \
 	set +a && \
 	{ test -f hive/.hive_initialized && export SKIP_HIVE_SCHEMA_INIT=true || echo "Hive will initialize the schema..."; } && \
-	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up -d --build ${SERVICES}
+	COMPOSE_PROFILES=${COMPOSE_PROFILES} docker compose $(COMPOSE_FILES_OPTIONS) up $(COMPOSE_OPTIONS) --build ${SERVICES}
 	touch hive/.hive_initialized
 
 # Parameters: \

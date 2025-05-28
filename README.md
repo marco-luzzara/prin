@@ -48,14 +48,13 @@ make up COMPOSE_PROFILES=without-visualization
 
 If `COMPOSE_PROFILES` is unset, then it defaults to `*` (all profiles are activated).
 
-Similarly, you can limit the resources of any container by including the `docker-compose-resource-limits.yml`. In develop mode, make sure to include the `docker-compose-development.yml` among the composes. For these additional compose files, run:
+Similarly, you can limit the resources of any container by including the `docker-compose-resource-limits.yml`. To enable the development mode, run:
 
 ```bash
-make up ADDITIONAL_COMPOSE_FILES="docker-compose-resource-limits.yml docker-compose-development.yml"
+make up SERVICES=data-loading-webapp IS_DEV=true
 ```
 
-
-The `data-loading-webapp` service monitors the `./edge-vm/to-watch` folder for any new Excel file. Valid extensions are `.xls`, `.xlsx`, `.ods`. When a new Excel is detected, an event with the patient information are sent to the topic `devprin.medical-records`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
+The `data-loading-webapp` service exposes a dashboard for uploading patients and MiR results at `/data-loading/patients` and `/data-loading/mir-results`, respectively. Valid extensions for uploaded files are `.xls`, `.xlsx`, `.ods`. When a new Excel is uplaoded, an event with the collected data are sent to the topic `devprin.patients`/`devprin.mir-results`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
 
 ```bash
 docker compose exec -it trino bash

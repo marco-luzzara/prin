@@ -10,6 +10,7 @@ import dataclasses
 from .model.PatientRecord import PatientRecord
 from .model.utils import from_dict
 from .. import record_processor
+from .utils.validation import validate_scope
 
 bp = Blueprint('patients-data-loading', __name__, url_prefix='/data-loading/patients')
 
@@ -23,15 +24,21 @@ def view_data_loading_dashboard():
 @bp.post('/from-excel')
 def load_from_excel():
     data_file = request.files['data_file']
-    current_app.logger.info(f'File {secure_filename(data_file.filename)} is being processed...')
+    task_scope = request.args.get('scope', '')
+    validate_scope(task_scope)
+
+    current_app.logger.info(f'File {secure_filename(data_file.filename)} is being processed for scope {task_scope}...')
 
     patient_records = cast_excel_to_objs_list(data_file.stream)
     for i, patient_record in enumerate(patient_records):
         current_app.logger.info(f'Patient {i}: {patient_record}')
         owner_id = current_app.config['GROUP_NAME']
-        record_processor.process('devprin.patients', owner_id, dataclasses.asdict(patient_record))
+        record_processor.process('devprin.patients', 
+                                 owner_id, 
+                                 dataclasses.asdict(patient_record) | { 'scope': task_scope })
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
+
     return ('', 204)
 
 
