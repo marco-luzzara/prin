@@ -22,6 +22,11 @@
                 "type": "VARCHAR"
             },
             {
+                "name": "scope",
+                "mapping": "scope",
+                "type": "VARCHAR"
+            },
+            {
                 "name": "hsa_miR_1539",
                 "mapping": "hsa_miR_1539",
                 "type": "DOUBLE"

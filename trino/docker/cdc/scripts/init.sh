@@ -10,12 +10,14 @@ do
         precondition_satisfied=false
 done
 
+echo "Initializing database..."
 INIT_SQL_SCRIPT="
     -- upsert_at is not necessary but gives some insights on the record's age
     CREATE TABLE IF NOT EXISTS patients (
         -- shared columns
         owner_id VARCHAR,
         id VARCHAR,
+        scope VARCHAR,
 
         -- clinical data
         current_diagnose INTEGER,
@@ -193,6 +195,7 @@ INIT_SQL_SCRIPT="
         -- shared columns
         owner_id VARCHAR,
         id VARCHAR,
+        scope VARCHAR,
 
         current_diagnose INTEGER,
         age INTEGER,
@@ -309,6 +312,7 @@ INIT_SQL_SCRIPT="
         -- shared columns
         owner_id VARCHAR,
         id VARCHAR,
+        scope VARCHAR,
 
         hsa_miR_1539 DOUBLE,
         hsa_miR_6840_3p DOUBLE,
@@ -372,8 +376,17 @@ INIT_SQL_SCRIPT="
         --format = 'PARQUET'
         format='ORC'
     );
+
+    CREATE OR REPLACE VIEW patients_training AS
+    SELECT owner_id, id, current_diagnose, age, sex, right_handed, schooling, egfr, first_visit, diagnose_date, a, t, n, memoria, memoria_esordio, fx_esecutive, fx_esecutive_esordio, fx_visuo_spaziali, fx_visuo_spaziali_esordio, linguaggio, linguaggio_esordio, fx_pratto_gnosiche, fx_pratto_gnosiche_esordio, social_cognition, social_cognition_esordio, comportamento, comportamento_esordio, extrapiramidale, adl, iadl, cdr, cdr_sob, tau_totale_liquor, ptau_181_liquor, ttau_ptau, mta, fazekas, koedam, gca, vascular, pet_fdg, spect, pet_a, mmse_raw, mmse_corr, fab_raw, fab_corr, memoria_di_prosa_immediata_raw, memoria_di_prosa_immediata_corr, memoria_di_prosa_differita_raw, memoria_di_prosa_differita_corr, fcsrt_immediate_free_recall_raw, fcsrt_immediate_free_recall_corr, fcsrt_delayed_free_recall_raw, fcsrt_delayed_free_recall_corr, fcsrt_isc, fcsrt_itr, fcsrt_dtr, ravlt_immediato_raw, ravlt_immediato_corr, ravlt_differito_raw, ravlt_differito_corr, ravlt_recognition, digit_span_diretto_raw, digit_span_diretto_corr, digit_span_inverso_raw, digit_span_inverso_corr, corsi_block_tapping_test_raw, corsi_block_tapping_test_corr, figura_di_rey_differita, figura_di_rey_differita_corr, matrici_attentive_raw, matrici_attentive_corr, tmt_a_raw, tmt_a_corr, tmt_b_raw, tmt_b_corr, stroop_test_tempo_raw, stroop_test_tempo_corr, stroop_test_errori_raw, stroop_test_errori_corr, fluenza_verbale_fonemica_raw, fluenza_verbale_fonemica_corr, fluenza_verbale_semantica_raw, fluenza_verbale_semantica_corr, clock_drawing_test_raw, figura_di_rey_copia, test_di_prassia_costruttiva_raw, test_di_prassia_costruttiva_corr, gds, bdi, stai_i, stai_ii, social_cognition_gs_raw, social_cognition_gs_corr, social_cognition_ia_raw, social_cognition_ia_corr, social_cognition_ea_raw, social_cognition_ea_corr, social_cognition_ci_raw, social_cognition_ci_corr, cri_totale_raw, cri_tempo_libero_raw, cri_lavoro_raw, cri_scuola_raw, test_linguistici_nndd, hsa_miR_1539, hsa_miR_6840_3p, hsa_miR_6836_3p, hsa_miR_4667_5p, hsa_miR_208a_5p, hsa_miR_6885_5p, hsa_miR_1306_5p, hsa_miR_3184_5p, hsa_miR_4649_5p, hsa_miR_6859_3p, hsa_miR_6829_3p, hsa_miR_3622a_3p, hsa_miR_4664_3p, hsa_miR_6776_3p, hsa_miR_135a_3p, hsa_miR_6875_5p, hsa_miR_3646, hsa_miR_3614_5p, hsa_miR_128_1_5p, hsa_miR_6813_3p, hsa_miR_6752_5p, hsa_miR_204_3p, hsa_miR_6806_5p, hsa_miR_1538, hsa_miR_6887_3p, hsa_miR_5088_3p, hsa_miR_6743_5p, hsa_miR_4274, hsa_miR_5585_3p, hsa_miR_4787_5p, hsa_miR_320b, hsa_miR_6870_3p, hsa_miR_199a_5p, hsa_miR_4290, hsa_miR_6721_5p, hsa_miR_4728_3p, hsa_miR_3691_5p, hsa_miR_4440, hsa_miR_874_3p, hsa_miR_27a_3p, hsa_miR_2278, hsa_miR_150_3p, hsa_miR_4716_3p, hsa_miR_211_5p, hsa_miR_125a_5p, hsa_miR_4741, hsa_miR_3122, hsa_miR_3180_5p, hsa_miR_574_3p, hsa_miR_150_5p, hsa_miR_133b, hsa_miR_30c_5p, hsa_miR_212_3p, hsa_miR_92b_3p, hsa_miR_504_3p, ath_miR_159a
+    FROM patients
+    WHERE scope = 'training';
+
+    CREATE OR REPLACE VIEW patients_inference AS
+    SELECT owner_id, id, current_diagnose, age, sex, right_handed, schooling, egfr, first_visit, diagnose_date, a, t, n, memoria, memoria_esordio, fx_esecutive, fx_esecutive_esordio, fx_visuo_spaziali, fx_visuo_spaziali_esordio, linguaggio, linguaggio_esordio, fx_pratto_gnosiche, fx_pratto_gnosiche_esordio, social_cognition, social_cognition_esordio, comportamento, comportamento_esordio, extrapiramidale, adl, iadl, cdr, cdr_sob, tau_totale_liquor, ptau_181_liquor, ttau_ptau, mta, fazekas, koedam, gca, vascular, pet_fdg, spect, pet_a, mmse_raw, mmse_corr, fab_raw, fab_corr, memoria_di_prosa_immediata_raw, memoria_di_prosa_immediata_corr, memoria_di_prosa_differita_raw, memoria_di_prosa_differita_corr, fcsrt_immediate_free_recall_raw, fcsrt_immediate_free_recall_corr, fcsrt_delayed_free_recall_raw, fcsrt_delayed_free_recall_corr, fcsrt_isc, fcsrt_itr, fcsrt_dtr, ravlt_immediato_raw, ravlt_immediato_corr, ravlt_differito_raw, ravlt_differito_corr, ravlt_recognition, digit_span_diretto_raw, digit_span_diretto_corr, digit_span_inverso_raw, digit_span_inverso_corr, corsi_block_tapping_test_raw, corsi_block_tapping_test_corr, figura_di_rey_differita, figura_di_rey_differita_corr, matrici_attentive_raw, matrici_attentive_corr, tmt_a_raw, tmt_a_corr, tmt_b_raw, tmt_b_corr, stroop_test_tempo_raw, stroop_test_tempo_corr, stroop_test_errori_raw, stroop_test_errori_corr, fluenza_verbale_fonemica_raw, fluenza_verbale_fonemica_corr, fluenza_verbale_semantica_raw, fluenza_verbale_semantica_corr, clock_drawing_test_raw, figura_di_rey_copia, test_di_prassia_costruttiva_raw, test_di_prassia_costruttiva_corr, gds, bdi, stai_i, stai_ii, social_cognition_gs_raw, social_cognition_gs_corr, social_cognition_ia_raw, social_cognition_ia_corr, social_cognition_ea_raw, social_cognition_ea_corr, social_cognition_ci_raw, social_cognition_ci_corr, cri_totale_raw, cri_tempo_libero_raw, cri_lavoro_raw, cri_scuola_raw, test_linguistici_nndd, hsa_miR_1539, hsa_miR_6840_3p, hsa_miR_6836_3p, hsa_miR_4667_5p, hsa_miR_208a_5p, hsa_miR_6885_5p, hsa_miR_1306_5p, hsa_miR_3184_5p, hsa_miR_4649_5p, hsa_miR_6859_3p, hsa_miR_6829_3p, hsa_miR_3622a_3p, hsa_miR_4664_3p, hsa_miR_6776_3p, hsa_miR_135a_3p, hsa_miR_6875_5p, hsa_miR_3646, hsa_miR_3614_5p, hsa_miR_128_1_5p, hsa_miR_6813_3p, hsa_miR_6752_5p, hsa_miR_204_3p, hsa_miR_6806_5p, hsa_miR_1538, hsa_miR_6887_3p, hsa_miR_5088_3p, hsa_miR_6743_5p, hsa_miR_4274, hsa_miR_5585_3p, hsa_miR_4787_5p, hsa_miR_320b, hsa_miR_6870_3p, hsa_miR_199a_5p, hsa_miR_4290, hsa_miR_6721_5p, hsa_miR_4728_3p, hsa_miR_3691_5p, hsa_miR_4440, hsa_miR_874_3p, hsa_miR_27a_3p, hsa_miR_2278, hsa_miR_150_3p, hsa_miR_4716_3p, hsa_miR_211_5p, hsa_miR_125a_5p, hsa_miR_4741, hsa_miR_3122, hsa_miR_3180_5p, hsa_miR_574_3p, hsa_miR_150_5p, hsa_miR_133b, hsa_miR_30c_5p, hsa_miR_212_3p, hsa_miR_92b_3p, hsa_miR_504_3p, ath_miR_159a
+    FROM patients
+    WHERE scope = 'inference';
 "
 
-echo "Creating the patients table..."
 ./trino --server "$TRINO_ENDPOINT" --catalog hive --schema default --user trino --execute "$INIT_SQL_SCRIPT" && \
-    echo "patients table created"
+    echo "Initialization complete."
