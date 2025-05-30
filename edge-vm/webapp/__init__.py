@@ -13,10 +13,12 @@ def create_app(test_config=None):
     app.logger.setLevel(logging.INFO)
     app.logger.info('Loading configurations...')
     if test_config is None:
-        app.config['RECORD_PROCESSOR_CLASS'] = os.environ.get('RECORD_PROCESSOR_CLASS') or 'KafkaProcessor'
-        app.config['KAFKA_BOOTSTRAP_SERVERS'] = os.environ['KAFKA_BOOTSTRAP_SERVERS']
-        app.config['GROUP_NAME'] = os.environ.get('GROUP_NAME') or 'test-group1'
-        app.config['USERNAME'] = os.environ.get('USERNAME') or 'specialistdoc_user1'
+        app.config.from_mapping({
+            'RECORD_PROCESSOR_CLASS': os.environ.get('RECORD_PROCESSOR_CLASS') or 'KafkaProcessor',
+            'KAFKA_BOOTSTRAP_SERVERS': os.environ['KAFKA_BOOTSTRAP_SERVERS'],
+            'GROUP_NAME': os.environ.get('GROUP_NAME') or 'test-group1',
+            'USERNAME': os.environ.get('USERNAME') or 'specialistdoc_user1'
+        })
     else:
         app.config.from_mapping(test_config)
         # configs = ...

@@ -21,6 +21,8 @@ x-kafka-shared-envs: &kafka-shared-envs
   KAFKA_KRAFT_CLUSTER_ID: clusterid0with016bytes
 
 services:
+
+# ----------------------------- DASHBOARD FOR DATA LOADING -----------------------------
   data-loading-webapp:
     build:
       context: edge-vm
@@ -98,6 +100,33 @@ services:
       - KAFKA_BOOTSTRAP_SERVER=kafka-broker-0:9092
       - KAFKA_TOPIC_NAME=devprin.task.trigger
       - INFERENCE_DOCKER_IMAGE=prin-task
+
+# ----------------------------- TEST TASK -----------------------------
+  test-task:
+    image: prin-task:latest
+    depends_on:
+      trino:
+        condition: service_healthy
+    environment:
+      - TRINO_USER=trino
+      - TRINO_ENDPOINT=trino:8080
+      - TRINO_CATALOG=hive
+      - TRINO_SCHEMA=default
+    entrypoint: ["sleep", "inf"]
+
+# ----------------------------- TASK RESULTS HANDLER -----------------------------
+
+  task-results-handler:
+    build:
+      context: task-results-handler
+      dockerfile: ./Dockerfile
+    ports:
+      - "${TASK_RESULTS_HANDLER_PORT}:80"
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092 #,kafka-broker-1:9092
 
 # ----------------------------- HIVE METASTORE -----------------------------
   hive-metastore:
@@ -337,19 +366,6 @@ services:
   #     interval: 20s
   #     timeout: 10s
   #     retries: 5
-
-# ----------------------------- TEST TASK -----------------------------
-  test-task:
-    image: prin-task:latest
-    depends_on:
-      trino:
-        condition: service_healthy
-    environment:
-      - TRINO_USER=trino
-      - TRINO_ENDPOINT=trino:8080
-      - TRINO_CATALOG=hive
-      - TRINO_SCHEMA=default
-    entrypoint: ["sleep", "inf"]
 
 # ----------------------------- SUPERSET -----------------------------
 ## https://hub.docker.com/r/apache/superset
