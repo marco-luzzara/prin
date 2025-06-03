@@ -20,3 +20,12 @@ services:
         condition: service_healthy
       kafka-init:
         condition: service_completed_successfully
+
+  task-results-handler:
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./task-results-handler/api
+          target: /app/api
+        - action: rebuild
+          path: ./task-results-handler/requirements.txt

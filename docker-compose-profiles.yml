@@ -19,7 +19,22 @@ services:
       - local-dev
       - all
 
+# ----------------------------- TASK DISPATCHER -----------------------------
+
   task-dispatcher:
+    profiles:
+      - local-dev
+      - all
+
+# ----------------------------- TEST TASK -----------------------------
+
+  test-task:
+    profiles:
+      - local-dev
+
+# ----------------------------- TASK RESULTS HANDLER -----------------------------
+
+  task-results-handler:
     profiles:
       - local-dev
       - all
@@ -80,12 +95,6 @@ services:
   atlas:
     profiles:
       - all
-
-# ----------------------------- TEST TASK -----------------------------
-
-  test-task:
-    profiles:
-      - local-dev
 
 # ----------------------------- SUPERSET -----------------------------
   superset:
