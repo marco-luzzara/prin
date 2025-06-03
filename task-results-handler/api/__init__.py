@@ -10,10 +10,7 @@ def create_app(test_config=None):
     app.logger.setLevel(logging.INFO)
     app.logger.info('Loading configurations...')
     if test_config is None:
-        app.config.from_mapping({
-            'KAFKA_BOOTSTRAP_SERVERS': os.environ['KAFKA_BOOTSTRAP_SERVERS'],
-            'GROUP_NAME': os.environ.get('GROUP_NAME') or 'test-group1'
-        })
+        app.config.from_mapping({})
     else:
         app.config.from_mapping(test_config)
     app.logger.info('Configurations loaded')

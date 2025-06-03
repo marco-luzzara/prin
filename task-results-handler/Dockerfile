@@ -19,8 +19,10 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY . .
 
 ENV KAFKA_BOOTSTRAP_SERVERS=
-ENV GROUP_NAME=
+ENV KAFKA_TOPIC=devprin.task.result
+
 ENV S3_ENDPOINT=
+ENV S3_BUCKET=prin
 ENV S3_ACCESS_KEY_ID=
 ENV S3_SECRET_ACCESS_KEY=
 # Expiration defaults to 604800 seconds = 1 week
