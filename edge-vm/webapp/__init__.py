@@ -2,7 +2,7 @@ import os
 import json
 import socket
 
-import flask
+from flask import Flask, render_template
 from kafka import KafkaProducer, KafkaConsumer
 import logging
 
@@ -14,7 +14,7 @@ _kafka_producer = None
 _kafka_consumer = None
 
 def create_app(test_config=None):
-    app = flask.Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True)
 
     app.logger.setLevel(logging.INFO)
     app.logger.info('Loading configurations...')
@@ -37,11 +37,19 @@ def create_app(test_config=None):
     app.register_blueprint(task_runner.bp)
     app.register_blueprint(users.bp)
 
-    @app.get('/health')
-    def health_check():
-        return ('', 200)
+    health_check_route = app.get('/health')(health_check)
+    not_found_route = app.errorhandler(404)(homepage)
+    home_route = app.get('/')(homepage)
 
     return app
+
+
+def health_check():
+    return ('', 200)
+
+
+def homepage():
+    return render_template('index.html')
 
 
 def configure_kafka_clients():

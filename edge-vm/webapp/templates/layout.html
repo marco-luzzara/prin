@@ -4,142 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>BA-PHERD - {% block title %}{% endblock %}</title>
-    <script>
-        function showMsg(msgDiv, text, type) {
-            msgDiv.textContent = text;
-            msgDiv.className = `message ${type}`;
-
-            setTimeout(() => {
-                msgDiv.textContent = ''
-                msgDiv.className = 'message';
-            }, 10000)
-        }
-
-        function addFileUploadSubmitListener(form, submitBtn, apiEndpoint, fileInput, msgDiv) {
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-                submitBtn.disabled = true;
-
-                if (fileInput.files.length === 0) {
-                    showMsg(msgDiv, 'Non hai caricato alcun file', 'error');
-                    return;
-                }
-
-                const file = fileInput.files[0];
-                if (!file.name.match(/\.(xls|xlsx|odt)$/)) {
-                    showMsg(msgDiv, 'Il tipo di file non è valido. File compatibili: .xls,.xlsx,.odt', 'error');
-                    return;
-                }
-
-                const formData = new FormData();
-                formData.append('data_file', file);
-
-                fetch(apiEndpoint, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => {
-                    console.log(res);
-
-                    if (res.ok) {
-                        showMsg(msgDiv, 'File caricato correttamente', 'success');
-                    }
-                    else {
-                        throw new Error(`The response returned status ${res.status}`);
-                    }
-                })
-                .catch(error => {
-                    showMsg(msgDiv, 'Si è verificato un errore', 'error');
-                    console.error(error);
-                })
-                .then(_ => {
-                    submitBtn.disabled = false;
-                    fileInput.value = ''
-                });
-            });
-        }
-    </script>
-    <style>
-        {% block css %}
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f5f5f5;
-        }
-        .container {
-            width: 75%;
-            padding: 20px;
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .pretty-button {
-            background-color: #f8f9fa;
-            border: 1px solid #f8f9fa;
-            border-radius: 4px;
-            color: #3c4043;
-            cursor: pointer;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            height: 36px;
-            line-height: 27px;
-            min-width: 100px;
-            padding: 0 16px;
-            user-select: none;
-            transition: all 0.1s ease-in-out;
-        }
-        .pretty-button:hover {
-            border-color: #dadce0;
-            box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
-            color: #202124;
-        }
-        .pretty-button:focus {
-            border-color: #4285f4;
-            outline: none;
-        }
-        .message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-        }
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            display: block;
-        }
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            display: block;
-        }
-        .top-right-form {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #fff;
-            padding: 10px;
-            border-radius: 6px;
-            box-shadow: rgba(0,0,0,0.1) 0 2px 4px;
-            font-size: 14px;
-        }
-        .top-right-form input {
-            margin: 4px 0;
-            padding: 6px;
-            width: 140px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .top-right-form button {
-            margin-top: 6px;
-        }
-        {% endblock %}
-    </style>
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script src="{{ url_for('static', filename='utils.js') }}"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="top-right-form">
@@ -158,6 +27,21 @@
         </form>
         <div id="login-message" class="message"></div>
     </div>
+
+    <header class="mdc-top-app-bar mdc-top-app-bar--short">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button>
+                <span class="mdc-top-app-bar__title">Title</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+                <button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Bookmark this page">bookmark</button>
+            </section>
+        </div>
+    </header>
+    <main class="mdc-top-app-bar--short-fixed-adjust">
+        App content
+    </main>
 
     <div class="container">
         {% block container_content %}{% endblock %}

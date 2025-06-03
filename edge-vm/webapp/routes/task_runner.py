@@ -26,8 +26,8 @@ def trigger_task():
         value={ 
             'trigger_type': 'manual',
             'scope': task_scope,
-            'group_name': current_app.config['GROUP_NAME'], 
-            'username': current_app.config['USERNAME']
+            'group': current_app.config['GROUP_NAME'], 
+            'user': current_app.config['USERNAME']
         }
     )
     _kafka_producer.flush()

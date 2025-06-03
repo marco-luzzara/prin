@@ -1,13 +1,9 @@
 import json
 from flask import (
-    Blueprint, render_template, current_app, request
+    Blueprint, render_template, current_app, request, session
 )
 
 bp = Blueprint('users', __name__, url_prefix='/users')
-
-@bp.get('/')
-def view_inference_dashboard():
-    return render_template('model-inference.html')
 
 
 @bp.post('/login')
