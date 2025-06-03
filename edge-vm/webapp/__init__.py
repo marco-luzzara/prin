@@ -1,11 +1,17 @@
 import os
-from typing import Dict, Any
+import json
+import socket
 
 import flask
+from kafka import KafkaProducer, KafkaConsumer
 import logging
-from . import record_processors
 
-record_processor: record_processors.RecordProcessor = None
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '')
+if KAFKA_BOOTSTRAP_SERVERS == '':
+    raise Exception('Env variable KAFKA_BOOTSTRAP_SERVERS is empty')
+
+_kafka_producer = None
+_kafka_consumer = None
 
 def create_app(test_config=None):
     app = flask.Flask(__name__, instance_relative_config=True)
@@ -13,27 +19,17 @@ def create_app(test_config=None):
     app.logger.setLevel(logging.INFO)
     app.logger.info('Loading configurations...')
     if test_config is None:
-        app.config.from_mapping({
-            'RECORD_PROCESSOR_CLASS': os.environ.get('RECORD_PROCESSOR_CLASS') or 'KafkaProcessor',
-            'KAFKA_BOOTSTRAP_SERVERS': os.environ['KAFKA_BOOTSTRAP_SERVERS'],
-            'GROUP_NAME': os.environ.get('GROUP_NAME') or 'test-group1',
-            'USERNAME': os.environ.get('USERNAME') or 'specialistdoc_user1'
-        })
+        app.config.from_mapping({})
     else:
         app.config.from_mapping(test_config)
-        # configs = ...
+
     app.logger.info('Configurations loaded')
 
-    try:
-        os.makedirs(app.instance_path)
-    except OSError as exc:
-        app.logger.warning(exc)
-        pass
+    os.makedirs(app.instance_path)
 
-    app.logger.info('Initializing RecordProcessor...')
-    global record_processor
-    record_processor = configure_record_processor(app)
-    app.logger.info('RecordProcessor initialized')
+    app.logger.info('Initializing Kafka Clients...')
+    configure_kafka_clients()
+    app.logger.info('Kafka Clients initialized')
 
     from .routes import patients_data_loading, mir_results_data_loading, task_runner, users
     app.register_blueprint(patients_data_loading.bp)
@@ -48,9 +44,17 @@ def create_app(test_config=None):
     return app
 
 
-def configure_record_processor(app: flask.Flask) -> record_processors.RecordProcessor:
-    RecordProcessorClass: record_processors.RecordProcessor = \
-        getattr(record_processors, app.config['RECORD_PROCESSOR_CLASS'])
-    app.logger.info(f'RecordProcessor set to {RecordProcessorClass.__name__}')
+def configure_kafka_clients():
+    global _kafka_producer, _kafka_consumer
+    _kafka_producer = KafkaProducer(
+        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+        client_id=f'edge-vm-{socket.gethostname()}',
+        value_serializer=lambda m: json.dumps(m).encode(),
+        key_serializer=lambda m: json.dumps(m).encode()
+    )
 
-    return RecordProcessorClass(app)
+    _kafka_consumer = KafkaConsumer(
+        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+        client_id=f'edge-vm-{socket.gethostname()}',
+        value_deserializer=lambda m: json.loads(m.decode())
+    )

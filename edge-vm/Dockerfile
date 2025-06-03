@@ -6,18 +6,20 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-RUN apt update && apt install -y curl
+RUN <<EOF
+    apt update
+    apt install -y curl
+    pip install pip-tools
+EOF
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements.txt,target=requirements.txt \
-    python -m pip install -r requirements.txt
+    --mount=type=bind,source=requirements.in,target=requirements.in \
+    pip-compile requirements.in && pip-sync
 
 COPY . .
 
 ENV RECORD_PROCESSOR_CLASS=KafkaProcessor
 ENV KAFKA_BOOTSTRAP_SERVERS=
-ENV GROUP_NAME=
-ENV USERNAME=
 
 EXPOSE 80
 

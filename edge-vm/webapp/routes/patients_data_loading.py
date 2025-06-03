@@ -9,7 +9,7 @@ import dataclasses
 
 from .model.PatientRecord import PatientRecord
 from .model.utils import from_dict
-from .. import record_processor
+from .. import _kafka_producer
 from .utils.validation import validate_scope
 
 bp = Blueprint('patients-data-loading', __name__, url_prefix='/data-loading/patients')
@@ -33,9 +33,12 @@ def load_from_excel():
     for i, patient_record in enumerate(patient_records):
         current_app.logger.info(f'Patient {i}: {patient_record}')
         owner_id = current_app.config['GROUP_NAME']
-        record_processor.process('devprin.patients', 
-                                 owner_id, 
-                                 dataclasses.asdict(patient_record) | { 'scope': task_scope })
+        _kafka_producer.send(
+            topic='devprin.patients', 
+            key={ 'owner_id': owner_id },
+            value=dataclasses.asdict(patient_record) | { 'scope': task_scope }
+        )
+        _kafka_producer.flush()
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
 

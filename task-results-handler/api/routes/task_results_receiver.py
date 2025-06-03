@@ -41,7 +41,7 @@ S3_PRE_SIGNED_URL_EXPIRATION_SECONDS = int(os.getenv('S3_PRE_SIGNED_URL_EXPIRATI
 producer = KafkaProducer(
     bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
     client_id='restapi-storage-server',
-    value_serializer=lambda m: json.dumps(m).encode('ascii')
+    value_serializer=lambda m: json.dumps(m).encode()
 )
 
 s3_client = boto_client(

@@ -9,7 +9,7 @@ import dataclasses
 
 from .model.MiRRecord import MiRRecord
 from .model.utils import from_dict
-from .. import record_processor
+from .. import _kafka_producer
 from .utils.validation import validate_scope
 
 bp = Blueprint('mir-results-data-loading', __name__, url_prefix='/data-loading/mir-results')
@@ -33,9 +33,12 @@ def load_from_excel():
     for i, mir_record in enumerate(mir_records):
         current_app.logger.info(f'Mir record {i}: {mir_record}')
         owner_id = current_app.config['GROUP_NAME']
-        record_processor.process('devprin.mir-results', 
-                                 owner_id, 
-                                 dataclasses.asdict(mir_record) | { 'scope': task_scope })
+        _kafka_producer.send(
+            topic='devprin.mir-results', 
+            key={ 'owner_id': owner_id },
+            value=dataclasses.asdict(mir_record) | { 'scope': task_scope }
+        )
+        _kafka_producer.flush()
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
 
