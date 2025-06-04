@@ -19,13 +19,14 @@ def create_app(test_config=None):
     app.logger.setLevel(logging.INFO)
     app.logger.info('Loading configurations...')
     if test_config is None:
+        app.config.from_prefixed_env()
         app.config.from_mapping({})
     else:
         app.config.from_mapping(test_config)
 
     app.logger.info('Configurations loaded')
 
-    os.makedirs(app.instance_path)
+    os.makedirs(app.instance_path, exist_ok=True)
 
     app.logger.info('Initializing Kafka Clients...')
     configure_kafka_clients()

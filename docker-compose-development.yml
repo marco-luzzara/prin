@@ -1,13 +1,21 @@
 services:
   data-loading-webapp:
+    environment:
+      - FLASK_TEMPLATES_AUTO_RELOAD=True
     develop:
       watch:
         - action: sync+restart
           path: ./edge-vm/webapp
           target: /app/webapp
+          ignore:
+            - templates/
+            - static/
         - action: sync
           path: ./edge-vm/webapp/templates
           target: /app/webapp/templates
+        - action: sync
+          path: ./edge-vm/webapp/static
+          target: /app/webapp/static
         - action: rebuild
           path: ./edge-vm/requirements.txt
 

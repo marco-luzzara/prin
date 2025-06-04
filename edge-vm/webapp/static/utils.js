@@ -31,23 +31,23 @@ function addFileUploadSubmitListener(form, submitBtn, apiEndpoint, fileInput, ms
             method: 'POST',
             body: formData
         })
-        .then(res => {
-            console.log(res);
+            .then(res => {
+                console.log(res);
 
-            if (res.ok) {
-                showMsg(msgDiv, 'File caricato correttamente', 'success');
-            }
-            else {
-                throw new Error(`The response returned status ${res.status}`);
-            }
-        })
-        .catch(error => {
-            showMsg(msgDiv, 'Si è verificato un errore', 'error');
-            console.error(error);
-        })
-        .then(_ => {
-            submitBtn.disabled = false;
-            fileInput.value = ''
-        });
+                if (res.ok) {
+                    showMsg(msgDiv, 'File caricato correttamente', 'success');
+                }
+                else {
+                    throw new Error(`The response returned status ${res.status}`);
+                }
+            })
+            .catch(error => {
+                showMsg(msgDiv, 'Si è verificato un errore', 'error');
+                console.error(error);
+            })
+            .then(_ => {
+                submitBtn.disabled = false;
+                fileInput.value = ''
+            });
     });
 }
