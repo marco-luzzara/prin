@@ -49,7 +49,7 @@ def health_check():
     return ('', 200)
 
 
-def homepage():
+def homepage(e=None):
     return render_template('index.html')
 
 

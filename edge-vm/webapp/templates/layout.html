@@ -5,14 +5,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>BA-PHERD - {% block title %}{% endblock %}</title>
-    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-    <script src="{{ url_for('static', filename='utils.js') }}"></script>
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script src="{{ url_for('static', filename='utils.js') }}"></script>
 </head>
 
-<body>
+<body class="mdc-typography">
     <!-- <div class="top-right-form">
         <form id="login-form" data-login-step="change">
             <label>
@@ -50,8 +52,8 @@
             </nav>
         </div>
     </aside>
-    <div class="mdc-drawer-app-content">
-        <header class="mdc-top-app-bar app-bar" id="app-bar">
+    <div class="mdc-drawer-app-content mdc-theme--background page-container">
+        <header class="mdc-top-app-bar mdc-top-app-bar--fixed" id="top-app-bar">
             <div class="mdc-top-app-bar__row">
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                     <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button>
@@ -59,11 +61,26 @@
                 </section>
             </div>
         </header>
-        <main class="main-content" id="main-content">
+        <main class="main-content mdc-top-app-bar--fixed-adjust" id="main-content">
             <div class="mdc-top-app-bar--fixed-adjust">
-                App Content
+                {% block main_content %}{% endblock %}
             </div>
         </main>
+        <footer class="footer">
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell">
+                        <img src="{{ url_for('static', filename='logos/italiadomani.png') }}" class="footer-logo">
+                    </div>
+                    <div class="mdc-layout-grid__cell">
+                        <img src="{{ url_for('static', filename='logos/MUR.png') }}" class="footer-logo">
+                    </div>
+                    <div class="mdc-layout-grid__cell">
+                        <img src="{{ url_for('static', filename='logos/NextGenerationEU.png') }}" class="footer-logo">
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <!-- <div class="container">
@@ -74,12 +91,23 @@
 
     <script type="module">
         // material design
-        const topAppBar = mdc.topAppBar.MDCTopAppBar.attachTo(document.getElementById('app-bar'));
+        const topAppBar = mdc.topAppBar.MDCTopAppBar.attachTo(document.getElementById('top-app-bar'));
         const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
         topAppBar.setScrollTarget(document.getElementById('main-content'));
         topAppBar.listen('MDCTopAppBar:nav', () => {
             drawer.open = !drawer.open;
         });
+
+        const listEl = document.querySelector('.mdc-drawer .mdc-list');
+        const mainContentEl = document.querySelector('.main-content');
+
+        listEl.addEventListener('click', (event) => {
+            mainContentEl.querySelector('input, button, .mdc-card').focus();
+        });
+
+        // document.body.addEventListener('MDCDrawer:closed', () => {
+        //     mainContentEl.querySelector('input, button').focus();
+        // });
     </script>
 
     <!-- <script>

@@ -1,2 +1,25 @@
 {% extends "layout.html" %}
 {% block title %}Home{% endblock %}
+{% block main_content %}
+<div class="mdc-layout-grid">
+    <div class="mdc-layout-grid__inner">
+        <div class="mdc-layout-grid__cell">
+            <div class="mdc-card">
+                <div class="mdc-card__primary-action" tabindex="0">
+                    <div class="mdc-card-content">
+                        <h5 class="mdc-typography--headline5 mdc-theme--primary-bg mdc-theme--on-primary">
+                            Data Upload - Pazienti</h5>
+                        <!-- <h2 class="mdc-typography--headline6">A solid decision.</h2> -->
+                        <p class="mdc-typography--subtitle1">
+                            Carica un file Excel contenente i dati dei pazienti
+                        </p>
+                    </div>
+                    <div class="mdc-card__ripple"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-layout-grid__cell"></div>
+        <div class="mdc-layout-grid__cell"></div>
+    </div>
+</div>
+{% endblock %}
