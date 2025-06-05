@@ -95,3 +95,4 @@ venv/
 # custom
 to-watch/
 test-files/
+.devcontainer/
