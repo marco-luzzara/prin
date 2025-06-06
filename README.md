@@ -69,7 +69,7 @@ make up COMPOSE_PROFILES=local-dev \
 
 To first render your Docker Compose template, replace `make up` with `make up-rendered`.
 
-The `data-loading-webapp` service exposes a dashboard for uploading patients and MiR results at `/data-loading/patients` and `/data-loading/mir-results`, respectively. Valid extensions for uploaded files are `.xls`, `.xlsx`, `.ods`. When a new Excel is uplaoded, an event with the collected data are sent to the topic `devprin.patients`/`devprin.mir-results`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
+The `user-dashboard` service exposes a dashboard for uploading patients and MiR results at `/data-loading/patients` and `/data-loading/mir-results`, respectively. Valid extensions for uploaded files are `.xls`, `.xlsx`, `.ods`. When a new Excel is uplaoded, an event with the collected data are sent to the topic `devprin.patients`/`devprin.mir-results`. These events can be queried from Trino thanks to the Kafka connector for Trino. To run any query:
 
 ```bash
 docker compose exec -it trino bash

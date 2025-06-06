@@ -1,5 +1,5 @@
 services:
-  data-loading-webapp:
+  user-dashboard:
     cpus: 0.3
     mem_limit: 200mb
 

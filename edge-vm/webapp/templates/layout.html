@@ -15,6 +15,49 @@
 </head>
 
 <body class="mdc-typography">
+    <div class="mdc-dialog" id="login-dialog">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface" role="dialog" aria-modal="true" aria-labelledby="login-dialog"
+                aria-describedby="login-dialog-content">
+                <form action="www.google.it" method="post">
+                    <h2 class="mdc-dialog__title" id="my-dialog-title">Login</h2>
+                    <div class="mdc-dialog__content" id="my-dialog-content">
+                        <ul class="mdc-list">
+                            <li class="mdc-list-item" tabindex="0">
+                                <label class="mdc-text-field mdc-text-field--filled">
+                                    <span class="mdc-text-field__ripple"></span>
+                                    <span class="mdc-floating-label" id="login-user-label">User</span>
+                                    <input class="mdc-text-field__input" type="text"
+                                        aria-labelledby="login-user-input" />
+                                    <span class="mdc-line-ripple"></span>
+                                </label>
+                            </li>
+                            <li class="mdc-list-item">
+                                <label class="mdc-text-field mdc-text-field--filled">
+                                    <span class="mdc-text-field__ripple"></span>
+                                    <span class="mdc-floating-label" id="login-group-label">Group</span>
+                                    <input class="mdc-text-field__input" type="text"
+                                        aria-labelledby="login-group-input" />
+                                    <span class="mdc-line-ripple"></span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mdc-dialog__actions">
+                        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
+                            <div class="mdc-button__ripple"></div>
+                            <span class="mdc-button__label">Cancel</span>
+                        </button>
+                        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept">
+                            <div class="mdc-button__ripple"></div>
+                            <span class="mdc-button__label">Login</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
     <!-- <div class="top-right-form">
         <form id="login-form" data-login-step="change">
             <label>
@@ -31,23 +74,23 @@
         <div id="login-message" class="message"></div>
     </div> -->
 
-    <aside class="mdc-drawer mdc-drawer--dismissible">
+    <aside class="mdc-drawer" id="side-nav-bar">
         <div class="mdc-drawer__content">
             <nav class="mdc-list">
-                <a class="mdc-list-item mdc-list-item--activated" href="#" aria-current="page">
+                <a class="mdc-list-item" href="#">
                     <span class="mdc-list-item__ripple"></span>
-                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">inbox</i>
-                    <span class="mdc-list-item__text">Inbox</span>
+                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">groups</i>
+                    <span class="mdc-list-item__text">Pazienti</span>
                 </a>
                 <a class="mdc-list-item" href="#">
                     <span class="mdc-list-item__ripple"></span>
-                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">send</i>
-                    <span class="mdc-list-item__text">Outgoing</span>
+                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">biotech</i>
+                    <span class="mdc-list-item__text">Risultati MiRNA</span>
                 </a>
                 <a class="mdc-list-item" href="#">
                     <span class="mdc-list-item__ripple"></span>
-                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">drafts</i>
-                    <span class="mdc-list-item__text">Drafts</span>
+                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">construction</i>
+                    <span class="mdc-list-item__text">Tasks</span>
                 </a>
             </nav>
         </div>
@@ -56,8 +99,14 @@
         <header class="mdc-top-app-bar mdc-top-app-bar--fixed" id="top-app-bar">
             <div class="mdc-top-app-bar__row">
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                    <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button>
+                    <!-- <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button> -->
                     <span class="mdc-top-app-bar__title">BA-PHERD</span>
+                </section>
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+                    <button class="mdc-button">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">Login</span>
+                    </button>
                 </section>
             </div>
         </header>
@@ -90,24 +139,39 @@
     {% block js %}{% endblock %}
 
     <script type="module">
-        // material design
+        // **MATERIAL DESIGN**
+
+        // login
+        const loginDialog = new mdc.dialog.MDCDialog(document.querySelector('#login-dialog'));
+        const loginDialogList = new mdc.list.MDCList(document.querySelector('#login-dialog .mdc-list'));
+
+        loginDialog.listen('MDCDialog:opened', () => {
+            loginDialogList.layout();
+        });
+        // const textField = new mdc.textField.MDCTextField(document.querySelector('.mdc-text-field:not(.mdc-dialog .mdc-list)'));
+
+        // drawer
         const topAppBar = mdc.topAppBar.MDCTopAppBar.attachTo(document.getElementById('top-app-bar'));
-        const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
+        // const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
+        const drawerListElem = document.querySelector('#side-nav-bar .mdc-list')
+        const drawerList = mdc.list.MDCList.attachTo(drawerListElem);
+        document.querySelectorAll('.mdc-list-item').forEach(el => {
+            new mdc.ripple.MDCRipple(el);
+        });
+        drawerList.wrapFocus = true;
+
         topAppBar.setScrollTarget(document.getElementById('main-content'));
-        topAppBar.listen('MDCTopAppBar:nav', () => {
-            drawer.open = !drawer.open;
-        });
-
-        const listEl = document.querySelector('.mdc-drawer .mdc-list');
-        const mainContentEl = document.querySelector('.main-content');
-
-        listEl.addEventListener('click', (event) => {
-            mainContentEl.querySelector('input, button, .mdc-card').focus();
-        });
-
-        // document.body.addEventListener('MDCDrawer:closed', () => {
-        //     mainContentEl.querySelector('input, button').focus();
+        // topAppBar.listen('MDCTopAppBar:nav', () => {
+        //     drawer.open = !drawer.open;
         // });
+
+        const mainContent = document.querySelector('.main-content');
+        drawerListElem.addEventListener('click', (event) => {
+            mainContent.querySelector('input, button, a').focus();
+        });
+
+        // buttons
+        // const buttonRipple = new mdc.ripple.MDCRipple(document.querySelectorAll('.mdc-button'));
     </script>
 
     <!-- <script>

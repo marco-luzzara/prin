@@ -1,6 +1,6 @@
 services:
 # ----------------------------- FILE WATCHER -----------------------------
-  data-loading-webapp:
+  user-dashboard:
     profiles:
       - local-dev
       - all
