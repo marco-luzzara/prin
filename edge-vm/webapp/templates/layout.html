@@ -75,8 +75,30 @@
     </div> -->
 
     <aside class="mdc-drawer" id="side-nav-bar">
+        <div class="mdc-drawer__header">
+            <div id="side-nav-bar-header">
+                <img class="user-avatar" src="{{ url_for('static', filename='images/user-account.png') }}"
+                    alt="anonymous" />
+                <h3 class="mdc-drawer__title">Mail</h3>
+                <h6 class="mdc-drawer__subtitle">email@material.io</h6>
+                <button class="mdc-button mdc-button--raised user-account-button" id="login-button">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Login</span>
+                </button>
+                <button class="mdc-button mdc-button--raised user-account-button">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Logout</span>
+                </button>
+            </div>
+        </div>
         <div class="mdc-drawer__content">
             <nav class="mdc-list">
+                <hr class="mdc-list-divider">
+                <a class="mdc-list-item mdc-list-item--activated" href="#">
+                    <span class="mdc-list-item__ripple"></span>
+                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">home</i>
+                    <span class="mdc-list-item__text">Home</span>
+                </a>
                 <a class="mdc-list-item" href="#">
                     <span class="mdc-list-item__ripple"></span>
                     <i class="material-icons mdc-list-item__graphic" aria-hidden="true">groups</i>
@@ -101,12 +123,6 @@
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                     <!-- <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button> -->
                     <span class="mdc-top-app-bar__title">BA-PHERD</span>
-                </section>
-                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-                    <button class="mdc-button">
-                        <span class="mdc-button__ripple"></span>
-                        <span class="mdc-button__label">Login</span>
-                    </button>
                 </section>
             </div>
         </header>
@@ -141,6 +157,11 @@
     <script type="module">
         // **MATERIAL DESIGN**
 
+        // buttons
+        document.querySelectorAll('.mdc-button').forEach(el => {
+            new mdc.ripple.MDCRipple(el);
+        });
+
         // login
         const loginDialog = new mdc.dialog.MDCDialog(document.querySelector('#login-dialog'));
         const loginDialogList = new mdc.list.MDCList(document.querySelector('#login-dialog .mdc-list'));
@@ -161,17 +182,15 @@
         drawerList.wrapFocus = true;
 
         topAppBar.setScrollTarget(document.getElementById('main-content'));
-        // topAppBar.listen('MDCTopAppBar:nav', () => {
-        //     drawer.open = !drawer.open;
-        // });
 
         const mainContent = document.querySelector('.main-content');
         drawerListElem.addEventListener('click', (event) => {
             mainContent.querySelector('input, button, a').focus();
         });
 
-        // buttons
-        // const buttonRipple = new mdc.ripple.MDCRipple(document.querySelectorAll('.mdc-button'));
+        document.querySelector('#login-button').addEventListener('click', e => {
+            loginDialog.open()
+        })
     </script>
 
     <!-- <script>

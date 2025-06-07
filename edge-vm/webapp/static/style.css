@@ -1,7 +1,7 @@
 body {
     margin: unset;
     display: flex;
-    height: 100vh;
+    /* height: 100vh; */
     --mdc-theme-background: #F0FFFF;
     --mdc-theme-text-primary-on-background: black;
     --mdc-theme-primary: #514FFF;
@@ -10,6 +10,9 @@ body {
     --mdc-theme-on-secondary: black;
 }
 
+/*
+Removes default user agent stylesheet for anchors
+*/
 a:-webkit-any-link {
     color: unset;
     text-decoration: unset;
@@ -19,12 +22,6 @@ a:-webkit-any-link {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-}
-
-.mdc-drawer-app-content {
-    flex: auto;
-    overflow: auto;
-    position: relative;
 }
 
 .main-content {
@@ -37,9 +34,17 @@ a:-webkit-any-link {
     padding: 5%;
 }
 
+.user-avatar {
+    width: 60%;
+}
+
 /*
 ** SIDE NAV BAR **
 */
+
+#side-nav-bar {
+    padding-top: 3%;
+}
 
 #side-nav-bar .mdc-list-item {
     padding: 7% 10%;
@@ -47,6 +52,23 @@ a:-webkit-any-link {
 
 #side-nav-bar .mdc-list-item__graphic {
     margin-right: 10%;
+}
+
+.mdc-drawer-app-content {
+    flex: auto;
+    overflow: auto;
+    position: relative;
+}
+
+#side-nav-bar-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-account-button {
+    margin-top: 5%;
 }
 
 /* #side-nav-bar .mdc-list-item__text {
