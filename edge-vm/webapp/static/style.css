@@ -38,6 +38,18 @@ a:-webkit-any-link {
     width: 60%;
 }
 
+/* LOGIN DIALOG */
+#login-dialog-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-dialog-content__select-input {
+    width: 75%;
+}
+
 /*
 ** SIDE NAV BAR **
 */
@@ -60,7 +72,7 @@ a:-webkit-any-link {
     position: relative;
 }
 
-#side-nav-bar-header {
+.centered-flex-column {
     display: flex;
     flex-direction: column;
     justify-content: center;

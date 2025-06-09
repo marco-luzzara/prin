@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>BA-PHERD - {% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.css">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -17,38 +17,124 @@
 <body class="mdc-typography">
     <div class="mdc-dialog" id="login-dialog">
         <div class="mdc-dialog__container">
-            <div class="mdc-dialog__surface" role="dialog" aria-modal="true" aria-labelledby="login-dialog"
+            <div class="mdc-dialog__surface" role="dialog" aria-modal="true" aria-labelledby="login-dialog-title"
                 aria-describedby="login-dialog-content">
-                <form action="www.google.it" method="post">
-                    <h2 class="mdc-dialog__title" id="my-dialog-title">Login</h2>
-                    <div class="mdc-dialog__content" id="my-dialog-content">
-                        <ul class="mdc-list">
-                            <li class="mdc-list-item" tabindex="0">
-                                <label class="mdc-text-field mdc-text-field--filled">
-                                    <span class="mdc-text-field__ripple"></span>
-                                    <span class="mdc-floating-label" id="login-user-label">User</span>
-                                    <input class="mdc-text-field__input" type="text"
-                                        aria-labelledby="login-user-input" />
+                <form>
+                    <h2 class="mdc-dialog__title" id="login-dialog-title">User Login</h2>
+                    <div class="mdc-dialog__content" id="login-dialog-content">
+                        <div id="login-dialog-content">
+                            <div id="login-group-select"
+                                class="mdc-select mdc-select--filled mdc-select--required login-dialog-content__select-input">
+                                <input type="hidden" name="group">
+                                <div class="mdc-select__anchor" role="button" aria-haspopup="listbox"
+                                    aria-required="true" aria-expanded="false">
+                                    <span class="mdc-select__ripple"></span>
+                                    <span class="mdc-floating-label">Gruppo</span>
+                                    <span class="mdc-select__selected-text-container">
+                                        <span class="mdc-select__selected-text"></span>
+                                    </span>
+                                    <span class="mdc-select__dropdown-icon">
+                                        <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5"
+                                            focusable="false">
+                                            <polygon class="mdc-select__dropdown-icon-inactive" stroke="none"
+                                                fill-rule="evenodd" points="7 10 12 15 17 10">
+                                            </polygon>
+                                            <polygon class="mdc-select__dropdown-icon-active" stroke="none"
+                                                fill-rule="evenodd" points="7 15 12 10 17 15">
+                                            </polygon>
+                                        </svg>
+                                    </span>
                                     <span class="mdc-line-ripple"></span>
-                                </label>
-                            </li>
-                            <li class="mdc-list-item">
-                                <label class="mdc-text-field mdc-text-field--filled">
-                                    <span class="mdc-text-field__ripple"></span>
-                                    <span class="mdc-floating-label" id="login-group-label">Group</span>
-                                    <input class="mdc-text-field__input" type="text"
-                                        aria-labelledby="login-group-input" />
+                                </div>
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+                                    <ul class="mdc-list" role="listbox" aria-label="Groups list">
+                                        <li class="mdc-list-item mdc-list-item--selected" aria-selected="true"
+                                            data-value="" role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                        </li>
+                                        <li class="mdc-list-item" aria-selected="false" data-value="test-group1"
+                                            role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                            <span class="mdc-list-item__text">
+                                                test-group1
+                                            </span>
+                                        </li>
+                                        <li class="mdc-list-item" aria-selected="false" data-value="test-group2"
+                                            role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                            <span class="mdc-list-item__text">
+                                                test-group2
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div id="login-user-select"
+                                class="mdc-select mdc-select--filled mdc-select--required mdc-select--disabled login-dialog-content__select-input">
+                                <input type="hidden" name="user" disabled="true" />
+                                <div class=" mdc-select__anchor" role="button" aria-haspopup="listbox"
+                                    aria-required="true" aria-expanded="false" aria-disabled="true">
+                                    <span class="mdc-select__ripple"></span>
+                                    <span class="mdc-floating-label">Utente</span>
+                                    <span class="mdc-select__selected-text-container">
+                                        <span class="mdc-select__selected-text"></span>
+                                    </span>
+                                    <span class="mdc-select__dropdown-icon">
+                                        <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5"
+                                            focusable="false">
+                                            <polygon class="mdc-select__dropdown-icon-inactive" stroke="none"
+                                                fill-rule="evenodd" points="7 10 12 15 17 10">
+                                            </polygon>
+                                            <polygon class="mdc-select__dropdown-icon-active" stroke="none"
+                                                fill-rule="evenodd" points="7 15 12 10 17 15">
+                                            </polygon>
+                                        </svg>
+                                    </span>
                                     <span class="mdc-line-ripple"></span>
-                                </label>
-                            </li>
-                        </ul>
+                                </div>
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+                                    <ul class="mdc-list" role="listbox" aria-label="Users list">
+                                        <li class="mdc-list-item mdc-list-item--selected" aria-selected="true"
+                                            data-value="" role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+
+
+
+                            <!-- <label class="mdc-text-field mdc-text-field--filled">
+                                <span class="mdc-text-field__ripple"></span>
+                                <span class="mdc-floating-label" id="login-user-label">User</span>
+                                <input class="mdc-text-field__input" type="text" aria-labelledby="login-user-input"
+                                    data-mdc-dialog-initial-focus />
+                                <span class="mdc-line-ripple"></span>
+                            </label> -->
+                            <!-- <select id="login-group-select">
+                                <button>
+                                    <selectedcontent></selectedcontent>
+                                </button>
+
+                                <option value="">Selezionare il gruppo</option>
+                                <option value="cat">
+                                    <span class="option-label" aria-hidden="true">test-group1</span>
+                                </option>
+                                <option value="cat">
+                                    <span class="option-label" aria-hidden="true">test-group2</span>
+                                </option>
+                            </select> -->
+                        </div>
                     </div>
                     <div class="mdc-dialog__actions">
                         <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
                             <div class="mdc-button__ripple"></div>
                             <span class="mdc-button__label">Cancel</span>
                         </button>
-                        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept">
+                        <button type="submit" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept"
+                            data-mdc-dialog-button-default>
                             <div class="mdc-button__ripple"></div>
                             <span class="mdc-button__label">Login</span>
                         </button>
@@ -76,7 +162,7 @@
 
     <aside class="mdc-drawer" id="side-nav-bar">
         <div class="mdc-drawer__header">
-            <div id="side-nav-bar-header">
+            <div id="side-nav-bar-header" class="centered-flex-column">
                 <img class="user-avatar" src="{{ url_for('static', filename='images/user-account.png') }}"
                     alt="anonymous" />
                 <h3 class="mdc-drawer__title">Mail</h3>
@@ -157,30 +243,71 @@
     <script type="module">
         // **MATERIAL DESIGN**
 
+        // ** INITIALIZATION **
+        // select
+        // document.querySelectorAll('.mdc-select').forEach(el => {
+        //     new mdc.select.MDCSelect(el);
+        // });
+
+        // top app bar
+        const topAppBar = new mdc.topAppBar.MDCTopAppBar(document.getElementById('top-app-bar'));
+
         // buttons
         document.querySelectorAll('.mdc-button').forEach(el => {
             new mdc.ripple.MDCRipple(el);
         });
 
-        // login
-        const loginDialog = new mdc.dialog.MDCDialog(document.querySelector('#login-dialog'));
-        const loginDialogList = new mdc.list.MDCList(document.querySelector('#login-dialog .mdc-list'));
-
-        loginDialog.listen('MDCDialog:opened', () => {
-            loginDialogList.layout();
-        });
-        // const textField = new mdc.textField.MDCTextField(document.querySelector('.mdc-text-field:not(.mdc-dialog .mdc-list)'));
-
-        // drawer
-        const topAppBar = mdc.topAppBar.MDCTopAppBar.attachTo(document.getElementById('top-app-bar'));
-        // const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
+        // list
         const drawerListElem = document.querySelector('#side-nav-bar .mdc-list')
-        const drawerList = mdc.list.MDCList.attachTo(drawerListElem);
+        const drawerList = new mdc.list.MDCList(drawerListElem);
         document.querySelectorAll('.mdc-list-item').forEach(el => {
             new mdc.ripple.MDCRipple(el);
         });
-        drawerList.wrapFocus = true;
 
+        // text fields
+        document.querySelectorAll('.mdc-text-field').forEach(el => {
+            new mdc.textField.MDCTextField(el);
+        });
+
+        // dialogs
+        const loginDialog = new mdc.dialog.MDCDialog(document.querySelector('#login-dialog'));
+
+        // ** END INITIALIZATION **
+
+        // ** LOGIN **
+        const loginGroupSelect = new mdc.select.MDCSelect(document.querySelector('#login-group-select'));
+        const loginUserSelect = new mdc.select.MDCSelect(document.querySelector('#login-user-select'));
+        loginDialog.listen('MDCDialog:opened', () => {
+            loginGroupSelect.layout();
+            loginUserSelect.layout();
+        });
+
+        const groupToUsersMap = new Map([
+            ['test-group1', ['specialistdoc_user1', 'researcher_user1', 'careworker_user1']],
+            ['test-group2', ['specialistdoc_user2', 'researcher_user2', 'careworker_user2']]
+        ])
+
+        loginGroupSelect.listen('MDCSelect:change', function () {
+            document.querySelector('#login-user-select .mdc-list').innerHTML = `
+                <li class="mdc-list-item mdc-list-item--selected" aria-selected="true"
+                    data-value="" role="option">
+                    <span class="mdc-list-item__ripple"></span>
+                </li>
+                ${groupToUsersMap.get(loginGroupSelect.value).map(user => `
+                <li class="mdc-list-item" aria-selected="false" data-value="${user}"
+                    role="option">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__text">
+                        ${user}
+                    </span>
+                </li>`).join('\n')}`;
+
+            loginUserSelect.disabled = false;
+            loginUserSelect.layout();
+        });
+
+        // drawer
+        drawerList.wrapFocus = true;
         topAppBar.setScrollTarget(document.getElementById('main-content'));
 
         const mainContent = document.querySelector('.main-content');
@@ -189,7 +316,7 @@
         });
 
         document.querySelector('#login-button').addEventListener('click', e => {
-            loginDialog.open()
+            loginDialog.open();
         })
     </script>
 
