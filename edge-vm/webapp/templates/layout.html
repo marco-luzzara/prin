@@ -15,15 +15,15 @@
     <script src="{{ url_for('static', filename='utils.js') }}"></script>
 </head>
 
-<body class="mdc-typography">
+<body class="mdc-typography flex m-[unset]">
     <div class="mdc-dialog" id="login-dialog">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface" role="dialog" aria-modal="true" aria-labelledby="login-dialog-title"
                 aria-describedby="login-dialog-content">
                 <form method="post" action="{{ url_for('users.login') }}">
                     <h2 class="mdc-dialog__title" id="login-dialog-title">User Login</h2>
-                    <div class="mdc-dialog__content" id="login-dialog-content">
-                        <div id="login-dialog-content">
+                    <div class="mdc-dialog__content" style="overflow: unset;">
+                        <div id="login-dialog-content" class="flex flex-col justify-center items-center">
                             <div id="login-group-select"
                                 class="mdc-select mdc-select--filled mdc-select--required login-dialog-content__select-input">
                                 <input type="hidden" name="group">
@@ -167,11 +167,10 @@
         <div id="login-message" class="message"></div>
     </div> -->
 
-    <aside class="mdc-drawer" id="side-nav-bar">
+    <aside class="mdc-drawer pt-6" id="side-nav-bar">
         <div class="mdc-drawer__header">
-            <div id="side-nav-bar-header" class="centered-flex-column">
-                <img class="user-avatar" src="{{ url_for('static', filename='images/user-account.png') }}"
-                    alt="anonymous" />
+            <div id="side-nav-bar-header" class="flex flex-col justify-center items-center">
+                <img class="w-40" src="{{ url_for('static', filename='images/user-account.png') }}" alt="anonymous" />
                 {% if session.user %}
                 <h3 class="mdc-drawer__title">{{ session.user }}</h3>
                 <h6 class="mdc-drawer__subtitle">Group: {{ session.group }}</h6>
@@ -180,14 +179,13 @@
                 {% endif %}
                 <form method="post" action="{{ url_for('users.logout') }}">
                     <button
-                        class="mdc-button mdc-button--raised user-account-button {% if session.user is undefined %}!hidden{% endif %}"
+                        class="mdc-button mdc-button--raised mt-5 {% if session.user is undefined %}hidden!{% endif %}"
                         id="logout-button" type="submit">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">Logout</span>
                     </button>
                 </form>
-                <button
-                    class="mdc-button mdc-button--raised user-account-button {% if session.user %}!hidden{% endif %}"
+                <button class="mdc-button mdc-button--raised mt-5 {% if session.user %}hidden!{% endif %}"
                     id="login-button">
                     <span class="mdc-button__ripple"></span>
                     <span class="mdc-button__label">Login</span>
@@ -234,7 +232,7 @@
                 {% block main_content %}{% endblock %}
             </div>
         </main>
-        <footer class="footer">
+        <footer class="bg-(--mdc-theme-primary)">
             <div class="mdc-layout-grid">
                 <div class="mdc-layout-grid__inner">
                     <div class="mdc-layout-grid__cell">
@@ -250,10 +248,6 @@
             </div>
         </footer>
     </div>
-
-    <!-- <div class="container">
-        {% block container_content %}{% endblock %}
-    </div> -->
 
     {% block js %}{% endblock %}
 
@@ -332,54 +326,6 @@
             loginDialog.open();
         })
     </script>
-
-    <!-- <script>
-        const group = document.getElementById('group-name');
-        const user = document.getElementById('username');
-        const loginMessage = document.getElementById('login-message');
-        const loginSubmitBtn = document.getElementById('login-submit-btn');
-        const loginForm = document.getElementById('login-form');
-        loginForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (loginForm.dataset.loginStep === 'change') {
-                group.readOnly = false;
-                user.readOnly = false;
-                loginSubmitBtn.textContent = 'Login'
-                loginForm.dataset.loginStep = 'login';
-
-                return;
-            }
-
-            loginSubmitBtn.disabled = true;
-            group.readOnly = true;
-            user.readOnly = true;
-            loginSubmitBtn.textContent = 'Modifica'
-            loginForm.dataset.loginStep = 'change';
-
-            fetch("{{ url_for('users.login') }}", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ group_name: group.value, username: user.value })
-            })
-                .then(res => {
-                    console.log(res);
-
-                    if (res.ok) {
-                        showMsg(loginMessage, `Login con utente ${group.value}:${user.value}`, 'success');
-                    }
-                    else {
-                        throw new Error(`The response returned status ${res.status}`);
-                    }
-                })
-                .catch(err => {
-                    showMsg(loginMessage, 'Si è verificato un errore', 'error');
-                    console.error(err);
-                })
-                .then(_ => {
-                    loginSubmitBtn.disabled = false;
-                });
-        });
-    </script> -->
 </body>
 
 </html>
