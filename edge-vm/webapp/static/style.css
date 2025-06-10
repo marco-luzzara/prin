@@ -44,10 +44,11 @@ a:-webkit-any-link {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: unset;
 }
 
 .login-dialog-content__select-input {
-    width: 75%;
+    margin: 10%;
 }
 
 /*

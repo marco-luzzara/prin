@@ -99,6 +99,36 @@
                                             data-value="" role="option">
                                             <span class="mdc-list-item__ripple"></span>
                                         </li>
+                                        <li class="mdc-list-item" aria-selected="false" data-value="specialistdoc_user1"
+                                            role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                            <span class="mdc-list-item__text">specialistdoc_user1</span>
+                                        </li>
+                                        <li class="mdc-list-item" aria-selected="false" data-value="specialistdoc_user2"
+                                            role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                            <span class="mdc-list-item__text">specialistdoc_user2</span>
+                                        </li>
+                                        <li class="mdc-list-item" aria-selected="false" data-value="researcher_user1"
+                                            role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                            <span class="mdc-list-item__text">researcher_user1</span>
+                                        </li>
+                                        <li class="mdc-list-item" aria-selected="false" data-value="researcher_user2"
+                                            role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                            <span class="mdc-list-item__text">researcher_user2</span>
+                                        </li>
+                                        <li class="mdc-list-item" aria-selected="false" data-value="careworker_user1"
+                                            role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                            <span class="mdc-list-item__text">careworker_user1</span>
+                                        </li>
+                                        <li class="mdc-list-item" aria-selected="false" data-value="careworker_user2"
+                                            role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                            <span class="mdc-list-item__text">careworker_user2</span>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -270,13 +300,13 @@
         });
 
         // dialogs
-        const loginDialog = new mdc.dialog.MDCDialog(document.querySelector('#login-dialog'));
+        const loginDialog = new mdc.dialog.MDCDialog(document.getElementById('login-dialog'));
 
         // ** END INITIALIZATION **
 
         // ** LOGIN **
-        const loginGroupSelect = new mdc.select.MDCSelect(document.querySelector('#login-group-select'));
-        const loginUserSelect = new mdc.select.MDCSelect(document.querySelector('#login-user-select'));
+        const loginGroupSelect = new mdc.select.MDCSelect(document.getElementById('login-group-select'));
+        const loginUserSelect = new mdc.select.MDCSelect(document.getElementById('login-user-select'));
         loginDialog.listen('MDCDialog:opened', () => {
             loginGroupSelect.layout();
             loginUserSelect.layout();
@@ -288,23 +318,19 @@
         ])
 
         loginGroupSelect.listen('MDCSelect:change', function () {
-            document.querySelector('#login-user-select .mdc-list').innerHTML = `
-                <li class="mdc-list-item mdc-list-item--selected" aria-selected="true"
-                    data-value="" role="option">
-                    <span class="mdc-list-item__ripple"></span>
-                </li>
-                ${groupToUsersMap.get(loginGroupSelect.value).map(user => `
-                <li class="mdc-list-item" aria-selected="false" data-value="${user}"
-                    role="option">
-                    <span class="mdc-list-item__ripple"></span>
-                    <span class="mdc-list-item__text">
-                        ${user}
-                    </span>
-                </li>`).join('\n')}`;
+            loginUserSelect.setValue("");
+            document.querySelectorAll('#login-user-select .mdc-list > li:not(:first-child)').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            const usersToEnable = groupToUsersMap.get(loginGroupSelect.value)
+            usersToEnable.forEach(user => {
+                document.querySelector(`#login-user-select .mdc-list > li[data-value="${user}"]`)
+                    ?.style.setProperty('display', 'block');
+            });
 
             loginUserSelect.disabled = false;
-            loginUserSelect.layout();
-        });
+        })
 
         // drawer
         drawerList.wrapFocus = true;
