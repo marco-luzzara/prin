@@ -151,21 +151,6 @@
         </div>
         <div class="mdc-dialog__scrim"></div>
     </div>
-    <!-- <div class="top-right-form">
-        <form id="login-form" data-login-step="change">
-            <label>
-                Group Name<br>
-                <input type="text" id="group-name" name="group_name" value="{{ group_name }}" readonly required
-                    minlength="1">
-            </label><br>
-            <label>
-                Username<br>
-                <input type="text" id="username" name="username" value="{{ username }}" readonly required minlength="1">
-            </label><br>
-            <button type="submit" class="pretty-button" id="login-submit-btn">Modifica</button>
-        </form>
-        <div id="login-message" class="message"></div>
-    </div> -->
 
     <aside class="mdc-drawer pt-6" id="side-nav-bar">
         <div class="mdc-drawer__header">
@@ -195,22 +180,26 @@
         <div class="mdc-drawer__content">
             <nav class="mdc-list">
                 <hr class="mdc-list-divider">
-                <a class="mdc-list-item mdc-list-item--activated" href="#">
+                <a class="mdc-list-item {{ 'mdc-list-item--activated' if request.endpoint == 'homepage' }}"
+                    href="{{ url_for('homepage') }}">
                     <span class="mdc-list-item__ripple"></span>
                     <i class="material-icons mdc-list-item__graphic" aria-hidden="true">home</i>
                     <span class="mdc-list-item__text">Home</span>
                 </a>
-                <a class="mdc-list-item" href="#">
+                <a class="mdc-list-item {{ 'mdc-list-item--activated' if request.endpoint == 'patients-data-loading.view_data_loading_dashboard' }}"
+                    href="{{ url_for('patients-data-loading.view_data_loading_dashboard') }}">
                     <span class="mdc-list-item__ripple"></span>
                     <i class="material-icons mdc-list-item__graphic" aria-hidden="true">groups</i>
                     <span class="mdc-list-item__text">Pazienti</span>
                 </a>
-                <a class="mdc-list-item" href="#">
+                <a class="mdc-list-item {{ 'mdc-list-item--activated' if request.endpoint == 'mir-results-data-loading.view_data_loading_dashboard' }}"
+                    href="{{ url_for('mir-results-data-loading.view_data_loading_dashboard') }}">
                     <span class="mdc-list-item__ripple"></span>
                     <i class="material-icons mdc-list-item__graphic" aria-hidden="true">biotech</i>
                     <span class="mdc-list-item__text">Risultati MiRNA</span>
                 </a>
-                <a class="mdc-list-item" href="#">
+                <a class="mdc-list-item {{ 'mdc-list-item--activated' if request.endpoint == 'task-runner.view_task_runner_dashboard' }}"
+                    href="{{ url_for('task-runner.view_task_runner_dashboard') }}">
                     <span class="mdc-list-item__ripple"></span>
                     <i class="material-icons mdc-list-item__graphic" aria-hidden="true">construction</i>
                     <span class="mdc-list-item__text">Tasks</span>
@@ -326,6 +315,7 @@
             loginDialog.open();
         })
     </script>
+    {% block custom_js %}{% endblock %}
 </body>
 
 </html>

@@ -16,9 +16,7 @@ bp = Blueprint('patients-data-loading', __name__, url_prefix='/data-loading/pati
 
 @bp.get('/')
 def view_data_loading_dashboard():
-    return render_template('patient-data-loading.html',
-                           group_name = current_app.config['GROUP_NAME'],
-                           username = current_app.config['USERNAME'])
+    return render_template('patient-data-loading.html')
 
 
 @bp.post('/from-excel')

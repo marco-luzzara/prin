@@ -9,9 +9,7 @@ bp = Blueprint('task-runner', __name__, url_prefix='/tasks')
 
 @bp.get('/')
 def view_task_runner_dashboard():
-    return render_template('task-runner.html',
-                           group_name = current_app.config['GROUP_NAME'],
-                           username = current_app.config['USERNAME'])
+    return render_template('task-runner.html')
 
 
 @bp.post('/trigger')

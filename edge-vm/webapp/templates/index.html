@@ -4,7 +4,7 @@
 <div class="mdc-layout-grid">
     <div class="mdc-layout-grid__inner">
         <div class="mdc-layout-grid__cell">
-            <a href="#">
+            <a href="{{ url_for('patients-data-loading.view_data_loading_dashboard') }}">
                 <div class="mdc-card">
                     <div class="mdc-card__primary-action" tabindex="0">
                         <div class="mdc-card-content">
@@ -21,14 +21,13 @@
             </a>
         </div>
         <div class="mdc-layout-grid__cell">
-            <a href="#">
+            <a href="{{ url_for('mir-results-data-loading.view_data_loading_dashboard') }}">
                 <div class="mdc-card">
                     <div class="mdc-card__primary-action">
                         <div class="mdc-card-content">
                             <h5 class="mdc-typography--headline5 mdc-theme--primary-bg mdc-theme--on-primary">Risultati
                                 MiRNA
                             </h5>
-                            <!-- <h2 class="mdc-typography--headline6">A solid decision.</h2> -->
                             <p class="mdc-typography--subtitle1">
                                 Carica i risultati dell'analisi MiRNA tramite un file Excel
                             </p>
@@ -39,7 +38,7 @@
             </a>
         </div>
         <div class="mdc-layout-grid__cell">
-            <a href="#">
+            <a href="{{ url_for('task-runner.view_task_runner_dashboard') }}">
                 <div class="mdc-card">
                     <div class="mdc-card__primary-action">
                         <div class="mdc-card-content">

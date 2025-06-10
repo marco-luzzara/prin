@@ -1,21 +1,33 @@
 {% extends "layout.html" %}
 {% block title %}Caricamento dati pazienti{% endblock %}
-{% block container_content %}
-    <h2>Carica i dati dei pazienti - Training</h2>
-    <form id="upload-training-data-form" enctype="multipart/form-data">
-        <input class="pretty-button" type="file" id="training-data-input" accept=".xls,.xlsx,.odt" required>
-        <button class="pretty-button" id="submit-training-data-btn" type="submit">Invia</button>
-    </form>
-    <div id="upload-training-data-result-msg" class="message"></div>
-    <hr />
-    <h2>Carica i dati dei pazienti - Inferenza</h2>
-    <form id="upload-inference-data-form" enctype="multipart/form-data">
-        <input class="pretty-button" type="file" id="inference-data-input" accept=".xls,.xlsx,.odt" required>
-        <button class="pretty-button" id="submit-inference-data-btn" type="submit">Invia</button>
-    </form>
-    <div id="upload-inference-data-result-msg" class="message"></div>
+{% block main_content %}
+
+<div class="mdc-card">
+    <div class="mdc-card__primary-action">
+        <div class="mdc-card-content">
+            <h5 class="mdc-typography--headline5 mdc-theme--primary-bg mdc-theme--on-primary">Training</h5>
+            <p class="mdc-typography--subtitle1">
+                Seleziona un file Excel (<italic>.xls,.xlsx,.odt</italic>) contenente i dati dei pazienti per il
+                Training del modello
+            </p>
+        </div>
+    </div>
+</div>
+<h2>Carica i dati dei pazienti - Training</h2>
+<form id="upload-training-data-form" enctype="multipart/form-data">
+    <input class="pretty-button" type="file" id="training-data-input" accept=".xls,.xlsx,.odt" required>
+    <button class="pretty-button" id="submit-training-data-btn" type="submit">Invia</button>
+</form>
+<div id="upload-training-data-result-msg" class="message"></div>
+<hr />
+<h2>Carica i dati dei pazienti - Inferenza</h2>
+<form id="upload-inference-data-form" enctype="multipart/form-data">
+    <input class="pretty-button" type="file" id="inference-data-input" accept=".xls,.xlsx,.odt" required>
+    <button class="pretty-button" id="submit-inference-data-btn" type="submit">Invia</button>
+</form>
+<div id="upload-inference-data-result-msg" class="message"></div>
 {% endblock %}
-{% block js %}
+{% block custom_js %}
 <script>
     const trainingDataInput = document.getElementById('training-data-input');
     const uploadTrainingDataResultMsg = document.getElementById('upload-training-data-result-msg');
@@ -27,7 +39,7 @@
         trainingDataInput,
         uploadTrainingDataResultMsg
     )
-    
+
     const inferenceDataInput = document.getElementById('inference-data-input');
     const uploadInferenceDataResultMsg = document.getElementById('upload-inference-data-result-msg');
     const submitInferenceDataBtn = document.getElementById('submit-inference-data-btn');
