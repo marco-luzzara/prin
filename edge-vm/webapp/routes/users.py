@@ -1,19 +1,26 @@
 import json
 from flask import (
-    Blueprint, render_template, current_app, request, session
+    Blueprint, redirect, current_app, request, session
 )
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
 
 @bp.post('/login')
-def login_user():
-    data = request.get_json()
-    group = data.get('group_name', '').strip()
-    user = data.get('username', '').strip()
+def login():
+    group = request.form.get('group').strip()
+    user = request.form.get('user').strip()
 
-    current_app.config['GROUP_NAME'] = group
-    current_app.config['USERNAME'] = user
+    session['group'] = group
+    session['user'] = user
 
     current_app.logger.info(f'Logged in as {group}:{user}')
-    return ('', 204)
+    return redirect(request.referrer)
+
+
+@bp.post('/logout')
+def logout():
+    current_app.logger.info(f'User {session['group']}:{session['user']} has logged out')
+    session.clear()
+
+    return redirect(request.referrer)

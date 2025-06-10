@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="{{ url_for('static', filename='utils.js') }}"></script>
 </head>
 
@@ -19,7 +20,7 @@
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface" role="dialog" aria-modal="true" aria-labelledby="login-dialog-title"
                 aria-describedby="login-dialog-content">
-                <form>
+                <form method="post" action="{{ url_for('users.login') }}">
                     <h2 class="mdc-dialog__title" id="login-dialog-title">User Login</h2>
                     <div class="mdc-dialog__content" id="login-dialog-content">
                         <div id="login-dialog-content">
@@ -132,30 +133,6 @@
                                     </ul>
                                 </div>
                             </div>
-
-
-
-
-                            <!-- <label class="mdc-text-field mdc-text-field--filled">
-                                <span class="mdc-text-field__ripple"></span>
-                                <span class="mdc-floating-label" id="login-user-label">User</span>
-                                <input class="mdc-text-field__input" type="text" aria-labelledby="login-user-input"
-                                    data-mdc-dialog-initial-focus />
-                                <span class="mdc-line-ripple"></span>
-                            </label> -->
-                            <!-- <select id="login-group-select">
-                                <button>
-                                    <selectedcontent></selectedcontent>
-                                </button>
-
-                                <option value="">Selezionare il gruppo</option>
-                                <option value="cat">
-                                    <span class="option-label" aria-hidden="true">test-group1</span>
-                                </option>
-                                <option value="cat">
-                                    <span class="option-label" aria-hidden="true">test-group2</span>
-                                </option>
-                            </select> -->
                         </div>
                     </div>
                     <div class="mdc-dialog__actions">
@@ -195,15 +172,25 @@
             <div id="side-nav-bar-header" class="centered-flex-column">
                 <img class="user-avatar" src="{{ url_for('static', filename='images/user-account.png') }}"
                     alt="anonymous" />
-                <h3 class="mdc-drawer__title">Mail</h3>
-                <h6 class="mdc-drawer__subtitle">email@material.io</h6>
-                <button class="mdc-button mdc-button--raised user-account-button" id="login-button">
+                {% if session.user %}
+                <h3 class="mdc-drawer__title">{{ session.user }}</h3>
+                <h6 class="mdc-drawer__subtitle">Group: {{ session.group }}</h6>
+                {% else %}
+                <h3 class="mdc-drawer__title">Anonymous User</h3>
+                {% endif %}
+                <form method="post" action="{{ url_for('users.logout') }}">
+                    <button
+                        class="mdc-button mdc-button--raised user-account-button {% if session.user is undefined %}!hidden{% endif %}"
+                        id="logout-button" type="submit">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">Logout</span>
+                    </button>
+                </form>
+                <button
+                    class="mdc-button mdc-button--raised user-account-button {% if session.user %}!hidden{% endif %}"
+                    id="login-button">
                     <span class="mdc-button__ripple"></span>
                     <span class="mdc-button__label">Login</span>
-                </button>
-                <button class="mdc-button mdc-button--raised user-account-button">
-                    <span class="mdc-button__ripple"></span>
-                    <span class="mdc-button__label">Logout</span>
                 </button>
             </div>
         </div>
@@ -369,7 +356,7 @@
             loginSubmitBtn.textContent = 'Modifica'
             loginForm.dataset.loginStep = 'change';
 
-            fetch("{{ url_for('users.login_user') }}", {
+            fetch("{{ url_for('users.login') }}", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ group_name: group.value, username: user.value })
