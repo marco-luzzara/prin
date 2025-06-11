@@ -1,7 +1,7 @@
 import json
 from typing import Any, List
 from flask import (
-    Blueprint, render_template, request, current_app
+    Blueprint, render_template, request, current_app, session
 )
 import pandas as pd
 from werkzeug.utils import secure_filename
@@ -21,8 +21,8 @@ def view_data_loading_dashboard():
 
 @bp.post('/from-excel')
 def load_from_excel():
-    data_file = request.files['data_file']
-    task_scope = request.args.get('scope', '')
+    data_file = request.files['data-files']
+    task_scope = request.form.get('scope', '')
     validate_scope(task_scope)
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} is being processed for scope {task_scope}...')
@@ -30,7 +30,7 @@ def load_from_excel():
     patient_records = cast_excel_to_objs_list(data_file.stream)
     for i, patient_record in enumerate(patient_records):
         current_app.logger.info(f'Patient {i}: {patient_record}')
-        owner_id = current_app.config['GROUP_NAME']
+        owner_id = session['group']
         _kafka_producer.send(
             topic='devprin.patients', 
             key={ 'owner_id': owner_id },

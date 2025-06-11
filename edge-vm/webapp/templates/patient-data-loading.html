@@ -17,7 +17,8 @@
                     <div class="mdc-button__ripple"></div>
                     <span class="mdc-button__label">Upload File</span>
                 </label>
-                <input type="file" id="file-input-patients-training" accept=".xls,.xlsx,.odt" required class="hidden">
+                <input type="file" id="file-input-patients-training" name="data-files" accept=".xls,.xlsx,.odt" required
+                    class="hidden">
                 <span id="file-input-patients-training-preview" class="ml-4"></span>
                 <input type="hidden" name="scope" value="training" />
                 <hr class="mdc-list-divider prin-container-card__divider">
@@ -30,9 +31,6 @@
             </form>
         </div>
     </div>
-</div>
-
-<div class="flex flex-col items-center">
     <div class="mdc-card prin-container-card">
         <div class="mdc-card__primary-action">
             <h5 class="mdc-typography--headline5 mdc-theme--primary-bg mdc-theme--on-primary prin-card__section">
@@ -48,7 +46,8 @@
                     <div class="mdc-button__ripple"></div>
                     <span class="mdc-button__label">Upload File</span>
                 </label>
-                <input type="file" id="file-input-patients-inference" accept=".xls,.xlsx,.odt" required class="hidden">
+                <input type="file" id="file-input-patients-inference" name="data-files" accept=".xls,.xlsx,.odt"
+                    required class="hidden">
                 <span id="file-input-patients-inference-preview" class="ml-4"></span>
                 <input type="hidden" name="scope" value="inference" />
                 <hr class="mdc-list-divider prin-container-card__divider">
@@ -81,7 +80,7 @@
         if (fileInputInference.files.length == 0)
             fileInputInferencePreview.innerText = 'Nessun file caricato';
         else
-            fileInputInferencePreview.innerText = 'File caricato: ' + fileInputTraining.files[0].name;
+            fileInputInferencePreview.innerText = 'File caricato: ' + fileInputInference.files[0].name;
     })
 </script>
 {% endblock %}

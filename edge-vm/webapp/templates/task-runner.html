@@ -1,13 +1,71 @@
 {% extends "layout.html" %}
-{% block title %}Trigger inferenza{% endblock %}
-{% block container_content %}
-    <button id="start-training-btn" class="pretty-button">Avvia training</button>
-    <div id="training-result-msg" class="message"></div>
-    <hr />
-    <button id="start-inference-btn" class="pretty-button">Avvia inferenza</button>
-    <div id="inference-result-msg" class="message"></div>
+{% block title %}Tasks{% endblock %}
+{% block main_content %}
+<div class="flex flex-col items-center">
+    <div class="mdc-card prin-container-card">
+        <div class="mdc-card__primary-action">
+            <h5 class="mdc-typography--headline5 mdc-theme--primary-bg mdc-theme--on-primary prin-card__section">
+                Training</h5>
+            <form action="{{ url_for('patients-data-loading.load_from_excel') }}" class="prin-card__section"
+                method="post" enctype="multipart/form-data">
+                <p class="mdc-typography--subtitle1">
+                    Seleziona un file Excel (<i>.xls,.xlsx,.odt</i>) contenente i dati dei pazienti per il
+                    Training del modello
+                </p>
+                <hr class="mdc-list-divider prin-container-card__divider">
+                <label class="mdc-button mdc-button" for="file-input-patients-training">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Upload File</span>
+                </label>
+                <input type="file" id="file-input-patients-training" accept=".xls,.xlsx,.odt" required class="hidden">
+                <span id="file-input-patients-training-preview" class="ml-4"></span>
+                <input type="hidden" name="scope" value="training" />
+                <hr class="mdc-list-divider prin-container-card__divider">
+                <div class="prin-container-card__main-button-container">
+                    <button type="submit" class="mdc-button mdc-button--raised">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Invia</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="mdc-card prin-container-card">
+        <div class="mdc-card__primary-action">
+            <h5 class="mdc-typography--headline5 mdc-theme--primary-bg mdc-theme--on-primary prin-card__section">
+                Inferenza</h5>
+            <form action="{{ url_for('patients-data-loading.load_from_excel') }}" class="prin-card__section"
+                method="post" enctype="multipart/form-data">
+                <p class="mdc-typography--subtitle1">
+                    Seleziona un file Excel (<i>.xls,.xlsx,.odt</i>) contenente i dati dei pazienti su cui predire
+                    l'output (Alzheimer)
+                </p>
+                <hr class="mdc-list-divider prin-container-card__divider">
+                <label class="mdc-button mdc-button" for="file-input-patients-inference">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Upload File</span>
+                </label>
+                <input type="file" id="file-input-patients-inference" accept=".xls,.xlsx,.odt" required class="hidden">
+                <span id="file-input-patients-inference-preview" class="ml-4"></span>
+                <input type="hidden" name="scope" value="inference" />
+                <hr class="mdc-list-divider prin-container-card__divider">
+                <div class="prin-container-card__main-button-container">
+                    <button type="submit" class="mdc-button mdc-button--raised">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Invia</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<button id="start-training-btn" class="pretty-button">Avvia training</button>
+<div id="training-result-msg" class="message"></div>
+<hr />
+<button id="start-inference-btn" class="pretty-button">Avvia inferenza</button>
+<div id="inference-result-msg" class="message"></div>
 {% endblock %}
-{% block js %}
+{% block custom_js %}
 <script>
     function addClickListenerForTask(taskType, apiEndpoint, btn, msgDiv) {
         btn.addEventListener('click', () => {
@@ -17,30 +75,30 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             })
-            .then(res => {
-                console.log(res);
+                .then(res => {
+                    console.log(res);
 
-                if (res.ok) {
-                    showMsg(msgDiv, `Task di ${taskType} avviato`, 'success');
-                } 
-                else {
-                    throw new Error(`The response returned status ${res.status}`);
-                }
-            })
-            .catch(err => {
-                showMsg(msgDiv, 'Si è verificato un errore', 'error');
-                console.error(err);
-            })
-            .then(_ => {
-                btn.disabled = false;
-            });
+                    if (res.ok) {
+                        showMsg(msgDiv, `Task di ${taskType} avviato`, 'success');
+                    }
+                    else {
+                        throw new Error(`The response returned status ${res.status}`);
+                    }
+                })
+                .catch(err => {
+                    showMsg(msgDiv, 'Si è verificato un errore', 'error');
+                    console.error(err);
+                })
+                .then(_ => {
+                    btn.disabled = false;
+                });
         });
     }
 
     const startTrainingBtn = document.getElementById('start-training-btn');
     const trainingResultMsg = document.getElementById('training-result-msg');
 
-    addClickListenerForTask('training', 
+    addClickListenerForTask('training',
         "{{ url_for('task-runner.trigger_task') }}?scope=training",
         startTrainingBtn,
         trainingResultMsg
@@ -49,7 +107,7 @@
     const startInferenceBtn = document.getElementById('start-inference-btn');
     const inferenceResultMsg = document.getElementById('inference-result-msg');
 
-    addClickListenerForTask('inferenza', 
+    addClickListenerForTask('inferenza',
         "{{ url_for('task-runner.trigger_task') }}?scope=inference",
         startInferenceBtn,
         inferenceResultMsg

@@ -2,7 +2,8 @@ import os
 import json
 import socket
 
-from flask import Flask, render_template
+import werkzeug
+from flask import Flask, render_template, redirect, request
 from kafka import KafkaProducer, KafkaConsumer
 import logging
 
@@ -39,7 +40,7 @@ def create_app(test_config=None):
     app.register_blueprint(users.bp)
 
     health_check_route = app.get('/health')(health_check)
-    not_found_route = app.errorhandler(404)(homepage)
+    not_found_route = app.errorhandler(Exception)(error_handler)
     home_route = app.get('/')(homepage)
 
     return app
@@ -49,8 +50,12 @@ def health_check():
     return ('', 200)
 
 
-def homepage(e=None):
+def homepage():
     return render_template('index.html')
+
+
+def error_handler(e):
+    return redirect(request.referrer)
 
 
 def configure_kafka_clients():
