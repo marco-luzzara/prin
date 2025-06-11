@@ -27,15 +27,15 @@ a:-webkit-any-link {
     overflow: auto;
 }
 
-.mdc-card-content>* {
+.prin-card__section {
+    padding: 1.25rem;
     margin: 0;
-    padding: 5%;
 }
 
 /* LOGIN DIALOG */
 
-.login-dialog-content__select-input {
-    margin: 10%;
+.prin-login-dialog__field {
+    margin: 1rem;
 }
 
 /* SIDE NAV BAR */
@@ -54,9 +54,27 @@ a:-webkit-any-link {
     position: relative;
 }
 
+/* CONTAINER */
+
+.prin-container-card {
+    width: 80%;
+    max-width: 50rem;
+    margin-bottom: 2rem;
+}
+
+.prin-container-card__divider {
+    margin: 0.75rem 0;
+}
+
+.prin-container-card__main-button-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
 /* FOOTER */
 
-.footer-logo {
+.prin-footer__logo {
     width: 40%;
     margin: 5% 30%;
 }

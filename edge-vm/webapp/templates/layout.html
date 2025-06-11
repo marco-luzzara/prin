@@ -25,7 +25,7 @@
                     <div class="mdc-dialog__content" style="overflow: unset;">
                         <div id="login-dialog-content" class="flex flex-col justify-center items-center">
                             <div id="login-group-select"
-                                class="mdc-select mdc-select--filled mdc-select--required login-dialog-content__select-input">
+                                class="mdc-select mdc-select--filled mdc-select--required prin-login-dialog__field">
                                 <input type="hidden" name="group">
                                 <div class="mdc-select__anchor" role="button" aria-haspopup="listbox"
                                     aria-required="true" aria-expanded="false">
@@ -72,7 +72,7 @@
                             </div>
 
                             <div id="login-user-select"
-                                class="mdc-select mdc-select--filled mdc-select--required mdc-select--disabled login-dialog-content__select-input">
+                                class="mdc-select mdc-select--filled mdc-select--required mdc-select--disabled prin-login-dialog__field">
                                 <input type="hidden" name="user" disabled="true" />
                                 <div class=" mdc-select__anchor" role="button" aria-haspopup="listbox"
                                     aria-required="true" aria-expanded="false" aria-disabled="true">
@@ -225,13 +225,14 @@
             <div class="mdc-layout-grid">
                 <div class="mdc-layout-grid__inner">
                     <div class="mdc-layout-grid__cell">
-                        <img src="{{ url_for('static', filename='logos/italiadomani.png') }}" class="footer-logo">
+                        <img src="{{ url_for('static', filename='logos/italiadomani.png') }}" class="prin-footer__logo">
                     </div>
                     <div class="mdc-layout-grid__cell">
-                        <img src="{{ url_for('static', filename='logos/MUR.png') }}" class="footer-logo">
+                        <img src="{{ url_for('static', filename='logos/MUR.png') }}" class="prin-footer__logo">
                     </div>
                     <div class="mdc-layout-grid__cell">
-                        <img src="{{ url_for('static', filename='logos/NextGenerationEU.png') }}" class="footer-logo">
+                        <img src="{{ url_for('static', filename='logos/NextGenerationEU.png') }}"
+                            class="prin-footer__logo">
                     </div>
                 </div>
             </div>

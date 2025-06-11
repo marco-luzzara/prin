@@ -1,54 +1,87 @@
 {% extends "layout.html" %}
 {% block title %}Caricamento dati pazienti{% endblock %}
 {% block main_content %}
-
-<div class="mdc-card">
-    <div class="mdc-card__primary-action">
-        <div class="mdc-card-content">
-            <h5 class="mdc-typography--headline5 mdc-theme--primary-bg mdc-theme--on-primary">Training</h5>
-            <p class="mdc-typography--subtitle1">
-                Seleziona un file Excel (<italic>.xls,.xlsx,.odt</italic>) contenente i dati dei pazienti per il
-                Training del modello
-            </p>
+<div class="flex flex-col items-center">
+    <div class="mdc-card prin-container-card">
+        <div class="mdc-card__primary-action">
+            <h5 class="mdc-typography--headline5 mdc-theme--primary-bg mdc-theme--on-primary prin-card__section">
+                Training</h5>
+            <form action="{{ url_for('patients-data-loading.load_from_excel') }}" class="prin-card__section"
+                method="post" enctype="multipart/form-data">
+                <p class="mdc-typography--subtitle1">
+                    Seleziona un file Excel (<i>.xls,.xlsx,.odt</i>) contenente i dati dei pazienti per il
+                    Training del modello
+                </p>
+                <hr class="mdc-list-divider prin-container-card__divider">
+                <label class="mdc-button mdc-button" for="file-input-patients-training">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Upload File</span>
+                </label>
+                <input type="file" id="file-input-patients-training" accept=".xls,.xlsx,.odt" required class="hidden">
+                <span id="file-input-patients-training-preview" class="ml-4"></span>
+                <input type="hidden" name="scope" value="training" />
+                <hr class="mdc-list-divider prin-container-card__divider">
+                <div class="prin-container-card__main-button-container">
+                    <button type="submit" class="mdc-button mdc-button--raised">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Invia</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-<h2>Carica i dati dei pazienti - Training</h2>
-<form id="upload-training-data-form" enctype="multipart/form-data">
-    <input class="pretty-button" type="file" id="training-data-input" accept=".xls,.xlsx,.odt" required>
-    <button class="pretty-button" id="submit-training-data-btn" type="submit">Invia</button>
-</form>
-<div id="upload-training-data-result-msg" class="message"></div>
-<hr />
-<h2>Carica i dati dei pazienti - Inferenza</h2>
-<form id="upload-inference-data-form" enctype="multipart/form-data">
-    <input class="pretty-button" type="file" id="inference-data-input" accept=".xls,.xlsx,.odt" required>
-    <button class="pretty-button" id="submit-inference-data-btn" type="submit">Invia</button>
-</form>
-<div id="upload-inference-data-result-msg" class="message"></div>
+
+<div class="flex flex-col items-center">
+    <div class="mdc-card prin-container-card">
+        <div class="mdc-card__primary-action">
+            <h5 class="mdc-typography--headline5 mdc-theme--primary-bg mdc-theme--on-primary prin-card__section">
+                Inferenza</h5>
+            <form action="{{ url_for('patients-data-loading.load_from_excel') }}" class="prin-card__section"
+                method="post" enctype="multipart/form-data">
+                <p class="mdc-typography--subtitle1">
+                    Seleziona un file Excel (<i>.xls,.xlsx,.odt</i>) contenente i dati dei pazienti su cui predire
+                    l'output (Alzheimer)
+                </p>
+                <hr class="mdc-list-divider prin-container-card__divider">
+                <label class="mdc-button mdc-button" for="file-input-patients-inference">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Upload File</span>
+                </label>
+                <input type="file" id="file-input-patients-inference" accept=".xls,.xlsx,.odt" required class="hidden">
+                <span id="file-input-patients-inference-preview" class="ml-4"></span>
+                <input type="hidden" name="scope" value="inference" />
+                <hr class="mdc-list-divider prin-container-card__divider">
+                <div class="prin-container-card__main-button-container">
+                    <button type="submit" class="mdc-button mdc-button--raised">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Invia</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
 {% block custom_js %}
 <script>
-    const trainingDataInput = document.getElementById('training-data-input');
-    const uploadTrainingDataResultMsg = document.getElementById('upload-training-data-result-msg');
-    const submitTrainingDataBtn = document.getElementById('submit-training-data-btn');
+    const fileInputTraining = document.getElementById('file-input-patients-training');
+    const fileInputTrainingPreview = document.getElementById('file-input-patients-training-preview');
+    fileInputTraining.addEventListener('change', () => {
+        if (fileInputTraining.files.length == 0)
+            fileInputTrainingPreview.innerText = 'Nessun file caricato';
+        else
+            fileInputTrainingPreview.innerText = 'File caricato: ' + fileInputTraining.files[0].name;
+    })
 
-    addFileUploadSubmitListener(document.getElementById('upload-training-data-form'),
-        submitTrainingDataBtn,
-        "{{ url_for('patients-data-loading.load_from_excel') }}?scope=training",
-        trainingDataInput,
-        uploadTrainingDataResultMsg
-    )
-
-    const inferenceDataInput = document.getElementById('inference-data-input');
-    const uploadInferenceDataResultMsg = document.getElementById('upload-inference-data-result-msg');
-    const submitInferenceDataBtn = document.getElementById('submit-inference-data-btn');
-
-    addFileUploadSubmitListener(document.getElementById('upload-inference-data-form'),
-        submitInferenceDataBtn,
-        "{{ url_for('patients-data-loading.load_from_excel') }}?scope=inference",
-        inferenceDataInput,
-        uploadInferenceDataResultMsg
-    )
+    const fileInputInference = document.getElementById('file-input-patients-inference');
+    const fileInputInferencePreview = document.getElementById('file-input-patients-inference-preview');
+    fileInputInference.addEventListener('change', () => {
+        if (fileInputInference.files.length == 0)
+            fileInputInferencePreview.innerText = 'Nessun file caricato';
+        else
+            fileInputInferencePreview.innerText = 'File caricato: ' + fileInputTraining.files[0].name;
+    })
 </script>
 {% endblock %}
