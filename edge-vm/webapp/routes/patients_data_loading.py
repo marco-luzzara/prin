@@ -1,12 +1,14 @@
 import json
 from typing import Any, List
+import dataclasses
+
 from flask import (
-    Blueprint, render_template, request, current_app, session
+    Blueprint, render_template, request, current_app
 )
 import pandas as pd
 from werkzeug.utils import secure_filename
-import dataclasses
 
+from ..session_wrapper import session_wrapper
 from .model.PatientRecord import PatientRecord
 from .model.utils import from_dict
 from .. import _kafka_producer
@@ -30,7 +32,7 @@ def load_from_excel():
     patient_records = cast_excel_to_objs_list(data_file.stream)
     for i, patient_record in enumerate(patient_records):
         current_app.logger.info(f'Patient {i}: {patient_record}')
-        owner_id = session['group']
+        owner_id = session_wrapper.group
         _kafka_producer.send(
             topic='devprin.patients', 
             key={ 'owner_id': owner_id },

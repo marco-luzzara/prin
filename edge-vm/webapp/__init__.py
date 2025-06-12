@@ -1,11 +1,14 @@
 import os
 import json
 import socket
-
-import werkzeug
-from flask import Flask, render_template, redirect, request
-from kafka import KafkaProducer, KafkaConsumer
 import logging
+
+from flask import Flask, render_template, current_app, flash
+from flask.logging import default_handler
+from werkzeug.exceptions import NotFound
+from kafka import KafkaProducer, KafkaConsumer
+
+from .logging_formatter import AuthenticatedRequestFormatter
 
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '')
 if KAFKA_BOOTSTRAP_SERVERS == '':
@@ -33,6 +36,10 @@ def create_app(test_config=None):
     configure_kafka_clients()
     app.logger.info('Kafka Clients initialized')
 
+    app.logger.info('Configuring log format...')
+    configure_logging()
+    app.logger.info('Log format configured')
+
     from .routes import patients_data_loading, mir_results_data_loading, task_runner, users
     app.register_blueprint(patients_data_loading.bp)
     app.register_blueprint(mir_results_data_loading.bp)
@@ -54,8 +61,12 @@ def homepage():
     return render_template('index.html')
 
 
-def error_handler(e):
-    return redirect(request.referrer)
+def error_handler(err):
+    if not isinstance(err, NotFound):
+        current_app.logger.error(err, exc_info=True)
+        flash(err, 'error')
+
+    return render_template('index.html')
 
 
 def configure_kafka_clients():
@@ -72,3 +83,10 @@ def configure_kafka_clients():
         client_id=f'edge-vm-{socket.gethostname()}',
         value_deserializer=lambda m: json.loads(m.decode())
     )
+
+
+def configure_logging():
+    formatter = AuthenticatedRequestFormatter(
+        '[%(asctime)s] %(levelname)s account=%(group)s:%(user)s in %(module)s for %(url)s: %(message)s'
+    )
+    default_handler.setFormatter(formatter)

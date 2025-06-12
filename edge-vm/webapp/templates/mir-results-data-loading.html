@@ -8,11 +8,10 @@
                 Training</h5>
             <form action="{{ url_for('mir-results-data-loading.load_from_excel') }}" class="prin-card__section"
                 method="post" enctype="multipart/form-data">
-                <p class="mdc-typography--subtitle1">
+                <p class="mdc-typography--subtitle1 mb-3">
                     Seleziona un file Excel (<i>.xls,.xlsx,.odt</i>) contenente i dati dell'analisi MiRNA per il
                     Training del modello
                 </p>
-                <hr class="mdc-list-divider prin-container-card__divider">
                 <label class="mdc-button mdc-button" for="file-input-mir-results-training">
                     <div class="mdc-button__ripple"></div>
                     <span class="mdc-button__label">Upload File</span>
@@ -37,11 +36,10 @@
                 Inferenza</h5>
             <form action="{{ url_for('mir-results-data-loading.load_from_excel') }}" class="prin-card__section"
                 method="post" enctype="multipart/form-data">
-                <p class="mdc-typography--subtitle1">
+                <p class="mdc-typography--subtitle1 mb-3">
                     Seleziona un file Excel (<i>.xls,.xlsx,.odt</i>) contenente i dati dell'analisi MiRNA su cui predire
                     l'output (Alzheimer)
                 </p>
-                <hr class="mdc-list-divider prin-container-card__divider">
                 <label class="mdc-button mdc-button" for="file-input-mir-results-inference">
                     <div class="mdc-button__ripple"></div>
                     <span class="mdc-button__label">Upload File</span>

@@ -16,6 +16,57 @@
 </head>
 
 <body class="mdc-typography flex m-[unset]">
+    {% with errors = get_flashed_messages(category_filter=["error"]) %}
+    {% if errors %}
+    <div class="mdc-banner" id="errors-banner" role="banner">
+        <div class="mdc-banner__fixed">
+            <div class="mdc-banner__content" role="alertdialog" aria-live="assertive">
+                <div class="mdc-banner__graphic-text-wrapper">
+                    <div class="mdc-banner__text">
+                        <ul>
+                            {% for error in errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="mdc-banner__actions">
+                    <button type="button" class="mdc-button mdc-banner__primary-action">
+                        <div class="mdc-button__ripple"></div>
+                        <div class="mdc-button__label">Contact admin</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% with messages = get_flashed_messages(category_filter=["action_success"]) %}
+    {% if messages %}
+    <aside class="mdc-snackbar" id="notification-snackbar">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+            <div class="mdc-snackbar__label" aria-atomic="false">
+                <ul>
+                    {% for msg in messages %}
+                    <li>
+                        {{ msg }}
+                        <span class="material-icons text-[green]">check_circle</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="mdc-snackbar__actions" aria-atomic="true">
+                <button type="button" class="mdc-button mdc-snackbar__action">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Ok</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+    {% endif %}
+    {% endwith %}
+
     <div class="mdc-dialog" id="login-dialog">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface" role="dialog" aria-modal="true" aria-labelledby="login-dialog-title"
@@ -249,6 +300,18 @@
         // document.querySelectorAll('.mdc-select').forEach(el => {
         //     new mdc.select.MDCSelect(el);
         // });
+
+        // snackbar
+        const notificationSnackBar = document.getElementById('notification-snackbar');
+        if (notificationSnackBar !== null) {
+            const notificationSnackBarMDC = new mdc.snackbar.MDCSnackbar(notificationSnackBar);
+            notificationSnackBarMDC.open();
+        }
+
+        // banner
+        const errorsBanner = document.getElementById('errors-banner');
+        if (errorsBanner !== null)
+            (new mdc.banner.MDCBanner(errorsBanner)).open();
 
         // top app bar
         const topAppBar = new mdc.topAppBar.MDCTopAppBar(document.getElementById('top-app-bar'));

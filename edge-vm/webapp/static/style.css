@@ -79,113 +79,20 @@ a:-webkit-any-link {
     margin: 5% 30%;
 }
 
+/* LINK */
 
-/* #side-nav-bar .mdc-list-item__text {
-    line-height: 24px;
-    font-weight: 100;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-} */
-
-/* #side-nav-bar .mdc-list-item:hover {
-    background-color: rgba(0, 0, 0, 0.04);
-}
-
-#side-nav-bar .mdc-list-item:focus {
-    background-color: rgba(0, 0, 0, 0.08);
-    outline: none;
-} */
-
-/* #side-nav-bar .mdc-list-item--activated {
-    background-color: var(--mdc-theme-primary-light);
-}
-
-#side-nav-bar .mdc-list-item--activated .mdc-list-item__graphic {
-    color: var(--mdc-theme-primary);
-}
-
-#side-nav-bar .mdc-list-item--activated .mdc-list-item__text {
-    color: var(--mdc-theme-primary);
-} */
-
-
-/* .mdc-top-app-bar .mdc-button {
-    color: var(--mdc-theme-on-primary);
-} */
-/* body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f5f5f5;
-}
-.container {
-    width: 75%;
-    padding: 20px;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    text-align: center;
-}
-.pretty-button {
-    background-color: #f8f9fa;
-    border: 1px solid #f8f9fa;
-    border-radius: 4px;
-    color: #3c4043;
+.prin-link {
+    color: #1a0dab;
+    text-decoration: none;
+    font-weight: normal;
     cursor: pointer;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    height: 36px;
-    line-height: 27px;
-    min-width: 100px;
-    padding: 0 16px;
-    user-select: none;
-    transition: all 0.1s ease-in-out;
 }
-.pretty-button:hover {
-    border-color: #dadce0;
-    box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
-    color: #202124;
+
+.prin-link:hover {
+    text-decoration: underline;
+    color: #1745ad;
 }
-.pretty-button:focus {
-    border-color: #4285f4;
-    outline: none;
+
+.prin-link:visited {
+    color: #660099;
 }
-.message {
-    margin-top: 20px;
-    padding: 10px;
-    border-radius: 5px;
-    display: none;
-}
-.message.success {
-    background-color: #d4edda;
-    color: #155724;
-    display: block;
-}
-.message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    display: block;
-}
-.top-right-form {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: #fff;
-    padding: 10px;
-    border-radius: 6px;
-    box-shadow: rgba(0,0,0,0.1) 0 2px 4px;
-    font-size: 14px;
-}
-.top-right-form input {
-    margin: 4px 0;
-    padding: 6px;
-    width: 140px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-.top-right-form button {
-    margin-top: 6px;
-} */
