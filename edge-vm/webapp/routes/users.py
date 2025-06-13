@@ -1,8 +1,9 @@
 from flask import (
-    Blueprint, redirect, current_app, request, flash
+    Blueprint, redirect, current_app, request
 )
 
 from ..session_wrapper import session_wrapper
+from ..category_flash import flash_action_success
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -16,7 +17,7 @@ def login():
     session_wrapper.user = user
 
     current_app.logger.info(f'Logged in as {group}:{user}')
-    flash('Login avvenuto con successo', 'action_success')
+    flash_action_success('Login avvenuto con successo')
 
     return redirect(request.referrer)
 
@@ -26,6 +27,6 @@ def logout():
     current_app.logger.info(f'User {session_wrapper.group}:{session_wrapper.user} has logged out')
     session_wrapper.clear()
 
-    flash('Logout avvenuto con successo', 'action_success')
+    flash_action_success('Logout avvenuto con successo')
 
     return redirect(request.referrer)

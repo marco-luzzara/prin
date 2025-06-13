@@ -8,7 +8,9 @@ from flask import (
 import pandas as pd
 from werkzeug.utils import secure_filename
 
+from .middlewares.authenticated import authenticated
 from ..session_wrapper import session_wrapper
+from ..category_flash import flash_action_success
 from .model.PatientRecord import PatientRecord
 from .model.utils import from_dict
 from .. import _kafka_producer
@@ -17,6 +19,7 @@ from .utils.validation import validate_scope
 bp = Blueprint('patients-data-loading', __name__, url_prefix='/data-loading/patients')
 
 @bp.get('/')
+@authenticated
 def view_data_loading_dashboard():
     return render_template('patient-data-loading.html')
 
@@ -41,6 +44,8 @@ def load_from_excel():
         _kafka_producer.flush()
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
+
+    flash_action_success('I dati sono stati caricati correttamente')
 
     return ('', 204)
 

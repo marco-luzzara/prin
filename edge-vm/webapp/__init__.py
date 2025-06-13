@@ -3,11 +3,12 @@ import json
 import socket
 import logging
 
-from flask import Flask, render_template, current_app, flash
+from flask import Flask, render_template, current_app
 from flask.logging import default_handler
 from werkzeug.exceptions import NotFound
 from kafka import KafkaProducer, KafkaConsumer
 
+from .category_flash import flash_error
 from .logging_formatter import AuthenticatedRequestFormatter
 
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '')
@@ -64,7 +65,7 @@ def homepage():
 def error_handler(err):
     if not isinstance(err, NotFound):
         current_app.logger.error(err, exc_info=True)
-        flash(err, 'error')
+        flash_error(err)
 
     return render_template('index.html')
 

@@ -16,32 +16,6 @@
 </head>
 
 <body class="mdc-typography flex m-[unset]">
-    {% with errors = get_flashed_messages(category_filter=["error"]) %}
-    {% if errors %}
-    <div class="mdc-banner" id="errors-banner" role="banner">
-        <div class="mdc-banner__fixed">
-            <div class="mdc-banner__content" role="alertdialog" aria-live="assertive">
-                <div class="mdc-banner__graphic-text-wrapper">
-                    <div class="mdc-banner__text">
-                        <ul>
-                            {% for error in errors %}
-                            <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                <div class="mdc-banner__actions">
-                    <button type="button" class="mdc-button mdc-banner__primary-action">
-                        <div class="mdc-button__ripple"></div>
-                        <div class="mdc-button__label">Contact admin</div>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    {% endwith %}
-
     {% with messages = get_flashed_messages(category_filter=["action_success"]) %}
     {% if messages %}
     <aside class="mdc-snackbar" id="notification-snackbar">
@@ -49,7 +23,7 @@
             <div class="mdc-snackbar__label" aria-atomic="false">
                 <ul>
                     {% for msg in messages %}
-                    <li>
+                    <li class="flex items-center">
                         {{ msg }}
                         <span class="material-icons text-[green]">check_circle</span>
                     </li>
@@ -268,6 +242,36 @@
             </div>
         </header>
         <main class="main-content mdc-top-app-bar--fixed-adjust" id="main-content">
+            {% with errors = get_flashed_messages(category_filter=["error"]) %}
+            {% if errors %}
+            <div class="mdc-banner" id="errors-banner" role="banner">
+                <div class="mdc-banner__fixed">
+                    <div class="mdc-banner__content" role="alertdialog" aria-live="assertive">
+                        <div class="mdc-banner__graphic-text-wrapper">
+                            <div class="mdc-banner__text">
+                                <ul>
+                                    {% for error in errors %}
+                                    <li class="flex items-center">
+                                        <span class="material-icons text-[red]">error</span>
+                                        {{ error }}
+                                        <span class="material-icons text-[red]">error</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="mdc-banner__actions">
+                            <button type="button" class="mdc-button mdc-banner__primary-action">
+                                <div class="mdc-button__ripple"></div>
+                                <div class="mdc-button__label">Ho capito</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+
             <div class="mdc-top-app-bar--fixed-adjust">
                 {% block main_content %}{% endblock %}
             </div>
