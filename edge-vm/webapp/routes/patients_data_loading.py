@@ -3,7 +3,7 @@ from typing import Any, List
 import dataclasses
 
 from flask import (
-    Blueprint, render_template, request, current_app
+    Blueprint, render_template, request, current_app, redirect
 )
 import pandas as pd
 from werkzeug.utils import secure_filename
@@ -47,7 +47,7 @@ def load_from_excel():
 
     flash_action_success('I dati sono stati caricati correttamente')
 
-    return ('', 204)
+    return redirect(request.referrer)
 
 
 def cast_excel_to_objs_list(readable: Any) -> List[PatientRecord]:

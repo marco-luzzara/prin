@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, render_template, current_app, request
+    Blueprint, render_template, current_app, request, redirect
 )
 
 from .middlewares.authenticated import authenticated
@@ -30,7 +30,10 @@ def trigger_task():
             'trigger_type': 'manual',
             'scope': task_scope,
             'group': session_wrapper.group, 
-            'user': session_wrapper.user
+            'user': session_wrapper.user,
+            'params': {
+                'entrypoint': ['python', 'main.py']
+            }
         }
     )
     _kafka_producer.flush()
@@ -39,4 +42,4 @@ def trigger_task():
     
     flash_action_success('Il task è stato avviato correttamente')
 
-    return ('', 204)
+    return redirect(request.referrer)
