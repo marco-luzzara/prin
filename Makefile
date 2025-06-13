@@ -12,7 +12,7 @@ COMPOSE_FILES_OPTIONS = $(foreach cf,$(STANDARD_COMPOSE_FILES) $(ADDITIONAL_COMP
 # Parameters: \
 - ENV_FILE: path of env file containing configuration properties (Default: .env)
 init:
-	mkdir -p kafka/data0 minio/data solr/data postgres/data atlas/data atlas/logs trino/docker/cdc/data superset/data
+	mkdir -p kafka/data/broker-0 minio/data solr/data postgres/data atlas/data atlas/logs trino/docker/cdc/data superset/data
 	chmod 777 solr/data
 
 	test -e ${ENV_FILE} || { echo "${ENV_FILE} file does not exist" ; exit 1; }
@@ -56,5 +56,5 @@ down:
 	docker compose down -v ${SERVICES}
 
 clean-all: down
-	sudo rm -rf kafka/data0 minio/data solr/data/ postgres/data/ atlas/data/ atlas/logs/ trino/docker/cdc/data superset/data
+	sudo rm -rf kafka/data/broker-0 minio/data solr/data/ postgres/data/ atlas/data/ atlas/logs/ trino/docker/cdc/data superset/data
 	sudo rm -f hive/.hive_initialized

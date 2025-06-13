@@ -53,7 +53,7 @@ s3_client = boto_client(
 )
 
 @bp.post('/<task_type>/save')
-def load_from_excel(task_type):
+def save_result(task_type):
     task_type = task_type.strip()
     if task_type.strip() == '':
         return f'Parameter task_type cannot be blank: "{task_type}"', 400

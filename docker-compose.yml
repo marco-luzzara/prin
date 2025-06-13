@@ -1,25 +1,3 @@
-# TODO: change to apache/kafka
-x-kafka-shared-image: &kafka-shared-image
-  image: bitnami/kafka:${KAFKA_VERSION}
-
-# cannot keep image and healtcheck together because the kafka-init does not need a healthcheck
-x-kafka-shared-healthcheck: &kafka-shared-healthcheck
-  healthcheck:
-    test: ["CMD-SHELL", "kafka-topics.sh --list --bootstrap-server kafka-broker-0:9092 #,kafka-broker-1:9092" ]
-    interval: 5s
-    timeout: 5s
-    retries: 10
-    start_period: 2m
-    # start_interval: 10s
-
-x-kafka-shared-envs: &kafka-shared-envs
-  KAFKA_CFG_PROCESS_ROLES: controller,broker
-  KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-  KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka-broker-0:9093 #,1@kafka-broker-1:9093
-  KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
-  KAFKA_KRAFT_CLUSTER_ID: clusterid0with016bytes
-
 services:
 
 # ----------------------------- DASHBOARD FOR DATA LOADING -----------------------------
@@ -35,32 +13,34 @@ services:
         condition: service_completed_successfully
     environment:
       - FLASK_SECRET_KEY=SecretKeyForFlaskSessions
-      - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092 #,kafka-broker-1:9092
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092
 
 # ----------------------------- KAFKA -----------------------------
 # https://github.com/bitnami/containers/blob/466fffb6f2fe8cef54f281f22e62a967f7d69b78/bitnami/kafka/README.md
 
   kafka-broker-0:
-    <<: [*kafka-shared-image, *kafka-shared-healthcheck]
+    image: apache/kafka:${KAFKA_VERSION}
+    working_dir: /opt/kafka/bin/
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --list --bootstrap-server kafka-broker-0:9092" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 2m
     environment:
-      <<: *kafka-shared-envs
-      KAFKA_CFG_NODE_ID: 0
-    # volumes:
-    #   - ./kafka/data0:/bitnami/kafka
-
-  # kafka-broker-1:
-  #   <<: [*kafka-shared-image, *kafka-shared-healthcheck]
-  #   environment:
-  #     <<: *kafka-shared-envs
-  #     KAFKA_CFG_NODE_ID: 1
+      KAFKA_NODE_ID: 0
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      # CLUSTER_ID: 'clusterid0with016bytes'
+    volumes:
+      - ./kafka/data/broker-0:/var/lib/kafka/data
+      - ./kafka/configs:/mnt/shared/config
 
   kafka-init:
-    <<: *kafka-shared-image
+    image: apache/kafka:${KAFKA_VERSION}
     depends_on:
       kafka-broker-0:
         condition: service_healthy
-      # kafka-broker-1:
-      #   condition: service_healthy
+    working_dir: /opt/kafka/bin/
     entrypoint:
       - 'bash'
       - '-c'
@@ -84,15 +64,18 @@ services:
           --if-not-exists \
           --topic "devprin.task.result" \
           --replication-factor=1 \
-          --bootstrap-server kafka-broker-0:9092 #,kafka-broker-1:9092
+          --bootstrap-server kafka-broker-0:9092
 
 # ----------------------------- TASK DISPATCHER -----------------------------
 # TODO: align kafka version with KAFKA_VERSION (first, use image apache/kafka everywhere)
   task-dispatcher:
     build:
       context: ./task-dispatcher
+      args:
+        KAFKA_VERSION: ${KAFKA_VERSION}
       dockerfile_inline: |
-        FROM apache/kafka:3.7.2
+        ARG KAFKA_VERSION=
+        FROM apache/kafka:${KAFKA_VERSION}
         # user root is necessary to use the docker socket
         USER root
         RUN apk add jq curl
@@ -105,7 +88,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - KAFKA_BOOTSTRAP_SERVER=kafka-broker-0:9092
-      - KAFKA_TOPIC_NAME=devprin.task.trigger
       - TASK_DOCKER_IMAGE=prin-task
 
 # ----------------------------- TEST TASK -----------------------------
@@ -334,7 +316,7 @@ services:
       context: ranger/tagsync/docker
       target: ranger-tagsync
       args:
-        - TAGSYNC_VERSION=${RANGER_VERSION}
+        TAGSYNC_VERSION: ${RANGER_VERSION}
     image: ranger-tagsync
     depends_on:
       ranger:

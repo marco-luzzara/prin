@@ -20,6 +20,7 @@ function start_container {
     local trinoUser="$(echo "$msg" | jq -r '.user')"
     local trinoGroup="$(echo "$msg" | jq -r '.group')"
     local taskEntrypoint="$(echo "$msg" | jq -r '.params.entrypoint')"
+    local scope="$(echo "$msg" | jq -r '.scope')"
 
     log_with_date "Task started by user:group $trinoUser:$trinoGroup"
 
@@ -33,9 +34,11 @@ function start_container {
 {
     "Image": "$TASK_DOCKER_IMAGE",
     "Cmd": $taskEntrypoint,
+    "Entrypoint": $taskEntrypoint,
     "Env": [
         "TRINO_USER=$trinoUser",
-        "GROUP=$trinoGroup"
+        "TRINO_GROUP=$trinoGroup",
+        "TASK_SCOPE=$scope"
     ],
     "NetworkingConfig": {
         "EndpointsConfig": {
@@ -56,7 +59,7 @@ JSON
 
 /opt/kafka/bin/kafka-console-consumer.sh \
     --bootstrap-server $KAFKA_BOOTSTRAP_SERVER \
-    --topic $KAFKA_TOPIC_NAME | \
+    --topic "devprin.task.trigger" | \
 while read -r msg
 do
     log_with_date "Message received: $msg"
