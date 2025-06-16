@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ARG PYTHON_VERSION=3.12
 FROM python:${PYTHON_VERSION}-slim AS base
 
@@ -33,3 +35,21 @@ EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=10s --start-period=1m --retries=3 CMD ["curl", "http://localhost/health"]
 
 ENTRYPOINT ["flask", "--app", "api", "run", "--port", "80", "--host", "0.0.0.0"]
+
+# DevContainer
+# See https://stackoverflow.com/q/68937464/5587393
+
+FROM base AS devcontainer
+
+ARG REMOTE_USER
+ARG REMOTE_UID
+ARG REMOTE_GID
+RUN <<EOF
+    addgroup --gid ${REMOTE_GID} ${REMOTE_USER}
+    adduser --disabled-password --uid ${REMOTE_UID} --gid ${REMOTE_GID} ${REMOTE_USER}
+EOF
+
+ENV HOME=/home/${REMOTE_USER}
+HEALTHCHECK NONE
+
+USER ${REMOTE_USER}

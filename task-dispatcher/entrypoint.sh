@@ -38,7 +38,11 @@ function start_container {
     "Env": [
         "TRINO_USER=$trinoUser",
         "TRINO_GROUP=$trinoGroup",
-        "TASK_SCOPE=$scope"
+        "TRINO_ENDPOINT=trino:8080",
+        "TRINO_CATALOG=hive",
+        "TRINO_SCHEMA=default",
+        "TASK_SCOPE=$scope",
+        "TASK_APIS_BASE_URL=http://task-apis
     ],
     "NetworkingConfig": {
         "EndpointsConfig": {

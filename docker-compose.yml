@@ -67,7 +67,6 @@ services:
           --bootstrap-server kafka-broker-0:9092
 
 # ----------------------------- TASK DISPATCHER -----------------------------
-# TODO: align kafka version with KAFKA_VERSION (first, use image apache/kafka everywhere)
   task-dispatcher:
     build:
       context: ./task-dispatcher
@@ -109,6 +108,7 @@ services:
     build:
       context: task-apis
       dockerfile: ./Dockerfile
+      target: base
     ports:
       - "${TASK_APIS_PORT}:80"
     depends_on:

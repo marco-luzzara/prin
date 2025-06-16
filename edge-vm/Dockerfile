@@ -42,7 +42,7 @@ RUN <<EOF
     adduser --disabled-password --uid ${REMOTE_UID} --gid ${REMOTE_GID} ${REMOTE_USER}
 EOF
 
-ENV HOME /home/${REMOTE_USER}
+ENV HOME=/home/${REMOTE_USER}
 
 USER ${REMOTE_USER}
 
