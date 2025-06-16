@@ -32,9 +32,9 @@ services:
     profiles:
       - local-dev
 
-# ----------------------------- TASK RESULTS HANDLER -----------------------------
+# ----------------------------- TASK APIS -----------------------------
 
-  task-results-handler:
+  task-apis:
     profiles:
       - local-dev
       - all

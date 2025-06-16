@@ -9,6 +9,7 @@ from flask import (
 )
 from kafka import KafkaProducer
 from werkzeug.utils import secure_filename
+from werkzeug.datastructures import FileStorage
 
 bp = Blueprint('results', __name__, url_prefix='/results')
 
@@ -52,14 +53,14 @@ s3_client = boto_client(
     aws_secret_access_key=S3_SECRET_ACCESS_KEY
 )
 
-@bp.post('/<task_type>/save')
+@bp.post('/<task_type>')
 def save_result(task_type):
     task_type = task_type.strip()
-    if task_type.strip() == '':
+    if task_type == '':
         return f'Parameter task_type cannot be blank: "{task_type}"', 400
     
-    group_name: str = request.args.get('group_name', '')
-    if group_name.strip() == '':
+    group_name: str = request.args.get('group_name', '').strip()
+    if group_name == '':
         return f'Parameter group_name cannot be blank: "{group_name}"', 400
 
     if len(request.files) == 0:
@@ -67,41 +68,49 @@ def save_result(task_type):
     
     task_timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
 
+    response = {}
     for file_name, file in map(lambda x: (secure_filename(x[0]), x[1]), request.files.items()):
-        current_app.logger.info(f'Saving file {file_name}...')
-
-        pre_signed_url = save_on_s3(
-            file=file, 
+        current_app.logger.info(f'Saving result file {file_name}...')
+        s3_key = save_result_on_s3(
+            file=file,
+            file_name=file_name,
             group_name=group_name, 
             task_type=task_type, 
-            task_timestamp=task_timestamp, 
-            file_name=file_name
+            task_timestamp=task_timestamp
         )
+        current_app.logger.info(f'Result file {file_name} saved')
 
-        current_app.logger.info(f'File {file_name} saved')
+        current_app.logger.info(f'Generating pre-signed URL for {file_name}...')
+        pre_signed_url = generate_pre_signed_url(s3_key)
+        current_app.logger.info(f'Pre-signed URL for {file_name} generated')
 
+        response[file_name] = pre_signed_url
+
+        current_app.logger.info(f'Sending Kafka notification for result file {file_name}...')
         send_kafka_notification(
             group_name=group_name,
             task_type=task_type,
+            task_timestamp=task_timestamp,
             file_name=file_name,
             pre_signed_url=pre_signed_url
         )
+        current_app.logger.info(f'Kafka notification for result file {file_name} sent')
 
-        current_app.logger.info(f'Kafka notification for stored file {file_name} sent')
-
-    return ('', 204)
+    return jsonify(response)
 
 
-def save_on_s3(
-        file, 
+def save_result_on_s3(
+        file: FileStorage, 
         group_name: str, 
         task_type: str, 
         task_timestamp: str, 
         file_name: str
     ) -> str:
-    '''Save a file on S3 and generate a pre-signed URL for it. The file is
-    saved both in {group_name}/{task_type}/{task_timestamp}/{file_name} and in
-    {group_name}/{task_type}/latest/{file_name}
+    '''Save a result file on S3 and generate a pre-signed URL for it. The file is
+    saved in 
+        - {group_name}/{task_type}/{task_timestamp}/{file_name}
+        - {group_name}/{task_type}/latest/{file_name}
+    Returns the S3 key for the result
     '''
 
     s3_key_with_ts = generate_s3_key(
@@ -118,29 +127,33 @@ def save_on_s3(
             file_name=file_name
         )
 
-    with tempfile.NamedTemporaryFile() as stored_file:
-        file.save(stored_file)
-        s3_client.upload_file(
-            Filename=stored_file.name, 
-            Bucket=S3_BUCKET,
-            Key=s3_key_with_ts
-        )
+    file.stream.seek(0)
+    s3_client.upload_fileobj(
+        file.stream, 
+        Bucket=S3_BUCKET,
+        Key=s3_key_with_ts
+    )
 
-        s3_client.delete_object(
-            Bucket=S3_BUCKET,
-            Key=s3_key_with_latest
-        )
-        s3_client.upload_file(
-            Filename=stored_file.name, 
-            Bucket=S3_BUCKET,
-            Key=s3_key_with_latest
-        )
+    s3_client.delete_object(
+        Bucket=S3_BUCKET,
+        Key=s3_key_with_latest
+    )
+    file.stream.seek(0)
+    s3_client.upload_fileobj(
+        file.stream,
+        Bucket=S3_BUCKET,
+        Key=s3_key_with_latest
+    )
 
+    return s3_key_with_ts
+
+
+def generate_pre_signed_url(s3_key: str) -> str:
     pre_signed_url = s3_client.generate_presigned_url(
         'get_object',
         Params={
             'Bucket': S3_BUCKET, 
-            'Key': s3_key_with_ts
+            'Key': s3_key
         },
         ExpiresIn=S3_PRE_SIGNED_URL_EXPIRATION_SECONDS
     )
@@ -151,6 +164,7 @@ def save_on_s3(
 def send_kafka_notification(
         group_name: str,
         task_type: str,
+        task_timestamp: str,
         file_name: str,
         pre_signed_url: str
     ) -> None:
@@ -161,6 +175,7 @@ def send_kafka_notification(
         key=group_name,
         value={
             'taskType': task_type,
+            'taskTimestamp': task_timestamp,
             'group': group_name,
             'fileName': file_name,
             'preSignedUrl': pre_signed_url

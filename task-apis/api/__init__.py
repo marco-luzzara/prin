@@ -18,8 +18,8 @@ def create_app(test_config=None):
    # ensure the instance folder exists
     os.makedirs(app.instance_path)
 
-    from .routes import task_results_receiver
-    app.register_blueprint(task_results_receiver.bp)
+    from .routes import task_results, task_models
+    app.register_blueprint(task_results.bp)
 
     @app.get('/health')
     def health_check():

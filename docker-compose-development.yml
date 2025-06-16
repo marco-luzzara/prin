@@ -30,11 +30,11 @@ services:
       kafka-init:
         condition: service_completed_successfully
 
-  task-results-handler:
+  task-apis:
     develop:
       watch:
         - action: sync+restart
-          path: ./task-results-handler/api
+          path: ./task-apis/api
           target: /app/api
         - action: rebuild
-          path: ./task-results-handler/requirements.txt
+          path: ./task-apis/requirements.txt
