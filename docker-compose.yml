@@ -22,7 +22,7 @@ services:
     image: apache/kafka:${KAFKA_VERSION}
     working_dir: /opt/kafka/bin/
     healthcheck:
-      test: ["CMD-SHELL", "kafka-topics.sh --list --bootstrap-server kafka-broker-0:9092" ]
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --list --bootstrap-server kafka-broker-0:9092" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -45,22 +45,22 @@ services:
       - 'bash'
       - '-c'
       - |
-        kafka-topics.sh --create \
+        /opt/kafka/bin/kafka-topics.sh --create \
           --if-not-exists \
           --topic "devprin.patients" \
           --replication-factor=1 \
           --bootstrap-server kafka-broker-0:9092 && \
-        kafka-topics.sh --create \
+        /opt/kafka/bin/kafka-topics.sh --create \
           --if-not-exists \
           --topic "devprin.mir-results" \
           --replication-factor=1 \
           --bootstrap-server kafka-broker-0:9092 && \
-        kafka-topics.sh --create \
+        /opt/kafka/bin/kafka-topics.sh --create \
           --if-not-exists \
           --topic "devprin.task.trigger" \
           --replication-factor=1 \
           --bootstrap-server kafka-broker-0:9092 && \
-        kafka-topics.sh --create \
+        /opt/kafka/bin/kafka-topics.sh --create \
           --if-not-exists \
           --topic "devprin.task.result" \
           --replication-factor=1 \
