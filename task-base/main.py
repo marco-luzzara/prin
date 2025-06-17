@@ -28,9 +28,10 @@ def run_task():
     MODEL_FILE_CONTENT = 'prin model'
     print(f'Saving model with content "{MODEL_FILE_CONTENT}"...')
     with tempfile.TemporaryFile() as model_file:
-        model_file.write(MODEL_FILE_CONTENT)
+        model_file.write(MODEL_FILE_CONTENT.encode())
+        model_file.seek(0)
 
-        files = {'file': ('model.sav', model_file)}
+        files = {'model_file': ('model.sav', model_file)}
         save_model_req_params = { 'group_name': TRINO_GROUP }
         save_model_response = requests.post(f'{TASK_APIS_BASE_URL}/models', 
                                             params=save_model_req_params, 
@@ -48,17 +49,18 @@ def run_task():
             model_file.write(chunk)
 
         model_file.seek(0)
-        print(f'Model retrieved with content "{model_file.read()}"')
+        print(f'Model retrieved with content "{model_file.read().decode()}"')
 
 
     print('--------------- Testing results saving ---------------')
     RESULT_FILE_CONTENT = "task result"
-    RESULT_FILENAME = "result.txt"
+    RESULT_FILENAME = "result_file"
     print(f'Saving result with content "{RESULT_FILE_CONTENT}"...')
     with tempfile.TemporaryFile() as result_file:
-        result_file.write(RESULT_FILE_CONTENT)
+        result_file.write(RESULT_FILE_CONTENT.encode())
+        result_file.seek(0)
 
-        files = {'file': (RESULT_FILENAME, result_file)}
+        files = {RESULT_FILENAME: ("result.txt", result_file)}
         save_result_req_params = { 'group_name': TRINO_GROUP }
         save_result_response = requests.post(f'{TASK_APIS_BASE_URL}/results/{TASK_SCOPE}', 
                                             params=save_result_req_params, 
@@ -71,7 +73,7 @@ def run_task():
             result_file.write(chunk)
 
         result_file.seek(0)
-        print(f'Result retrieved with content "{result_file.read()}"')
+        print(f'Result retrieved with content "{result_file.read().decode()}"')
 
 
 if __name__ == '__main__':

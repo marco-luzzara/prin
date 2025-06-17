@@ -42,6 +42,7 @@ S3_PRE_SIGNED_URL_EXPIRATION_SECONDS = int(os.getenv('S3_PRE_SIGNED_URL_EXPIRATI
 producer = KafkaProducer(
     bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
     client_id='restapi-storage-server',
+    key_serializer=lambda m: json.dumps(m).encode(),
     value_serializer=lambda m: json.dumps(m).encode()
 )
 
@@ -108,8 +109,8 @@ def save_result_on_s3(
     ) -> str:
     '''Save a result file on S3 and generate a pre-signed URL for it. The file is
     saved in 
-        - {group_name}/{task_type}/{task_timestamp}/{file_name}
-        - {group_name}/{task_type}/latest/{file_name}
+        - {group_name}/tasks/{task_type}/{task_timestamp}/{file_name}
+        - {group_name}/tasks/{task_type}/latest/{file_name}
     Returns the S3 key for the result
     '''
 
@@ -138,10 +139,9 @@ def save_result_on_s3(
         Bucket=S3_BUCKET,
         Key=s3_key_with_latest
     )
-    file.stream.seek(0)
-    s3_client.upload_fileobj(
-        file.stream,
+    s3_client.copy_object(
         Bucket=S3_BUCKET,
+        CopySource={'Bucket': S3_BUCKET, 'Key': s3_key_with_ts},
         Key=s3_key_with_latest
     )
 
@@ -172,7 +172,7 @@ def send_kafka_notification(
     '''
     producer.send(
         topic=KAFKA_TOPIC,
-        key=group_name,
+        key={ 'group_name': group_name },
         value={
             'taskType': task_type,
             'taskTimestamp': task_timestamp,
@@ -185,4 +185,4 @@ def send_kafka_notification(
 
 
 def generate_s3_key(group_name: str, task_type: str, task_timestamp: str, file_name: str):
-    return f'{group_name}/{task_type}/{task_timestamp}/{file_name}'
+    return f'{group_name}/tasks/{task_type}/{task_timestamp}/{file_name}'

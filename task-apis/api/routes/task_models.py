@@ -1,4 +1,5 @@
 import os
+import io
 import json
 from datetime import datetime
 import tempfile
@@ -8,7 +9,6 @@ from boto3 import client as boto_client
 from flask import (
     Blueprint, request, current_app, send_file, jsonify
 )
-from werkzeug.utils import secure_filename
 
 bp = Blueprint('models', __name__, url_prefix='/models')
 
@@ -52,6 +52,9 @@ def save_model():
 
     model_file = next(request.files.values())
 
+    print('model_file content: ' + model_file.stream.read().decode())
+    model_file.stream.seek(0)
+
     current_app.logger.info(f'Saving model on S3...')
     model_s3_path = save_model_on_s3(
         file=model_file,
@@ -62,7 +65,7 @@ def save_model():
 
     return jsonify({
         'modelPathOnS3': model_s3_path
-    })
+    }), 200
 
 
 @bp.get('/<model_version>')
@@ -75,13 +78,13 @@ def get_model(model_version):
     if group_name == '':
         return f'Parameter group_name cannot be blank: "{group_name}"', 400
 
-    with tempfile.TemporaryFile() as model_file:
-        current_app.logger.info(f'Retrieving model with version {model_version} from S3...')
-        get_model_from_s3(model_file, group_name, model_version)
-        current_app.logger.info(f'Model with version {model_version} downloaded from S3')
+    model_file = io.BytesIO()
+    current_app.logger.info(f'Retrieving model with version {model_version} from S3...')
+    get_model_from_s3(model_file, group_name, model_version)
+    current_app.logger.info(f'Model with version {model_version} downloaded from S3')
 
-        model_file.seek(0)
-        return send_file(model_file)
+    model_file.seek(0)
+    return send_file(model_file, download_name=f'model-{model_version}')
 
 
 def save_model_on_s3(
@@ -97,12 +100,12 @@ def save_model_on_s3(
 
     s3_key_with_ts = generate_s3_key(
             group_name=group_name, 
-            model_timestamp=model_timestamp
+            model_version=model_timestamp
         )
     
     s3_key_with_latest = generate_s3_key(
             group_name=group_name, 
-            model_timestamp='latest'
+            model_version='latest'
         )
 
     file.stream.seek(0)
@@ -116,10 +119,9 @@ def save_model_on_s3(
         Bucket=S3_BUCKET,
         Key=s3_key_with_latest
     )
-    file.stream.seek(0)
-    s3_client.upload_fileobj(
-        file.stream,
+    s3_client.copy_object(
         Bucket=S3_BUCKET,
+        CopySource={'Bucket': S3_BUCKET, 'Key': s3_key_with_ts},
         Key=s3_key_with_latest
     )
 

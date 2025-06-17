@@ -20,6 +20,7 @@ def create_app(test_config=None):
 
     from .routes import task_results, task_models
     app.register_blueprint(task_results.bp)
+    app.register_blueprint(task_models.bp)
 
     @app.get('/health')
     def health_check():
