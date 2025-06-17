@@ -24,8 +24,9 @@
                 <ul>
                     {% for msg in messages %}
                     <li class="flex items-center">
+                        <span class="material-icons text-[#99F37D]">check_circle</span>
+                        &nbsp;&nbsp;&nbsp;
                         {{ msg }}
-                        <span class="material-icons text-[green]">check_circle</span>
                     </li>
                     {% endfor %}
                 </ul>
@@ -253,8 +254,8 @@
                                     {% for error in errors %}
                                     <li class="flex items-center">
                                         <span class="material-icons text-[red]">error</span>
+                                        &nbsp;&nbsp;&nbsp;
                                         {{ error }}
-                                        <span class="material-icons text-[red]">error</span>
                                     </li>
                                     {% endfor %}
                                 </ul>

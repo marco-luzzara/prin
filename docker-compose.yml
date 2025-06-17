@@ -100,6 +100,7 @@ services:
       - TRINO_ENDPOINT=trino:8080
       - TRINO_CATALOG=hive
       - TRINO_SCHEMA=default
+      - TASK_APIS_BASE_URL=http://task-apis
     entrypoint: ["sleep", "inf"]
 
 # ----------------------------- TASK APIS -----------------------------
@@ -308,7 +309,7 @@ services:
     healthcheck:
       test: 'su -c "pg_isready -q" postgres'
       interval: 10s
-      timeout: 2s
+      timeout: 10s
       retries: 3
 
   ranger-tagsync:

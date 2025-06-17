@@ -24,16 +24,9 @@ function start_container {
 
     log_with_date "Task started by user:group $trinoUser:$trinoGroup"
 
-    # create new container
-    local spawnedContainerId="$(
-    {
-        curl -s --unix-socket /var/run/docker.sock \
-        -H "Content-Type: application/json" \
-        -d @- \
-        -X POST http://localhost/containers/create <<JSON
+    local spawnedContainerConfig="$(cat <<JSON
 {
     "Image": "$TASK_DOCKER_IMAGE",
-    "Cmd": $taskEntrypoint,
     "Entrypoint": $taskEntrypoint,
     "Env": [
         "TRINO_USER=$trinoUser",
@@ -42,7 +35,7 @@ function start_container {
         "TRINO_CATALOG=hive",
         "TRINO_SCHEMA=default",
         "TASK_SCOPE=$scope",
-        "TASK_APIS_BASE_URL=http://task-apis
+        "TASK_APIS_BASE_URL=http://task-apis"
     ],
     "NetworkingConfig": {
         "EndpointsConfig": {
@@ -51,7 +44,17 @@ function start_container {
     }
 }
 JSON
-    } | jq -r '.Id'
+)"
+    log_with_date "Container config for task: $spawnedContainerConfig"
+
+    # create new container
+    local spawnedContainerId="$(
+        echo "$spawnedContainerConfig" |
+        curl -s --unix-socket /var/run/docker.sock \
+            -H "Content-Type: application/json" \
+            -d @- \
+            -X POST http://localhost/containers/create | 
+        jq -r '.Id'
     )"
     log_with_date "Task container created"
 

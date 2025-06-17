@@ -38,3 +38,12 @@ services:
           target: /app/api
         - action: rebuild
           path: ./task-apis/requirements.txt
+
+  test-task:
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./task-base/main.py
+          target: /app/main.py
+        - action: rebuild
+          path: ./task-base/requirements.txt
