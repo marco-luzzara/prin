@@ -40,31 +40,12 @@ services:
     depends_on:
       kafka-broker-0:
         condition: service_healthy
-    working_dir: /opt/kafka/bin/
-    entrypoint:
-      - 'bash'
-      - '-c'
-      - |
-        /opt/kafka/bin/kafka-topics.sh --create \
-          --if-not-exists \
-          --topic "devprin.patients" \
-          --replication-factor=1 \
-          --bootstrap-server kafka-broker-0:9092 && \
-        /opt/kafka/bin/kafka-topics.sh --create \
-          --if-not-exists \
-          --topic "devprin.mir-results" \
-          --replication-factor=1 \
-          --bootstrap-server kafka-broker-0:9092 && \
-        /opt/kafka/bin/kafka-topics.sh --create \
-          --if-not-exists \
-          --topic "devprin.task.trigger" \
-          --replication-factor=1 \
-          --bootstrap-server kafka-broker-0:9092 && \
-        /opt/kafka/bin/kafka-topics.sh --create \
-          --if-not-exists \
-          --topic "devprin.task.result" \
-          --replication-factor=1 \
-          --bootstrap-server kafka-broker-0:9092
+    working_dir: /opt/kafka/bin
+    volumes:
+      - ./kafka/entrypoint.sh:/entrypoint.sh
+    environment:
+      - TOPIC__TASK_RESULT__RETENTION_SECONDS=${S3_PRE_SIGNED_URL_EXPIRATION_SECONDS}
+    entrypoint: ["/entrypoint.sh"]
 
 # ----------------------------- TASK DISPATCHER -----------------------------
   task-dispatcher:
@@ -124,7 +105,7 @@ services:
       - S3_BUCKET=prin
       - S3_ACCESS_KEY_ID=${MINIO_ROOT_USER}
       - S3_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
-      - S3_PRE_SIGNED_URL_EXPIRATION_SECONDS=604800
+      - S3_PRE_SIGNED_URL_EXPIRATION_SECONDS=${S3_PRE_SIGNED_URL_EXPIRATION_SECONDS}
 
 # ----------------------------- HIVE METASTORE -----------------------------
   hive-metastore:
