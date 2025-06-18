@@ -324,10 +324,11 @@ services:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:21000/login.jsp"]
       interval: 30s
       timeout: 10s
+      start_period: 10m
       retries: 5
-    depends_on:
-      kafka-init:
-        condition: service_completed_successfully
+    # depends_on:
+      # kafka-init:
+      #   condition: service_completed_successfully
       # zookeeper:
       #   condition: service_healthy
     volumes:
