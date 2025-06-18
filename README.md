@@ -176,7 +176,7 @@ SELECT * FROM example;
 You can get the objects from minio with:
 
 ```bash
-mc get /data/prin/metadata/example/${object_name}
+mc get /data/${MINIO_BUCKET}/metadata/example/${object_name}
 ```
 
 ---

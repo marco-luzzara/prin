@@ -102,7 +102,7 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=kafka-broker-0:9092 #,kafka-broker-1:9092
       - KAFKA_TOPIC=devprin.task.result
       - S3_ENDPOINT=http://minio:9000
-      - S3_BUCKET=prin
+      - S3_BUCKET=${MINIO_BUCKET}
       - S3_ACCESS_KEY_ID=${MINIO_ROOT_USER}
       - S3_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
       - S3_PRE_SIGNED_URL_EXPIRATION_SECONDS=${S3_PRE_SIGNED_URL_EXPIRATION_SECONDS}
@@ -137,7 +137,7 @@ services:
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
       - S3_ENDPOINT_URL=http://minio:9000
-      - S3_BUCKET=prin
+      - S3_BUCKET=${MINIO_BUCKET}
       - S3_PREFIX=metadata
     volumes:
       - ./hive/conf:/opt/hive/custom-conf
@@ -170,13 +170,14 @@ services:
     depends_on:
       minio:
         condition: service_healthy
-    entrypoint:
-      - /bin/bash
-      - -c
-      - |
-        mc alias set local_minio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
-        mc rb --force local_minio/prin
-        mc mb local_minio/prin
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_BUCKET=${MINIO_BUCKET}
+    entrypoint: ["/entrypoint.sh"]
+    volumes:
+      - ./minio/entrypoint.sh:/entrypoint.sh
+
 
 # ----------------------------- TRINO -----------------------------
 # https://trino.io/docs/current/installation/containers.html
@@ -199,6 +200,8 @@ services:
     depends_on:
       ranger:
         condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
     volumes:
       - ./trino/catalog:/etc/trino/catalog
       - ./trino/kafka-description-files:/etc/trino/kafka
@@ -227,10 +230,6 @@ services:
       - FLUSH_DELAY_SECONDS=15
     depends_on:
       trino:
-        condition: service_healthy
-      kafka-init:
-        condition: service_completed_successfully
-      atlas:
         condition: service_healthy
     volumes:
       - ./trino/docker/cdc/scripts:/cdc/scripts
