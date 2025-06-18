@@ -6,7 +6,7 @@ import logging
 from flask import Flask, render_template, current_app
 from flask.logging import default_handler
 from werkzeug.exceptions import NotFound
-from kafka import KafkaProducer, KafkaConsumer
+from kafka import KafkaProducer, KafkaConsumer, TopicPartition
 
 from .category_flash import flash_error
 from .logging_formatter import AuthenticatedRequestFormatter
@@ -41,10 +41,11 @@ def create_app(test_config=None):
     configure_logging()
     app.logger.info('Log format configured')
 
-    from .routes import patients_data_loading, mir_results_data_loading, task_runner, users
+    from .routes import patients_data_loading, mir_results_data_loading, task_runner, users, task_results
     app.register_blueprint(patients_data_loading.bp)
     app.register_blueprint(mir_results_data_loading.bp)
     app.register_blueprint(task_runner.bp)
+    app.register_blueprint(task_results.bp)
     app.register_blueprint(users.bp)
 
     health_check_route = app.get('/health')(health_check)
@@ -79,11 +80,20 @@ def configure_kafka_clients():
         key_serializer=lambda m: json.dumps(m).encode()
     )
 
+    # auto_offset_reset is set to earliest because the task result consumer
+    # always reads from the beginning. Besides, it should not commit the message
+    # offset for the same reason
     _kafka_consumer = KafkaConsumer(
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
         client_id=f'edge-vm-{socket.gethostname()}',
-        value_deserializer=lambda m: json.loads(m.decode())
+        value_deserializer=lambda m: json.loads(m.decode()),
+        auto_offset_reset='earliest',
+        enable_auto_commit=False
     )
+    TASK_RESULTS_TOPIC_NAME='devprin.task.result'
+    tps = [TopicPartition(TASK_RESULTS_TOPIC_NAME, p) 
+           for p in _kafka_consumer.partitions_for_topic(TASK_RESULTS_TOPIC_NAME)]
+    _kafka_consumer.assign(tps)
 
 
 def configure_logging():

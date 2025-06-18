@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block title %}Task Results{% endblock %}
+{% block main_content %}
+<!-- <div class="mdc-list-group" id="task-results">
+    <h3 class="mdc-list-group__subheader">List 1</h3>
+    <ul class="mdc-list">
+        <li class="mdc-list-item" tabindex="0">
+            <span class="mdc-list-item__ripple"></span>
+            <details>
+                <summary>
+                    <span class="mdc-list-item__text">line item 1</span>
+                    <span class="icon">👇</span>
+                </summary>
+                <p>
+                    42
+                </p>
+            </details>
+        </li>
+        <li class="mdc-list-item">
+            <span class="mdc-list-item__ripple"></span>
+            <span class="mdc-list-item__text">line item</span>
+        </li>
+        <li class="mdc-list-item">
+            <span class="mdc-list-item__ripple"></span>
+            <span class="mdc-list-item__text">line item</span>
+        </li>
+    </ul>
+    <h3 class="mdc-list-group__subheader">List 2</h3>
+    <ul class="mdc-list">
+        <li class="mdc-list-item">
+            <span class="mdc-list-item__ripple"></span>
+            <span class="mdc-list-item__text">line item</span>
+        </li>
+        <li class="mdc-list-item">
+            <span class="mdc-list-item__ripple"></span>
+            <span class="mdc-list-item__text">line item</span>
+        </li>
+        <li class="mdc-list-item">
+            <span class="mdc-list-item__ripple"></span>
+            <span class="mdc-list-item__text">line item</span>
+        </li>
+    </ul>
+</div> -->
+<ul class="mdc-list">
+    {% for task_result in task_results %}
+    <li class="mdc-list-item prin-task-result__list-item" {{ 'tabindex=0' if loop.index == 1 }}>
+        <span class="mdc-list-item__ripple"></span>
+        <details class="prin-task-result__details">
+            <summary class="prin-task-result__summary">
+                <span class="material-icons">expand_more</span>
+                <span class="mdc-list-item__text">{{ task_result.timestamp }} - {{ task_result.type }}</span>
+            </summary>
+            <div class="p-3 border-t-1">
+                Filename: {{ task_result.filename }} <br />
+                <a class="prin-link" href="{{ task_result.url }}" target="_blank">Clicca qui per scaricare il file</a>
+            </div>
+        </details>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+{% block custom_js %}
+{% endblock %}

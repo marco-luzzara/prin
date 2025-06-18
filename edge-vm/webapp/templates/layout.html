@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="{{ url_for('static', filename='utils.js') }}"></script>
 </head>
 
 <body class="mdc-typography flex m-[unset]">
@@ -230,6 +229,12 @@
                     <i class="material-icons mdc-list-item__graphic" aria-hidden="true">construction</i>
                     <span class="mdc-list-item__text">Tasks</span>
                 </a>
+                <a class="mdc-list-item {{ 'mdc-list-item--activated' if request.endpoint == 'task-results.view_task_results' }}"
+                    href="{{ url_for('task-results.view_task_results') }}">
+                    <span class="mdc-list-item__ripple"></span>
+                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">query_stats</i>
+                    <span class="mdc-list-item__text">Task Results</span>
+                </a>
             </nav>
         </div>
     </aside>
@@ -326,17 +331,10 @@
             new mdc.ripple.MDCRipple(el);
         });
 
-        // list
+        // side navbar list
         const drawerListElem = document.querySelector('#side-nav-bar .mdc-list')
         const drawerList = new mdc.list.MDCList(drawerListElem);
-        document.querySelectorAll('.mdc-list-item').forEach(el => {
-            new mdc.ripple.MDCRipple(el);
-        });
-
-        // text fields
-        document.querySelectorAll('.mdc-text-field').forEach(el => {
-            new mdc.textField.MDCTextField(el);
-        });
+        drawerList.listElements.map(el => new mdc.ripple.MDCRipple(el));
 
         // dialogs
         const loginDialog = new mdc.dialog.MDCDialog(document.getElementById('login-dialog'));
