@@ -35,11 +35,12 @@ bp = Blueprint('task-results', __name__, url_prefix='/task-results')
 #         'url': 'http://unimi.it'
 #     }
 def get_task_results() -> Generator[Any, None, None]:
-    for task_result in _kafka_consumer:
+    for task_result_msg in _kafka_consumer:
+        task_result = task_result_msg.value
         yield {
             'timestamp': task_result['taskTimestamp'],
             'type': task_result['taskType'],
-            'fileName': task_result['fileName'],
+            'filename': task_result['fileName'],
             'url': task_result['preSignedUrl']
         }
 
