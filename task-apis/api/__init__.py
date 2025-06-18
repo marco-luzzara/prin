@@ -16,7 +16,7 @@ def create_app(test_config=None):
     app.logger.info('Configurations loaded')
 
    # ensure the instance folder exists
-    os.makedirs(app.instance_path)
+    os.makedirs(app.instance_path, exist_ok=True)
 
     from .routes import task_results, task_models
     app.register_blueprint(task_results.bp)
