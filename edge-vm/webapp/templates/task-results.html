@@ -41,23 +41,80 @@
         </li>
     </ul>
 </div> -->
-<ul class="mdc-list">
-    {% for task_result in task_results %}
-    <li class="mdc-list-item prin-task-result__list-item" {{ 'tabindex=0' if loop.index == 1 }}>
-        <span class="mdc-list-item__ripple"></span>
-        <details class="prin-task-result__details">
-            <summary class="prin-task-result__summary">
-                <span class="material-icons">expand_more</span>
-                <span class="mdc-list-item__text">{{ task_result.timestamp }} - {{ task_result.type }}</span>
-            </summary>
-            <div class="p-3 border-t-1">
-                Filename: {{ task_result.filename }} <br />
-                <a class="prin-link" href="{{ task_result.url }}" target="_blank">Clicca qui per scaricare il file</a>
+<div class="mdc-circular-progress" style="width:200px;height:200px;" id="task-results-progress-indicator" 
+    role="progressbar" aria-label="Example Progress Bar" aria-valuemin="0" aria-valuemax="1">
+    <div class="mdc-circular-progress__determinate-container">
+        <svg class="mdc-circular-progress__determinate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <circle class="mdc-circular-progress__determinate-track" cx="24" cy="24" r="18" stroke-width="4"/>
+            <circle class="mdc-circular-progress__determinate-circle" cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="113.097" stroke-width="4"/>
+        </svg>
+    </div>
+    <div class="mdc-circular-progress__indeterminate-container">
+        <div class="mdc-circular-progress__spinner-layer">
+            <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-left">
+                <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width="4"/>
+                </svg>
             </div>
-        </details>
-    </li>
-    {% endfor %}
+            <div class="mdc-circular-progress__gap-patch">
+                <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width="3.2"/>
+                </svg>
+            </div>
+            <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-right">
+                <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width="4"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button onclick="updateTaskResultsList()" class="mdc-button mdc-button--raised mdc-button--leading ml-5">
+    <span class="mdc-button__ripple"></span>
+    <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+    <span class="mdc-button__label">Ricarica</span>
+</button>
+<ul class="mdc-list" id="task-results-list">
 </ul>
 {% endblock %}
 {% block custom_js %}
+<script>
+    const taskResultsProgress = new mdc.circularProgress.MDCCircularProgress(
+        document.getElementById('task-results-progress-indicator')
+    );
+
+    const taskResultsList = document.getElementById('task-results-list')
+
+    async function updateTaskResultsList() {
+        taskResultsProgress.open();
+
+        const pollingUrl = {{ url_for('task-results.poll_task_results')|tojson }}
+        const response = await fetch(pollingUrl)
+        const taskResults = await response.json()
+
+        taskResultsList.innerHTML = ''
+        for (let taskResult of taskResults) {
+            taskResultsList.innerHTML += `
+                <li class="mdc-list-item prin-task-result__list-item">
+                    <span class="mdc-list-item__ripple"></span>
+                    <details class="prin-task-result__details">
+                        <summary class="prin-task-result__summary">
+                            <span class="material-icons">expand_more</span>
+                            <span class="mdc-list-item__text">${taskResult['timestamp']} - ${taskResult['type']}</span>
+                        </summary>
+                        <div class="p-3 border-t-1">
+                            Filename: ${taskResult['filename']} <br />
+                            <a class="prin-link" href="${taskResult['url']}" target="_blank">Clicca qui per scaricare il file</a>
+                        </div>
+                    </details>
+                </li>
+            `
+        }
+
+        taskResultsProgress.close();
+    }
+
+    updateTaskResultsList();
+</script>
 {% endblock %}

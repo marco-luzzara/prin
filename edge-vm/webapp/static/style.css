@@ -11,10 +11,10 @@ body {
 /*
 Removes default user agent stylesheet for anchors
 */
-a:-webkit-any-link {
+/* a:-webkit-any-link {
     color: unset;
     text-decoration: unset;
-}
+} */
 
 .page-container {
     display: flex;

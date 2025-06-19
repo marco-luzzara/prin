@@ -1,69 +1,60 @@
 from typing import Generator, Any
-import time
-import socket
-import json
 
 from flask import (
-    Blueprint, current_app, stream_template
+    Blueprint, current_app, render_template, jsonify
 )
-from kafka import KafkaConsumer
 
 from .middlewares.authenticated import authenticated
-from ..session_wrapper import session_wrapper
-from .utils.validation import validate_scope
-from ..category_flash import flash_action_success
-# from .. import _kafka_consumer
+from .. import _kafka_consumer
 
 bp = Blueprint('task-results', __name__, url_prefix='/task-results')
 
-## Testing results generator with:
-# def get_task_results() -> Generator[Any, None, None]:
-#     yield {
-#         'timestamp': '2025-06-18T15:02:35',
-#         'type': 'inference',
-#         'filename': 'results_inf.json',
-#         'url': 'http://google.it'
-#     }
-#     yield {
-#         'timestamp': '2025-06-18T15:02:37',
-#         'type': 'training',
-#         'filename': 'results_tr.json',
-#         'url': 'http://unimi.it'
-#     }
-#     time.sleep(5)
-#     yield {
-#         'timestamp': '2025-06-18T15:02:42',
-#         'type': 'training',
-#         'filename': 'results_tr.json',
-#         'url': 'http://unimi.it'
-#     }
+## Test Kafka notification with:
+#
+# BROKER=kafka-broker-0:9092
+# TOPIC=devprin.task.result
+# 
+# ./kafka-console-producer.sh \
+#   --broker-list $BROKER \
+#   --topic      $TOPIC \
+#   --property  parse.key=true \
+#   --property  key.separator=";" <<EOF
+# {"group_name":"researcher_user1"};{"taskType":"training","taskTimestamp":"2025-06-18T14:30:00Z","group":"researcher_user1","fileName":"data.csv","preSignedUrl":"https://..."}
+# EOF
+
+
+def poll_kafka_records() -> Generator[Any, None, None]:
+    # Changed from https://github.com/dpkp/kafka-python/blob/e4e6fcf353184af36226397d365cce1ee88b4a3a/kafka/consumer/group.py#L1160C9-L1175C29
+    record_map = _kafka_consumer.poll(timeout_ms=float('inf'), update_offsets=False)
+    for tp, records in iter(record_map.items()):
+        for record in records:
+            if not _kafka_consumer._subscription.is_fetchable(tp):
+                current_app.logger.debug("Not returning fetched records for partition %s"
+                            " since it is no longer fetchable", tp)
+                break
+            yield record
+
+
+def map_kafka_record_to_task_result(record):
+    task_result = record.value
+    return {
+        'timestamp': task_result['taskTimestamp'],
+        'type': task_result['taskType'],
+        'filename': task_result['fileName'],
+        'url': task_result['preSignedUrl']
+    }
 
 
 @bp.get('/')
 @authenticated
 def view_task_results():
-    # auto_offset_reset is set to earliest because the task result consumer
-    # always reads from the beginning. Besides, it should not commit the message
-    # offset for the same reason
-    _kafka_consumer = KafkaConsumer(
-        bootstrap_servers=current_app.config['KAFKA_BOOTSTRAP_SERVERS'],
-        client_id=f'edge-vm-{socket.gethostname()}',
-        value_deserializer=lambda m: json.loads(m.decode()),
-        auto_offset_reset='earliest',
-        enable_auto_commit=False
-    )
-    _kafka_consumer.subscribe(topics=['devprin.task.result'])
+    return render_template('task-results.html')
 
-    def get_task_results() -> Generator[Any, None, None]:
-        for task_result_msg in _kafka_consumer:
-            task_result = task_result_msg.value
-            yield {
-                'timestamp': task_result['taskTimestamp'],
-                'type': task_result['taskType'],
-                'filename': task_result['fileName'],
-                'url': task_result['preSignedUrl']
-            }
 
-    # _kafka_consumer.seek_to_beginning()
+@bp.get('/poll')
+@authenticated
+def poll_task_results():
+    task_results = [map_kafka_record_to_task_result(r) for r in poll_kafka_records()]
+    current_app.logger.debug(f'Task results after polling: {len(task_results)}')
 
-    return stream_template('task-results.html', task_results=get_task_results())
+    return jsonify(task_results)
