@@ -25,7 +25,9 @@ def create_app(test_config=None):
     app.logger.info('Loading configurations...')
     if test_config is None:
         app.config.from_prefixed_env()
-        app.config.from_mapping({})
+        app.config.from_mapping({
+            'KAFKA_BOOTSTRAP_SERVERS': KAFKA_BOOTSTRAP_SERVERS
+        })
     else:
         app.config.from_mapping(test_config)
 
@@ -80,20 +82,20 @@ def configure_kafka_clients():
         key_serializer=lambda m: json.dumps(m).encode()
     )
 
-    # auto_offset_reset is set to earliest because the task result consumer
-    # always reads from the beginning. Besides, it should not commit the message
-    # offset for the same reason
-    _kafka_consumer = KafkaConsumer(
-        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-        client_id=f'edge-vm-{socket.gethostname()}',
-        value_deserializer=lambda m: json.loads(m.decode()),
-        auto_offset_reset='earliest',
-        enable_auto_commit=False
-    )
-    TASK_RESULTS_TOPIC_NAME='devprin.task.result'
-    tps = [TopicPartition(TASK_RESULTS_TOPIC_NAME, p) 
-           for p in _kafka_consumer.partitions_for_topic(TASK_RESULTS_TOPIC_NAME)]
-    _kafka_consumer.assign(tps)
+    # # auto_offset_reset is set to earliest because the task result consumer
+    # # always reads from the beginning. Besides, it should not commit the message
+    # # offset for the same reason
+    # _kafka_consumer = KafkaConsumer(
+    #     bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+    #     client_id=f'edge-vm-{socket.gethostname()}',
+    #     value_deserializer=lambda m: json.loads(m.decode()),
+    #     auto_offset_reset='earliest',
+    #     enable_auto_commit=False
+    # )
+    # TASK_RESULTS_TOPIC_NAME='devprin.task.result'
+    # tps = [TopicPartition(TASK_RESULTS_TOPIC_NAME, p) 
+    #        for p in _kafka_consumer.partitions_for_topic(TASK_RESULTS_TOPIC_NAME)]
+    # _kafka_consumer.assign(tps)
 
 
 def configure_logging():

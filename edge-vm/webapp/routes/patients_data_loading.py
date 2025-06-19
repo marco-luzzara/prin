@@ -25,6 +25,7 @@ def view_data_loading_dashboard():
 
 
 @bp.post('/from-excel')
+@authenticated
 def load_from_excel():
     data_file = request.files['data-files']
     task_scope = request.form.get('scope', '')

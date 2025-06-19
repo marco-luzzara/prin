@@ -2,6 +2,7 @@ from flask import (
     Blueprint, redirect, current_app, request
 )
 
+from .middlewares.authenticated import authenticated
 from ..session_wrapper import session_wrapper
 from ..category_flash import flash_action_success
 
@@ -23,6 +24,7 @@ def login():
 
 
 @bp.post('/logout')
+@authenticated
 def logout():
     current_app.logger.info(f'User {session_wrapper.group}:{session_wrapper.user} has logged out')
     session_wrapper.clear()
