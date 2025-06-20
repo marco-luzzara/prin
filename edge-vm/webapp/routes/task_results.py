@@ -19,7 +19,7 @@ bp = Blueprint('task-results', __name__, url_prefix='/task-results')
 #   --topic      $TOPIC \
 #   --property  parse.key=true \
 #   --property  key.separator=";" <<EOF
-# {"group_name":"researcher_user1"};{"taskType":"training","taskTimestamp":"2025-06-18T14:30:00Z","group":"researcher_user1","fileName":"data.csv","preSignedUrl":"https://..."}
+# {"group_name":"researcher_user1"};{"taskType":"training","taskTimestamp":"$(date "+%Y-%m-%dT%H:%M:%SZ")","group":"researcher_user1","fileName":"data.csv","preSignedUrl":"https://..."}
 # EOF
 
 
