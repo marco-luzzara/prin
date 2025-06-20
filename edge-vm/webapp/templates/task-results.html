@@ -2,15 +2,41 @@
 {% block title %}Task Results{% endblock %}
 {% block main_content %}
 
-<button onclick="updateTaskResultsList()" class="mdc-button mdc-button--raised mdc-button--leading ml-5">
-    <span class="mdc-button__ripple"></span>
-    <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
-    <span class="mdc-button__label">Ricarica</span>
-</button>
+<div class="flex flex-row gap-10">
+    <button onclick="updateTaskResultsList()" class="mdc-button mdc-button--raised mdc-button--leading ml-5">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+        <span class="mdc-button__label">Ricarica</span>
+    </button>
+    <div class="flex flex-row items-center gap-5">
+        <label for="auto-refresh-task-results">Refresh automatico</label>
+        <button id="auto-refresh-task-results" class="mdc-switch mdc-switch--selected" type="button" role="switch"
+            aria-checked="true">
+            <div class="mdc-switch__track"></div>
+            <div class="mdc-switch__handle-track">
+                <div class="mdc-switch__handle">
+                    <div class="mdc-switch__shadow">
+                        <div class="mdc-elevation-overlay"></div>
+                    </div>
+                    <div class="mdc-switch__ripple"></div>
+                    <div class="mdc-switch__icons">
+                        <svg class="mdc-switch__icon mdc-switch__icon--on" viewBox="0 0 24 24">
+                            <path d="M19.69,5.23L8.96,15.96l-4.23-4.23L2.96,13.5l6,6L21.46,7L19.69,5.23z" />
+                        </svg>
+                        <svg class="mdc-switch__icon mdc-switch__icon--off" viewBox="0 0 24 24">
+                            <path d="M20 13H4v-2h16v2z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </button>
+    </div>
+</div>
 
 <div class="flex flex-col items-center">
     <div class="mdc-circular-progress mdc-circular-progress--indeterminate w-20 h-20" role="progressbar"
-        aria-label="Example Progress Bar" aria-valuemin="0" aria-valuemax="1" id="task-results-progress-indicator">
+        aria-label="Progress bar for task results" aria-valuemin="0" aria-valuemax="1"
+        id="task-results-progress-indicator">
         <div class="mdc-circular-progress__determinate-container">
             <svg class="mdc-circular-progress__determinate-circle-graphic" viewBox="0 0 48 48"
                 xmlns="http://www.w3.org/2000/svg">
@@ -61,8 +87,34 @@
     const taskResultsProgressElem = document.getElementById('task-results-progress-indicator');
     const taskResultsProgress = new mdc.circularProgress.MDCCircularProgress(taskResultsProgressElem);
 
-    const taskResultsList = document.getElementById('task-results-list')
+    const taskResultsList = document.getElementById('task-results-list');
 
+    // auto refresh switch
+    function setIntervalForTaskResultsRefresh() {
+        const callback = () => {
+            updateTaskResultsList();
+            console.log('auto-refreshing the task results...')
+        }
+
+        callback();
+        return setInterval(callback, 30000);
+    }
+
+    let taskResultsAutoRefreshIntervalId = setIntervalForTaskResultsRefresh();
+    const taskResultsAutoRefreshButton = document.getElementById('auto-refresh-task-results')
+    const taskResultsAutoRefreshSwitch = new mdc.switchControl.MDCSwitch(taskResultsAutoRefreshButton);
+
+    taskResultsAutoRefreshButton.addEventListener('click', () => {
+        if (taskResultsAutoRefreshSwitch.selected)
+            taskResultsAutoRefreshIntervalId = setIntervalForTaskResultsRefresh()
+        else
+            if (taskResultsAutoRefreshIntervalId !== null)
+                clearInterval(taskResultsAutoRefreshIntervalId);
+
+        taskResultsAutoRefreshButton.blur()
+    })
+
+    // updates the task results list
     async function updateTaskResultsList() {
         taskResultsProgress.open();
         taskResultsProgressElem.classList.remove('hidden!')
@@ -99,7 +151,5 @@
         taskResultsProgress.close();
         taskResultsProgressElem.classList.add('hidden!')
     }
-
-    updateTaskResultsList();
 </script>
 {% endblock %}
