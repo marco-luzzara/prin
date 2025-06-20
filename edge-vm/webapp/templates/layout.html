@@ -300,9 +300,7 @@
         </footer>
     </div>
 
-    {% block js %}{% endblock %}
-
-    <script type="module">
+    <script>
         // **MATERIAL DESIGN**
 
         // ** INITIALIZATION **
@@ -329,6 +327,7 @@
         // buttons
         document.querySelectorAll('.mdc-button').forEach(el => {
             new mdc.ripple.MDCRipple(el);
+            el.addEventListener('click', () => el.blur())
         });
 
         // side navbar list

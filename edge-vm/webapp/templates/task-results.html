@@ -1,107 +1,88 @@
 {% extends "layout.html" %}
 {% block title %}Task Results{% endblock %}
 {% block main_content %}
-<!-- <div class="mdc-list-group" id="task-results">
-    <h3 class="mdc-list-group__subheader">List 1</h3>
-    <ul class="mdc-list">
-        <li class="mdc-list-item" tabindex="0">
-            <span class="mdc-list-item__ripple"></span>
-            <details>
-                <summary>
-                    <span class="mdc-list-item__text">line item 1</span>
-                    <span class="icon">👇</span>
-                </summary>
-                <p>
-                    42
-                </p>
-            </details>
-        </li>
-        <li class="mdc-list-item">
-            <span class="mdc-list-item__ripple"></span>
-            <span class="mdc-list-item__text">line item</span>
-        </li>
-        <li class="mdc-list-item">
-            <span class="mdc-list-item__ripple"></span>
-            <span class="mdc-list-item__text">line item</span>
-        </li>
-    </ul>
-    <h3 class="mdc-list-group__subheader">List 2</h3>
-    <ul class="mdc-list">
-        <li class="mdc-list-item">
-            <span class="mdc-list-item__ripple"></span>
-            <span class="mdc-list-item__text">line item</span>
-        </li>
-        <li class="mdc-list-item">
-            <span class="mdc-list-item__ripple"></span>
-            <span class="mdc-list-item__text">line item</span>
-        </li>
-        <li class="mdc-list-item">
-            <span class="mdc-list-item__ripple"></span>
-            <span class="mdc-list-item__text">line item</span>
-        </li>
-    </ul>
-</div> -->
-<div class="mdc-circular-progress" style="width:200px;height:200px;" id="task-results-progress-indicator" 
-    role="progressbar" aria-label="Example Progress Bar" aria-valuemin="0" aria-valuemax="1">
-    <div class="mdc-circular-progress__determinate-container">
-        <svg class="mdc-circular-progress__determinate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-            <circle class="mdc-circular-progress__determinate-track" cx="24" cy="24" r="18" stroke-width="4"/>
-            <circle class="mdc-circular-progress__determinate-circle" cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="113.097" stroke-width="4"/>
-        </svg>
-    </div>
-    <div class="mdc-circular-progress__indeterminate-container">
-        <div class="mdc-circular-progress__spinner-layer">
-            <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-left">
-                <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width="4"/>
-                </svg>
-            </div>
-            <div class="mdc-circular-progress__gap-patch">
-                <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width="3.2"/>
-                </svg>
-            </div>
-            <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-right">
-                <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width="4"/>
-                </svg>
-            </div>
-        </div>
-    </div>
-</div>
 
 <button onclick="updateTaskResultsList()" class="mdc-button mdc-button--raised mdc-button--leading ml-5">
     <span class="mdc-button__ripple"></span>
     <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
     <span class="mdc-button__label">Ricarica</span>
 </button>
+
+<div class="flex flex-col items-center">
+    <div class="mdc-circular-progress mdc-circular-progress--indeterminate w-20 h-20" role="progressbar"
+        aria-label="Example Progress Bar" aria-valuemin="0" aria-valuemax="1" id="task-results-progress-indicator">
+        <div class="mdc-circular-progress__determinate-container">
+            <svg class="mdc-circular-progress__determinate-circle-graphic" viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg">
+                <circle class="mdc-circular-progress__determinate-track" cx="24" cy="24" r="18" stroke-width="4" />
+                <circle class="mdc-circular-progress__determinate-circle" cx="24" cy="24" r="18"
+                    stroke-dasharray="113.097" stroke-dashoffset="113.097" stroke-width="4" />
+            </svg>
+        </div>
+        <div class="mdc-circular-progress__indeterminate-container">
+            <div class="mdc-circular-progress__spinner-layer">
+                <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-left">
+                    <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549"
+                            stroke-width="4" />
+                    </svg>
+                </div>
+                <div class="mdc-circular-progress__gap-patch">
+                    <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549"
+                            stroke-width="3.2" />
+                    </svg>
+                </div>
+                <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-right">
+                    <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549"
+                            stroke-width="4" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <ul class="mdc-list" id="task-results-list">
 </ul>
 {% endblock %}
 {% block custom_js %}
 <script>
-    const taskResultsProgress = new mdc.circularProgress.MDCCircularProgress(
-        document.getElementById('task-results-progress-indicator')
-    );
+    // date formatting
+    const datetimeFormatOptions = {
+        timeStyle: "medium",
+        dateStyle: "medium",
+    };
+
+    // progress indicator
+    const taskResultsProgressElem = document.getElementById('task-results-progress-indicator');
+    const taskResultsProgress = new mdc.circularProgress.MDCCircularProgress(taskResultsProgressElem);
 
     const taskResultsList = document.getElementById('task-results-list')
 
     async function updateTaskResultsList() {
         taskResultsProgress.open();
+        taskResultsProgressElem.classList.remove('hidden!')
 
-        const pollingUrl = {{ url_for('task-results.poll_task_results')|tojson }}
-        const response = await fetch(pollingUrl)
-        const taskResults = await response.json()
+        const pollingUrl = "{{ url_for('task-results.poll_task_results') }}"
+        const response = await fetch(pollingUrl);
+        const taskResults = await response.json();
 
         taskResultsList.innerHTML = ''
         for (let taskResult of taskResults) {
+            const taskTimestamp = new Date(taskResult['timestamp']);
+            const formattedTaskTimestamp = taskTimestamp.toLocaleString("it-IT", datetimeFormatOptions);
+
             taskResultsList.innerHTML += `
                 <li class="mdc-list-item prin-task-result__list-item">
                     <span class="mdc-list-item__ripple"></span>
                     <details class="prin-task-result__details">
                         <summary class="prin-task-result__summary">
                             <span class="material-icons">expand_more</span>
-                            <span class="mdc-list-item__text">${taskResult['timestamp']} - ${taskResult['type']}</span>
+                            <span class="mdc-list-item__text mdc-typography--headline6">${formattedTaskTimestamp} - ${taskResult['type']}</span>
                         </summary>
                         <div class="p-3 border-t-1">
                             Filename: ${taskResult['filename']} <br />
@@ -112,7 +93,11 @@
             `
         }
 
+        const mdTaskResultsList = new mdc.list.MDCList(taskResultsList);
+        mdTaskResultsList.listElements.map(el => new mdc.ripple.MDCRipple(el));
+
         taskResultsProgress.close();
+        taskResultsProgressElem.classList.add('hidden!')
     }
 
     updateTaskResultsList();

@@ -25,7 +25,7 @@ bp = Blueprint('task-results', __name__, url_prefix='/task-results')
 
 def poll_kafka_records() -> Generator[Any, None, None]:
     # Changed from https://github.com/dpkp/kafka-python/blob/e4e6fcf353184af36226397d365cce1ee88b4a3a/kafka/consumer/group.py#L1160C9-L1175C29
-    record_map = _kafka_consumer.poll(timeout_ms=float('inf'), update_offsets=False)
+    record_map = _kafka_consumer.poll(timeout_ms=10000, update_offsets=False)
     for tp, records in iter(record_map.items()):
         for record in records:
             if not _kafka_consumer._subscription.is_fetchable(tp):
@@ -55,6 +55,6 @@ def view_task_results():
 @authenticated
 def poll_task_results():
     task_results = [map_kafka_record_to_task_result(r) for r in poll_kafka_records()]
-    current_app.logger.debug(f'Task results after polling: {len(task_results)}')
+    current_app.logger.info(f'Task results after polling: {len(task_results)}')
 
     return jsonify(task_results)
