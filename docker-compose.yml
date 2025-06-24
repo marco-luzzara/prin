@@ -42,10 +42,10 @@ services:
         condition: service_healthy
     working_dir: /opt/kafka/bin
     volumes:
-      - ./kafka/entrypoint.sh:/entrypoint.sh
+      - ./kafka/init.sh:/init.sh
     environment:
       - TOPIC__TASK_RESULT__RETENTION_SECONDS=${S3_PRE_SIGNED_URL_EXPIRATION_SECONDS}
-    entrypoint: ["/entrypoint.sh"]
+    entrypoint: ["/init.sh"]
 
 # ----------------------------- TASK DISPATCHER -----------------------------
   task-dispatcher:
@@ -174,9 +174,9 @@ services:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_BUCKET=${MINIO_BUCKET}
-    entrypoint: ["/entrypoint.sh"]
+    entrypoint: ["/init.sh"]
     volumes:
-      - ./minio/entrypoint.sh:/entrypoint.sh
+      - ./minio/init.sh:/init.sh
 
 
 # ----------------------------- TRINO -----------------------------
