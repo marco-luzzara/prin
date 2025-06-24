@@ -28,6 +28,9 @@ function start_container {
 {
     "Image": "$TASK_DOCKER_IMAGE",
     "Entrypoint": $taskEntrypoint,
+    "Labels": {
+        "prin.task.toRemove": "true"
+    },
     "Env": [
         "TRINO_USER=$trinoUser",
         "TRINO_GROUP=$trinoGroup",
