@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY . .
 
-ENV RECORD_PROCESSOR_CLASS=KafkaProcessor
+ENV FLASK_SECRET_KEY=SecretKeyForFlaskSessions
 ENV KAFKA_BOOTSTRAP_SERVERS=
 
 EXPOSE 80

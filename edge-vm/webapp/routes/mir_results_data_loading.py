@@ -42,7 +42,7 @@ def load_from_excel():
             key={ 'owner_id': owner_id },
             value=dataclasses.asdict(mir_record) | { 'scope': task_scope }
         )
-        _kafka_producer.flush()
+    _kafka_producer.flush()
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} has been processed')
 
