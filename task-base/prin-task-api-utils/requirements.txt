@@ -27,7 +27,9 @@ pytz==2025.2
     #   pandas
     #   trino
 requests==2.32.3
-    # via trino
+    # via
+    #   -r requirements.in
+    #   trino
 six==1.17.0
     # via python-dateutil
 sqlalchemy==2.0.41

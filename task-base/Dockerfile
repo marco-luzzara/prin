@@ -8,13 +8,15 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-RUN pip install pip-tools
+RUN pip install pip-sync build
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements.in,target=requirements.in \
+    --mount=type=bind,source=prin-task-api-utils/requirements.in,target=prin-task-api-utils/requirements.in \
     pip-compile requirements.in && pip-sync
 
-COPY . .
+COPY ./prin-task-api-utils ./prin-task-api-utils
+
+RUN pip install ./prin-task-api-utils
 
 ENV TRINO_USER=trino
 ENV TRINO_GROUP=
