@@ -1,3 +1,4 @@
 requests>=2.0,<3.0
+prin_task_api_utils @ file:///custom-libs/task-api-utils
 trino[sqlalchemy]>=0.334.0,<1.0.0
 pandas>=2.2.3,<3.0.0

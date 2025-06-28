@@ -6,7 +6,7 @@ FROM python:${PYTHON_VERSION}-slim AS base
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-RUN pip install pip-tools
+RUN pip install pip-tools build
 
 
 # DevContainer
@@ -27,8 +27,6 @@ USER ${REMOTE_USER}
 
 
 FROM base AS example-prod
-
-RUN pip install build
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=task-api-utils/requirements.in,target=/custom-libs/task-api-utils/requirements.in \

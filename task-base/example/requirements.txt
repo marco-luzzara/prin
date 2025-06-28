@@ -18,6 +18,8 @@ numpy==2.3.1
     # via pandas
 pandas==2.3.0
     # via -r requirements.in
+prin-task-api-utils @ file:///custom-libs/task-api-utils
+    # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
     #   pandas
@@ -27,7 +29,10 @@ pytz==2025.2
     #   pandas
     #   trino
 requests==2.32.4
-    # via trino
+    # via
+    #   -r requirements.in
+    #   prin-task-api-utils
+    #   trino
 six==1.17.0
     # via python-dateutil
 sqlalchemy==2.0.41
