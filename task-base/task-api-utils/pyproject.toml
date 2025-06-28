@@ -3,12 +3,10 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "prin-task-api-utils"
+name = "prin_task_api_utils"
 version = "1.0.0"
+requires-python = ">=3.9"
 dynamic = ["dependencies"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.in"]}
-
-[tool.setuptools.packages.find]
-where = ["."]

@@ -1,1 +1,4 @@
 .devcontainer/
+task-api-utils/*.egg-info/
+task-api-utils/dist/
+task-api-utils/build/

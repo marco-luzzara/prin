@@ -4,19 +4,19 @@
 #
 #    pip-compile requirements.in
 #
-certifi==2025.4.26
+certifi==2025.6.15
     # via requests
 charset-normalizer==3.4.2
     # via requests
-greenlet==3.2.2
+greenlet==3.2.3
     # via sqlalchemy
 idna==3.10
     # via requests
 lz4==4.4.4
     # via trino
-numpy==2.2.6
+numpy==2.3.1
     # via pandas
-pandas==2.2.3
+pandas==2.3.0
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
@@ -26,15 +26,13 @@ pytz==2025.2
     # via
     #   pandas
     #   trino
-requests==2.32.3
-    # via
-    #   -r requirements.in
-    #   trino
+requests==2.32.4
+    # via trino
 six==1.17.0
     # via python-dateutil
 sqlalchemy==2.0.41
     # via trino
-trino[sqlalchemy]==0.334.0
+trino[sqlalchemy]==0.335.0
     # via -r requirements.in
 typing-extensions==4.14.0
     # via sqlalchemy
@@ -42,7 +40,7 @@ tzdata==2025.2
     # via pandas
 tzlocal==5.3.1
     # via trino
-urllib3==2.4.0
+urllib3==2.5.0
     # via requests
 zstandard==0.23.0
     # via trino
