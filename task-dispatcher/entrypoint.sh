@@ -10,6 +10,14 @@ THIS_CONTAINER_NETWORK="$(curl -s --unix-socket /var/run/docker.sock -X GET \
     "http://localhost/containers/$THIS_CONTAINER_ID/json" | \
     jq -r '.NetworkSettings.Networks | keys | .[0]')"
 
+function pull_latest_task_image {
+    log_with_date "Pulling latest task image..."
+    curl -s --unix-socket /var/run/docker.sock \
+        -H "X-Registry-Auth: $(cat /run/secrets/docker_registry_token)" \
+        -X POST \
+        "http://localhost/images/create?fromImage=$TASK_DOCKER_IMAGE"
+}
+
 function log_with_date {
     local msg="$1"
     echo "$(date -u +"%Y-%m-%dT%H:%M:%S") - $msg"
@@ -22,12 +30,14 @@ function start_container {
     local taskEntrypoint="$(echo "$msg" | jq -r '.params.entrypoint')"
     local scope="$(echo "$msg" | jq -r '.scope')"
 
+    pull_latest_task_image
+
     log_with_date "Task started by user:group $trinoUser:$trinoGroup"
 
     local spawnedContainerConfig="$(cat <<JSON
 {
     "Image": "$TASK_DOCKER_IMAGE",
-    "Entrypoint": $taskEntrypoint,
+    "Cmd": $taskEntrypoint,
     "Labels": {
         "prin.task.toRemove": "true"
     },
@@ -66,6 +76,8 @@ JSON
         "http://localhost/containers/$spawnedContainerId/start"
     log_with_date "Task container started, remove it with \`docker container rm $spawnedContainerId\`"
 }
+
+docker_registry_login
 
 /opt/kafka/bin/kafka-console-consumer.sh \
     --bootstrap-server $KAFKA_BOOTSTRAP_SERVER \

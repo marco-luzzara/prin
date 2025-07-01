@@ -12,6 +12,33 @@
                     Avvia il task di training del modello. I risultati saranno accessibili a <a class="prin-link"
                         href="{{ url_for('task-results.view_task_results') }}">questa pagina</a>.
                 </p>
+                <div class="prin-task-runner-advanced">
+                    <details class="prin-task-runner-advanced__details">
+                        <summary class="prin-task-runner-advanced__summary mdc-ripple-surface">
+                            <span class="material-icons">expand_more</span>
+                            <span>Opzioni avanzate</span>
+                        </summary>
+                        <div class="p-3 border-t-1">
+                            <label class="mdc-text-field mdc-text-field--filled w-full">
+                                <span class="mdc-text-field__ripple"></span>
+                                <span class="mdc-floating-label"
+                                    id="training-advanced-params-entrypoint">Entrypoint</span>
+                                <input class="mdc-text-field__input" type="text" name="entrypoint"
+                                    aria-labelledby="training-advanced-params-entrypoint"
+                                    aria-controls="training-advanced-params-entrypoint-helper"
+                                    aria-describedby="training-advanced-params-entrypoint-helper">
+                                <span class="mdc-line-ripple"></span>
+                            </label>
+                            <div class="mdc-text-field-helper-line">
+                                <div class="mdc-text-field-helper-text" id="training-advanced-params-entrypoint-helper"
+                                    aria-hidden="true">JSON string
+                                    containing the commands
+                                    to run on start. (Example: ["python", "main.py"])
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
                 <hr class="mdc-list-divider prin-container-card__divider">
                 <input type="hidden" name="scope" value="training" />
                 <div class="prin-container-card__main-button-container">
@@ -34,6 +61,33 @@
                         href="{{ url_for('task-results.view_task_results') }}">questa
                         pagina</a>.
                 </p>
+                <div class="prin-task-runner-advanced">
+                    <details class="prin-task-runner-advanced__details">
+                        <summary class="prin-task-runner-advanced__summary mdc-ripple-surface">
+                            <span class="material-icons">expand_more</span>
+                            <span>Opzioni avanzate</span>
+                        </summary>
+                        <div class="p-3 border-t-1">
+                            <label class="mdc-text-field mdc-text-field--filled w-full">
+                                <span class="mdc-text-field__ripple"></span>
+                                <span class="mdc-floating-label"
+                                    id="inference-advanced-params-entrypoint">Entrypoint</span>
+                                <input class="mdc-text-field__input" type="text" name="entrypoint"
+                                    aria-labelledby="inference-advanced-params-entrypoint"
+                                    aria-controls="inference-advanced-params-entrypoint-helper"
+                                    aria-describedby="inference-advanced-params-entrypoint-helper">
+                                <span class="mdc-line-ripple"></span>
+                            </label>
+                            <div class="mdc-text-field-helper-line">
+                                <div class="mdc-text-field-helper-text" id="inference-advanced-params-entrypoint-helper"
+                                    aria-hidden="true">JSON string
+                                    containing the commands
+                                    to run on start. (Example: ["python", "main.py"])
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
                 <hr class="mdc-list-divider prin-container-card__divider">
                 <input type="hidden" name="scope" value="inference" />
                 <div class="prin-container-card__main-button-container">
@@ -48,4 +102,14 @@
 </div>
 {% endblock %}
 {% block custom_js %}
+<script>
+    document.querySelectorAll('.prin-task-runner-advanced__summary').forEach(el => {
+        el.addEventListener('click', () => el.blur());
+        new mdc.ripple.MDCRipple(el);
+    });
+
+    document.querySelectorAll('.prin-task-runner-advanced__details .mdc-text-field').forEach(el => {
+        new mdc.textField.MDCTextField(el);
+    })
+</script>
 {% endblock %}

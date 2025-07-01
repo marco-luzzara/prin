@@ -28,7 +28,7 @@ def view_data_loading_dashboard():
 @authenticated
 def load_from_excel():
     data_file = request.files['data-files']
-    task_scope = request.form.get('scope', '')
+    task_scope = request.form.get('scope', '').strip()
     validate_scope(task_scope)
 
     current_app.logger.info(f'File {secure_filename(data_file.filename)} is being processed for scope {task_scope}...')

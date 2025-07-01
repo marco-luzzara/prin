@@ -180,3 +180,4 @@ hive/.hive_initialized
 *.csr
 
 trino/docker/server/trino-anonymization-udfs-1.0/
+task-dispatcher/docker-registry-token.txt

@@ -130,3 +130,34 @@ Removes default user agent stylesheet for anchors
 .prin-task-result__details[open] .prin-task-result__summary .material-icons {
     transform: rotate(180deg);
 }
+
+/* TASK RUNNER ADVANCED SECTION */
+.prin-task-runner-advanced {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin: 1rem;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.prin-task-runner-advanced__summary {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem;
+    list-style: none;
+}
+
+.prin-task-runner-advanced__summary::-webkit-details-marker {
+    display: none;
+}
+
+.prin-task-runner-advanced__summary .material-icons {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.prin-task-runner-advanced__details[open] .prin-task-runner-advanced__summary .material-icons {
+    transform: rotate(180deg);
+}

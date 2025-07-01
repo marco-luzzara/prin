@@ -66,9 +66,11 @@ services:
         condition: service_completed_successfully
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    secrets:
+      - docker_registry_token
     environment:
       - KAFKA_BOOTSTRAP_SERVER=kafka-broker-0:9092
-      - TASK_DOCKER_IMAGE=prin-task
+      - TASK_DOCKER_IMAGE=ghcr.io/ba-pherd/platform/task-base:main
 
 # ----------------------------- TEST TASK -----------------------------
   test-task:
@@ -369,3 +371,7 @@ services:
       - ./superset/bootstrap.sh:/bootstrap.sh
       # - ./superset/data:/app/superset_home/superset.db
     entrypoint: ["/bootstrap.sh"]
+
+secrets:
+  docker_registry_token:
+    file: ./task-dispatcher/docker-registry-token.txt

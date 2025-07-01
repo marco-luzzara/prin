@@ -1,10 +1,12 @@
+import json
+
 from flask import (
     Blueprint, render_template, current_app, request, redirect
 )
 
 from .middlewares.authenticated import authenticated
 from ..session_wrapper import session_wrapper
-from .utils.validation import validate_scope
+from .utils.validation import validate_scope, validate_entrypoint
 from ..category_flash import flash_action_success
 from .. import _kafka_producer
 
@@ -19,8 +21,13 @@ def view_task_runner_dashboard():
 @bp.post('/trigger')
 @authenticated
 def trigger_task():
-    task_scope = request.form.get('scope', '')
+    task_scope = request.form.get('scope', '').strip()
     validate_scope(task_scope)
+
+    task_entrypoint = request.form.get('entrypoint', '').strip()
+    validate_entrypoint(task_entrypoint)
+    task_entrypoint_param = ['python', 'main.py'] if task_entrypoint == '' \
+        else json.loads(task_entrypoint)
 
     current_app.logger.info(f'Sending notification for task {task_scope}...')
     _kafka_producer.send(
@@ -32,7 +39,7 @@ def trigger_task():
             'group': session_wrapper.group, 
             'user': session_wrapper.user,
             'params': {
-                'entrypoint': ['python', 'main.py']
+                'entrypoint': task_entrypoint_param
             }
         }
     )
